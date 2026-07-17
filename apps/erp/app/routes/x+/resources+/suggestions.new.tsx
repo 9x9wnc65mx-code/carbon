@@ -2,7 +2,7 @@ import { requirePermissions } from "@carbon/auth/auth.server";
 import { getCarbonServiceRole } from "@carbon/auth/client.server";
 import { validator } from "@carbon/form";
 import { trigger } from "@carbon/jobs";
-import { getSlackClient } from "@carbon/lib/slack.server";
+import { postSuggestionToCarbonSlack } from "@carbon/lib/slack.server";
 import { getLogger } from "@carbon/logger";
 import { NotificationEvent } from "@carbon/notifications";
 import type { ActionFunctionArgs } from "react-router";
@@ -59,65 +59,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const company = await getCompany(serviceRole, companyId);
 
   if (sendToCarbon) {
-    try {
-      const [user, attachmentUrl] = await Promise.all([
-        formUserId
-          ? serviceRole
-              .from("user")
-              .select("firstName, lastName, email")
-              .eq("id", formUserId)
-              .single()
-          : Promise.resolve(null),
-        attachmentPath
-          ? serviceRole.storage
-              .from("private")
-              .createSignedUrl(attachmentPath, 60 * 60 * 24 * 7)
-              .then((result) => result.data?.signedUrl ?? null)
-          : Promise.resolve(null)
-      ]);
-
-      const submittedBy = user?.data
-        ? `${user.data.firstName ?? ""} ${user.data.lastName ?? ""} <${
-            user.data.email ?? ""
-          }>`
-        : "Anonymous";
-
-      const slackClient = getSlackClient();
-      await slackClient.sendMessage({
-        channel: "#feedback",
-        text: `New suggestion from ${company.data?.name ?? companyId}`,
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `${emoji} New suggestion from *${
-                company.data?.name ?? companyId
-              }*`
-            }
-          },
-          {
-            type: "section",
-            text: { type: "mrkdwn", text: suggestion }
-          },
-          {
-            type: "section",
-            fields: [
-              { type: "mrkdwn", text: `*Submitted by:*\n${submittedBy}` },
-              { type: "mrkdwn", text: `*Page:*\n${path}` },
-              {
-                type: "mrkdwn",
-                text: `*Attachment:*\n${
-                  attachmentUrl ? `<${attachmentUrl}|View image>` : "None"
-                }`
-              }
-            ]
-          }
-        ]
-      });
-    } catch (err) {
-      logger.error("Failed to send suggestion to Slack", { error: err });
-    }
+    await postSuggestionToCarbonSlack(serviceRole, {
+      companyId,
+      companyName: company.data?.name,
+      suggestion,
+      emoji,
+      path,
+      userId: formUserId,
+      attachmentPath
+    });
   }
 
   if (!company.error && company.data?.suggestionNotificationGroup?.length) {
