@@ -10614,6 +10614,9 @@ msgstr "Envoyer les invitations"
 msgid "Send RFQ to Suppliers"
 msgstr "Envoyer l'appel d'offres aux fournisseurs"
 
+msgid "Send to Carbon"
+msgstr "Envoyer à Carbon"
+
 msgid "Send Via"
 msgstr "Envoyer via"
 

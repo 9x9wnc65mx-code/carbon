@@ -10614,6 +10614,9 @@ msgstr "초대 보내기"
 msgid "Send RFQ to Suppliers"
 msgstr "공급업체에 RFQ 전송"
 
+msgid "Send to Carbon"
+msgstr "Carbon에 보내기"
+
 msgid "Send Via"
 msgstr "전송 방법"
 

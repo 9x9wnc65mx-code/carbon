@@ -10614,6 +10614,9 @@ msgstr "发送邀请"
 msgid "Send RFQ to Suppliers"
 msgstr "向供应商发送询价单"
 
+msgid "Send to Carbon"
+msgstr "发送至 Carbon"
+
 msgid "Send Via"
 msgstr "通过以下方式发送"
 

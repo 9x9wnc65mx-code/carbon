@@ -10614,6 +10614,9 @@ msgstr "Отправить приглашения"
 msgid "Send RFQ to Suppliers"
 msgstr "Отправить РФП поставщикам"
 
+msgid "Send to Carbon"
+msgstr "Отправить в Carbon"
+
 msgid "Send Via"
 msgstr "Отправить через"
 
