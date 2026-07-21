@@ -32,9 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
     sendToCarbon
   } = validation.data;
 
-  // Never trust form-supplied identifiers: the userId field is only an
-  // anonymous on/off signal (attribute the authenticated user or nobody), and
-  // attachments must live in this company's suggestions folder.
+  // formUserId is only an anonymous on/off signal — attribute the session user or nobody
   const suggestionUserId = formUserId ? userId : null;
   const suggestionAttachmentPath =
     attachmentPath && attachmentPath.startsWith(`${companyId}/suggestions/`)

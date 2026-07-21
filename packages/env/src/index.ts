@@ -248,9 +248,7 @@ export const RESEND_DOMAIN =
 export const SLACK_BOT_TOKEN = getEnv("SLACK_BOT_TOKEN", {
   isRequired: false
 });
-// Derived, non-secret flag telling the browser whether this deployment can
-// forward suggestions to Carbon's Slack — the token itself stays server-only.
-// Crosses the wire as "true" | "" (window.env values are all strings).
+// Derived from SLACK_BOT_TOKEN — the token itself never reaches the browser.
 export const CARBON_SLACK_ENABLED = isBrowser
   ? window.env?.CARBON_SLACK_ENABLED === "true"
   : Boolean(SLACK_BOT_TOKEN);

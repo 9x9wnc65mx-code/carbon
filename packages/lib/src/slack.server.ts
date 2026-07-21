@@ -48,8 +48,7 @@ export function getSlackClient(
 }
 
 const SUGGESTION_CHANNEL = "#feedback";
-// Slack rejects section blocks over 3000 chars; stay under it and split long
-// text across blocks instead of truncating (50-block message ceiling).
+// Slack rejects section blocks over 3000 chars; long text is split, not truncated.
 const SECTION_CHAR_LIMIT = 2900;
 const MAX_TEXT_BLOCKS = 12;
 
@@ -60,10 +59,7 @@ function escapeSlackText(text: string): string {
     .replace(/>/g, "&gt;");
 }
 
-// Operates on already-escaped text so SECTION_CHAR_LIMIT bounds the exact
-// length Slack receives. Escaped entities (&amp; / &lt; / &gt;) contain no
-// whitespace, so only a hard cut can land inside one — back up to keep the
-// entity intact.
+// Input is already mrkdwn-escaped; a hard cut backs up so it can't split an entity.
 function splitForSections(text: string): string[] {
   const chunks: string[] = [];
   let start = 0;
@@ -105,8 +101,6 @@ export async function postSuggestionToCarbonSlack(
     attachmentPath?: string | null;
   }
 ): Promise<void> {
-  // Self-hosted deployments have no Carbon Slack token — nothing to post to,
-  // even if a forged form submits sendToCarbon=true.
   if (!(process.env.SLACK_BOT_TOKEN ?? SLACK_BOT_TOKEN)) {
     return;
   }
@@ -149,9 +143,7 @@ export async function postSuggestionToCarbonSlack(
       });
     }
 
-    // This is awaited inside the user's submit request — the WebClient default
-    // retry policy (ten retries over ~30 minutes on 5xx/429) would hang the
-    // response during a Slack outage. One attempt, then give up.
+    // Awaited in the submit request — the default retry policy (~30 min) would hang it.
     await getSlackClient(undefined, {
       retryConfig: { retries: 0 }
     }).sendMessage({
