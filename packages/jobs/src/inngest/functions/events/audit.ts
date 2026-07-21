@@ -16,7 +16,7 @@ import type {
   CreateAuditLogEntry
 } from "@carbon/database/audit.types";
 import { getLogger } from "@carbon/logger";
-import { groupBy } from "@carbon/utils";
+import { groupBy, tiptapToText } from "@carbon/utils";
 import { z } from "zod";
 import { inngest } from "../../client";
 
@@ -58,6 +58,34 @@ function isSkippedAuditKey(key: string): boolean {
 }
 
 /**
+ * Rich-text (Tiptap) JSONB columns like `internalNotes` / `externalNotes`
+ * store a ProseMirror document. Diffing them structurally produces noise
+ * (`notes.content: [...]`), so they are treated as atomic values and stored
+ * as extracted plain text.
+ */
+function isTiptapDoc(value: unknown): boolean {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    (value as { type?: unknown }).type === "doc"
+  );
+}
+
+/**
+ * Normalize a rich-text column value to plain text. Notes columns default to
+ * `{}` before the first edit, so an empty object — like a doc with no text —
+ * reads as "" (empty notes), not as a JSON literal.
+ */
+function richTextToText(value: unknown): string {
+  if (isTiptapDoc(value)) {
+    return tiptapToText(value as Parameters<typeof tiptapToText>[0]);
+  }
+  if (typeof value === "string") return value;
+  return "";
+}
+
+/**
  * Compute the diff between old and new record values.
  */
 function computeDiff(
@@ -75,7 +103,19 @@ function computeDiff(
     const newValue = newRecord[key];
 
     if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
-      if (
+      if (isTiptapDoc(oldValue) || isTiptapDoc(newValue)) {
+        const oldText = richTextToText(oldValue);
+        const newText = richTextToText(newValue);
+        // Equal text on both sides means an empty↔empty or formatting-only
+        // change — not worth an audit row. An empty side is omitted so a
+        // first edit renders as a value being set, not "{} → text".
+        if (oldText !== newText) {
+          diff[key] = {
+            ...(oldText !== "" && { old: oldText }),
+            ...(newText !== "" && { new: newText })
+          };
+        }
+      } else if (
         typeof oldValue === "object" &&
         oldValue !== null &&
         typeof newValue === "object" &&
@@ -114,7 +154,13 @@ function computeCreateDiff(
   for (const field of createFields) {
     if (isSkippedAuditKey(field)) continue;
     if (field in newRecord) {
-      diff[field] = { new: newRecord[field] };
+      const value = newRecord[field];
+      if (isTiptapDoc(value)) {
+        const text = richTextToText(value);
+        if (text !== "") diff[field] = { new: text };
+      } else {
+        diff[field] = { new: value };
+      }
     }
   }
 
