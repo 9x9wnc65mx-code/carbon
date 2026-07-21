@@ -1,6 +1,7 @@
 import type { Database } from "@carbon/database";
 import { getAppUrl, SLACK_BOT_TOKEN } from "@carbon/env";
 import { getLogger } from "@carbon/logger";
+import type { WebClientOptions } from "@slack/web-api";
 import { WebClient } from "@slack/web-api";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -15,8 +16,8 @@ interface SlackMessage {
 class SlackClient {
   private client: WebClient;
 
-  constructor(token: string) {
-    this.client = new WebClient(token);
+  constructor(token: string, options?: WebClientOptions) {
+    this.client = new WebClient(token, options);
   }
 
   async sendMessage({ channel, text, blocks }: SlackMessage): Promise<void> {
@@ -36,9 +37,13 @@ class SlackClient {
   }
 }
 
-export function getSlackClient(token?: string): SlackClient {
+export function getSlackClient(
+  token?: string,
+  options?: WebClientOptions
+): SlackClient {
   return new SlackClient(
-    token ?? process.env.SLACK_BOT_TOKEN ?? SLACK_BOT_TOKEN ?? ""
+    token ?? process.env.SLACK_BOT_TOKEN ?? SLACK_BOT_TOKEN ?? "",
+    options
   );
 }
 
@@ -55,6 +60,10 @@ function escapeSlackText(text: string): string {
     .replace(/>/g, "&gt;");
 }
 
+// Operates on already-escaped text so SECTION_CHAR_LIMIT bounds the exact
+// length Slack receives. Escaped entities (&amp; / &lt; / &gt;) contain no
+// whitespace, so only a hard cut can land inside one — back up to keep the
+// entity intact.
 function splitForSections(text: string): string[] {
   const chunks: string[] = [];
   let start = 0;
@@ -64,7 +73,14 @@ function splitForSections(text: string): string[] {
       const newline = text.lastIndexOf("\n", end);
       const space = text.lastIndexOf(" ", end);
       const breakAt = Math.max(newline, space);
-      if (breakAt > start) end = breakAt;
+      if (breakAt > start) {
+        end = breakAt;
+      } else {
+        const amp = text.lastIndexOf("&", end - 1);
+        if (amp > start && !text.slice(amp, end).includes(";")) {
+          end = amp;
+        }
+      }
     }
     chunks.push(text.slice(start, end));
     start = end;
@@ -89,6 +105,11 @@ export async function postSuggestionToCarbonSlack(
     attachmentPath?: string | null;
   }
 ): Promise<void> {
+  // Self-hosted deployments have no Carbon Slack token — nothing to post to,
+  // even if a forged form submits sendToCarbon=true.
+  if (!(process.env.SLACK_BOT_TOKEN ?? SLACK_BOT_TOKEN)) {
+    return;
+  }
   try {
     const [user, attachmentUrl] = await Promise.all([
       input.userId
@@ -128,7 +149,12 @@ export async function postSuggestionToCarbonSlack(
       });
     }
 
-    await getSlackClient().sendMessage({
+    // This is awaited inside the user's submit request — the WebClient default
+    // retry policy (ten retries over ~30 minutes on 5xx/429) would hang the
+    // response during a Slack outage. One attempt, then give up.
+    await getSlackClient(undefined, {
+      retryConfig: { retries: 0 }
+    }).sendMessage({
       channel: SUGGESTION_CHANNEL,
       text: `New suggestion from ${companyName}`,
       blocks: [

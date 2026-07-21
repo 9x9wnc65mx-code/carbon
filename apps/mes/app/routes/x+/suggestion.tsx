@@ -31,6 +31,16 @@ export async function action({ request }: ActionFunctionArgs) {
     userId: formUserId,
     sendToCarbon
   } = validation.data;
+
+  // Never trust form-supplied identifiers: the userId field is only an
+  // anonymous on/off signal (attribute the authenticated user or nobody), and
+  // attachments must live in this company's suggestions folder.
+  const suggestionUserId = formUserId ? userId : null;
+  const suggestionAttachmentPath =
+    attachmentPath && attachmentPath.startsWith(`${companyId}/suggestions/`)
+      ? attachmentPath
+      : null;
+
   const serviceRole = await getCarbonServiceRole();
 
   const insertSuggestion = await serviceRole
@@ -40,8 +50,8 @@ export async function action({ request }: ActionFunctionArgs) {
         suggestion,
         emoji,
         path,
-        attachmentPath: attachmentPath || null,
-        userId: formUserId || null,
+        attachmentPath: suggestionAttachmentPath,
+        userId: suggestionUserId,
         companyId
       }
     ])
@@ -68,8 +78,8 @@ export async function action({ request }: ActionFunctionArgs) {
       suggestion,
       emoji,
       path,
-      userId: formUserId,
-      attachmentPath
+      userId: suggestionUserId,
+      attachmentPath: suggestionAttachmentPath
     });
   }
 
@@ -83,7 +93,7 @@ export async function action({ request }: ActionFunctionArgs) {
           type: "group",
           groupIds: company.data.suggestionNotificationGroup
         },
-        from: formUserId || userId
+        from: suggestionUserId || userId
       });
     } catch (err) {
       log.error("Failed to trigger suggestion notification", { error: err });
