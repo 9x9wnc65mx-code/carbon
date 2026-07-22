@@ -29,16 +29,23 @@ BEGIN
   WHERE i.indrelid = ('"' || p_table_name || '"')::regclass
     AND i.indisprimary;
 
-  -- No PK: all columns of the smallest unique index
+  -- No PK: key columns of the smallest valid, non-partial, non-expression
+  -- unique index. Partial/expression indexes don't guarantee row identity for
+  -- every row, and INCLUDE columns (positions past indnkeyatts) aren't part of
+  -- the uniqueness constraint — the slice keeps key columns only.
   IF pk_columns IS NULL THEN
     SELECT array_agg(a.attname ORDER BY a.attnum) INTO pk_columns
     FROM pg_index i
-    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+    JOIN pg_attribute a ON a.attrelid = i.indrelid
+      AND a.attnum = ANY ((i.indkey::int2[])[1:i.indnkeyatts])
     WHERE i.indexrelid = (
       SELECT i2.indexrelid
       FROM pg_index i2
       WHERE i2.indrelid = ('"' || p_table_name || '"')::regclass
         AND i2.indisunique
+        AND i2.indisvalid
+        AND i2.indpred IS NULL
+        AND i2.indexprs IS NULL
       ORDER BY i2.indnkeyatts ASC
       LIMIT 1
     );

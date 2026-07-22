@@ -79,7 +79,13 @@ function isTiptapDoc(value: unknown): boolean {
  */
 function richTextToText(value: unknown): string {
   if (isTiptapDoc(value)) {
-    return tiptapToText(value as Parameters<typeof tiptapToText>[0]);
+    // Malformed doc JSON must degrade to "", not throw — an unhandled throw
+    // here poisons the event batch and Inngest retries it forever.
+    try {
+      return tiptapToText(value as Parameters<typeof tiptapToText>[0]);
+    } catch {
+      return "";
+    }
   }
   if (typeof value === "string") return value;
   return "";
