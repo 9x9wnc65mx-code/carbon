@@ -11055,6 +11055,9 @@ msgstr "Davet Gönder"
 msgid "Send RFQ to Suppliers"
 msgstr "Tedarikçilere RFQ Gönder"
 
+msgid "Send to Carbon"
+msgstr "Carbon'a Gönder"
+
 msgid "Send Via"
 msgstr "Gönderim Yolu"
 

@@ -11055,6 +11055,9 @@ msgstr "Send Invites"
 msgid "Send RFQ to Suppliers"
 msgstr "Send RFQ to Suppliers"
 
+msgid "Send to Carbon"
+msgstr "Send to Carbon"
+
 msgid "Send Via"
 msgstr "Send Via"
 
