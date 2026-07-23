@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { isRouteErrorResponse, useNavigate } from "react-router";
 import { ErrorScreen, type ErrorScreenProps } from "./ErrorScreen";
 
@@ -21,6 +22,19 @@ import { ErrorScreen, type ErrorScreenProps } from "./ErrorScreen";
  */
 export function RootErrorBoundary({ error }: { error: unknown }) {
   const navigate = useNavigate();
+
+  // Route errors (e.g. an unmatched fetcher.load) are otherwise invisible —
+  // React Router hands them to the boundary without logging anywhere.
+  useEffect(() => {
+    const summary = isRouteErrorResponse(error)
+      ? `${error.status} ${error.statusText || "route error response"}`
+      : error instanceof Error
+        ? error.message
+        : String(error);
+    // biome-ignore lint/suspicious/noConsole: surfacing the swallowed error is the point
+    console.error(`[ErrorBoundary] ${summary}`, error);
+  }, [error]);
+
   const config = resolveConfig(error, () => navigate(0));
   return <ErrorScreen {...config} />;
 }
@@ -31,7 +45,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
     if (error.status === 404) {
       return {
         code: "404",
-        statusLabel: "signal lost",
         eyebrow: "— coordinates unresolved",
         title: "This page slipped through the cracks.",
         message:
@@ -46,14 +59,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
           "> location: /dev/void",
           "> recommendation: return to known coordinates"
         ],
-        marqueeItems: [
-          "404 NOT FOUND",
-          "SIGNAL LOST",
-          "DEAD END",
-          "NULL ROUTE",
-          "OFF THE MAP",
-          "ERROR ERROR ERROR"
-        ],
         actions: [{ label: "return home", to: "/" }]
       };
     }
@@ -66,7 +71,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
 
     return {
       code: String(error.status),
-      statusLabel: "transmission rejected",
       eyebrow: "— request refused",
       title: "The server turned this request away.",
       message:
@@ -80,14 +84,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
         `> detail: ${detail || "no additional detail"}`,
         "> channel closed by remote host",
         "> recommendation: verify access or retry"
-      ],
-      marqueeItems: [
-        `${error.status} ${error.statusText || "ERROR"}`,
-        "TRANSMISSION REJECTED",
-        "ACCESS DENIED",
-        "BAD REQUEST",
-        "REMOTE FAULT",
-        "ERROR ERROR ERROR"
       ],
       actions: [
         { label: "retry", onClick: retry },
@@ -105,7 +101,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
 
   return {
     code: "500",
-    statusLabel: "core fault",
     eyebrow: "— unhandled exception",
     title: "Something broke on our end.",
     message:
@@ -119,14 +114,6 @@ function resolveConfig(error: unknown, retry: () => void): ErrorScreenProps {
       stack ? `> at: ${stack}` : "> stack: unavailable",
       "> stack unwound to nearest boundary",
       "> recommendation: retry or return home"
-    ],
-    marqueeItems: [
-      "500 INTERNAL ERROR",
-      "CORE FAULT",
-      "EXCEPTION THROWN",
-      "STACK UNWOUND",
-      "SYSTEM HICCUP",
-      "ERROR ERROR ERROR"
     ],
     actions: [
       { label: "retry", onClick: retry },

@@ -4,7 +4,8 @@ import { Button, File as FileUpload, HStack, toast } from "@carbon/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { nanoid } from "nanoid";
 import type { ChangeEvent } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { LuRefreshCw } from "react-icons/lu";
 import { useUser } from "~/hooks";
 import { getPrivateUrl } from "~/utils/path";
 
@@ -12,11 +13,13 @@ const logger = getLogger("erp", "itemthumnailupload");
 export function ItemThumbnailUpload({
   path,
   itemId,
-  modelId
+  modelId,
+  isReadOnly = false
 }: {
   path?: string | null;
   itemId: string;
   modelId?: string | null;
+  isReadOnly?: boolean;
 }) {
   const { t } = useLingui();
   const { company } = useUser();
@@ -69,6 +72,63 @@ export function ItemThumbnailUpload({
 
     toast.success(t`Thumbnail removed`);
   }, [carbon, itemId, modelId, t]);
+
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const onRegenerate = useCallback(async () => {
+    if (!modelId || !carbon) return;
+    setIsRegenerating(true);
+    try {
+      // Snapshot the current model thumbnail so we can detect the new one.
+      const before = await carbon
+        .from("modelUpload")
+        .select("thumbnailPath")
+        .eq("id", modelId)
+        .maybeSingle();
+      const beforePath = before.data?.thumbnailPath ?? null;
+
+      const body = new FormData();
+      body.append("modelUploadId", modelId);
+      const res = await fetch("/api/model/thumbnail", {
+        method: "POST",
+        body
+      });
+      if (!res.ok) throw new Error(`thumbnail ${res.status}`);
+      toast.info(t`Regenerating thumbnail…`);
+
+      // The render runs async in the background. Poll for the fresh path (unique
+      // per generation) and swap the image in when it lands; bounded so it never
+      // spins forever.
+      const deadline = Date.now() + 90_000;
+      while (mountedRef.current && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 3000));
+        if (!mountedRef.current) return;
+        const cur = await carbon
+          .from("modelUpload")
+          .select("thumbnailPath")
+          .eq("id", modelId)
+          .maybeSingle();
+        const curPath = cur.data?.thumbnailPath ?? null;
+        if (curPath && curPath !== beforePath) {
+          setThumbnailPath(getPrivateUrl(curPath));
+          toast.success(t`Thumbnail updated`);
+          return;
+        }
+      }
+      if (mountedRef.current) toast.info(t`Thumbnail is still generating`);
+    } catch {
+      if (mountedRef.current) toast.error(t`Failed to regenerate thumbnail`);
+    } finally {
+      if (mountedRef.current) setIsRegenerating(false);
+    }
+  }, [modelId, carbon, t]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -171,27 +231,42 @@ export function ItemThumbnailUpload({
           </span>
         </div>
       )}
-      <HStack className="absolute bottom-2 right-2">
-        {thumbnailPath && (
-          <Button
+      {!isReadOnly && (
+        <HStack className="absolute bottom-2 right-2">
+          {modelId && (
+            <Button
+              variant="secondary"
+              className="bg-card opacity-100"
+              size="sm"
+              leftIcon={<LuRefreshCw />}
+              isLoading={isRegenerating}
+              isDisabled={isRegenerating}
+              onClick={onRegenerate}
+            >
+              <Trans>Regenerate</Trans>
+            </Button>
+          )}
+          {thumbnailPath && (
+            <Button
+              variant="secondary"
+              className="bg-card opacity-100"
+              size="sm"
+              onClick={onFileRemove}
+            >
+              <Trans>Remove</Trans>
+            </Button>
+          )}
+          <FileUpload
+            accept="image/*"
             variant="secondary"
-            className="bg-card opacity-100"
             size="sm"
-            onClick={onFileRemove}
+            className="bg-card opacity-100"
+            onChange={onFileChange}
           >
-            <Trans>Remove</Trans>
-          </Button>
-        )}
-        <FileUpload
-          accept="image/*"
-          variant="secondary"
-          size="sm"
-          className="bg-card opacity-100"
-          onChange={onFileChange}
-        >
-          <Trans>Upload</Trans>
-        </FileUpload>
-      </HStack>
+            <Trans>Upload</Trans>
+          </FileUpload>
+        </HStack>
+      )}
     </div>
   );
 }

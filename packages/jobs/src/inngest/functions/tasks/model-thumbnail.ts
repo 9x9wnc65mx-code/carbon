@@ -1,5 +1,11 @@
 import { getCarbonServiceRole } from "@carbon/auth/client.server";
-import { SUPABASE_ANON_KEY, SUPABASE_URL, VERCEL_URL } from "@carbon/env";
+import {
+  NODE_ENV,
+  SUPABASE_ANON_KEY,
+  SUPABASE_URL,
+  VERCEL_URL
+} from "@carbon/env";
+import { nanoid } from "nanoid";
 import { inngest } from "../../client";
 
 export const modelThumbnailFunction = inngest.createFunction(
@@ -8,8 +14,7 @@ export const modelThumbnailFunction = inngest.createFunction(
   async ({ event, step, logger }) => {
     const { modelId, companyId } = event.data;
 
-    const isLocal =
-      VERCEL_URL === undefined || VERCEL_URL.includes("localhost");
+    const isLocal = NODE_ENV !== "production";
 
     const getModelUrl = (id: string) => {
       if (isLocal) return `http://localhost:3000/file/model/${id}`;
@@ -29,6 +34,15 @@ export const modelThumbnailFunction = inngest.createFunction(
     await step.run("generate-and-upload-thumbnail", async () => {
       logger.info("Starting model-thumbnail task", { payload: event.data });
       const client = getCarbonServiceRole();
+
+      // The previous thumbnail's path — deleted after the new one lands so a
+      // regeneration doesn't leak an orphan (the filename is now unique per run).
+      const previous = await client
+        .from("modelUpload")
+        .select("thumbnailPath")
+        .eq("id", modelId)
+        .maybeSingle();
+      const previousPath = previous.data?.thumbnailPath ?? null;
 
       const url = getModelUrl(modelId);
       const imageUrl = `${SUPABASE_URL}/functions/v1/thumbnail`;
@@ -51,7 +65,12 @@ export const modelThumbnailFunction = inngest.createFunction(
         type: "image/png"
       });
 
-      const fileName = `${modelId}.png`;
+      // Unique filename per generation: the preview is served from a STABLE
+      // proxy URL (`/file/preview/...`), so reusing `{modelId}.png` would leave a
+      // regenerated thumbnail showing the browser-cached old image. A fresh path
+      // changes the URL (cache-bust) and the stored `thumbnailPath` value (so the
+      // UI actually re-renders).
+      const fileName = `${modelId}-${nanoid(8)}.png`;
       const thumbnailFile = new File([blob], fileName, {
         type: "image/png"
       });
@@ -70,6 +89,7 @@ export const modelThumbnailFunction = inngest.createFunction(
 
       if (error) {
         logger.error("Failed to upload thumbnail", { error });
+        throw new Error(`Failed to upload thumbnail: ${error.message}`);
       }
 
       const result = await client
@@ -83,6 +103,17 @@ export const modelThumbnailFunction = inngest.createFunction(
         logger.error("Failed to update thumbnail path", {
           error: result.error
         });
+        throw new Error(
+          `Failed to update thumbnail path: ${result.error.message}`
+        );
+      }
+
+      // Drop the superseded thumbnail (best-effort — never fail the run over it).
+      if (previousPath && previousPath !== data?.path) {
+        await client.storage
+          .from("private")
+          .remove([previousPath])
+          .catch(() => undefined);
       }
     });
   }

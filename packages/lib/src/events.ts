@@ -112,6 +112,38 @@ export type Events = {
     };
   };
 
+  // Eager model optimisation on upload (mesh inputs → compact optimised GLB)
+  "carbon/assembler-job-done": {
+    data: {
+      /** The assembler job id the waiting run matches on. */
+      jobId: string;
+      /** Terminal public status: succeeded | failed | canceled. */
+      status: string;
+      result: unknown;
+      stats: unknown;
+      error: { code?: string; message?: string } | null;
+    };
+  };
+  "carbon/model-optimize": {
+    data: {
+      modelUploadId: string;
+      companyId: string;
+      userId: string;
+      // format is derived from the stored file inside the job, not passed here.
+    };
+  };
+
+  // Compact the retained raw (STEP → BinXCAF `.xbf.zst`, mesh → `.{ext}.zst`)
+  // so it never lingers as the fat upload. Fired after model-optimize settles
+  // (success, already-optimized, or failure) — decoupled so an optimize
+  // failure can't strand a fat raw for the prune to delete.
+  "carbon/model-compact": {
+    data: {
+      modelUploadId: string;
+      companyId: string;
+    };
+  };
+
   // Company backup export — snapshot all company-scoped rows (and
   // optionally storage files) into a gzipped backup in the company bucket
   "carbon/company-export": {
@@ -300,7 +332,8 @@ export type Events = {
     };
   };
 
-  // Event queue processing (PGMQ consumer)
+  // Wake event for the PGMQ drainer (event-queue). Pushed by the database via
+  // the event-wake edge function whenever events are enqueued or pending.
   "carbon/event-queue.process": {
     data: Record<string, never>;
   };

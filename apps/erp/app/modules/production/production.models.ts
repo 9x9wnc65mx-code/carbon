@@ -1183,9 +1183,13 @@ export function getAssemblyModelState(
   ) {
     return "converted";
   }
-  const isStep = [".step", ".stp"].some((ext) =>
-    (model.modelPath ?? "").toLowerCase().endsWith(ext)
-  );
+  // The retained raw is compacted in place after upload (`x.step` ->
+  // `x.xbf.zst`, legacy `x.step.zst`), so peel the `.zst` wrapper before the
+  // extension check. Both STEP and its BinXCAF (`.xbf`) compacted form are
+  // convertible — the assembler content-sniffs and loads either through the
+  // same OCCT walk, yielding identical nodeIds.
+  const base = (model.modelPath ?? "").toLowerCase().replace(/\.zst$/, "");
+  const isStep = [".step", ".stp", ".xbf"].some((ext) => base.endsWith(ext));
   if (!isStep) return "none";
   if (
     model.processingStatus === "Queued" ||
