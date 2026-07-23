@@ -5371,6 +5371,9 @@ msgstr "Falha ao carregar entidades rastreadas"
 msgid "Failed to move account: {0}"
 msgstr "Falha ao mover conta: {0}"
 
+msgid "Failed to regenerate thumbnail"
+msgstr ""
+
 msgid "Failed to remove image: {errorMessage}"
 msgstr "Falha ao remover imagem: {errorMessage}"
 
@@ -5484,9 +5487,6 @@ msgstr "Valores de recurso sugeridos do desenho"
 
 msgid "Features"
 msgstr "Recursos"
-
-msgid "Feedback"
-msgstr "Comentários"
 
 msgid "Fees"
 msgstr "Taxas"
@@ -6210,9 +6210,6 @@ msgstr "Ainda estou trabalhando"
 
 msgid "ID"
 msgstr "ID"
-
-msgid "Ideas, suggestions or problems with this page?"
-msgstr "Ideias, sugestões ou problemas com esta página?"
 
 msgid "Ideas, suggestions or problems?"
 msgstr "Ideias, sugestões ou problemas?"
@@ -8320,6 +8317,9 @@ msgstr "Nenhuma impressora configurada"
 msgid "No printers configured. Click \"Add Printer\" to create one."
 msgstr "Nenhuma impressora configurada. Clique em \"Adicionar Impressora\" para criar uma."
 
+msgid "No process selected"
+msgstr "Nenhum processo selecionado"
+
 msgid "No Quote"
 msgstr "Sem Cotação"
 
@@ -10063,6 +10063,12 @@ msgstr "Atualizar"
 msgid "Refresh exchange rate"
 msgstr "Atualizar taxa de câmbio"
 
+msgid "Regenerate"
+msgstr ""
+
+msgid "Regenerating thumbnail…"
+msgstr ""
+
 msgid "Register"
 msgstr "Registrar Ativo Existente"
 
@@ -10873,6 +10879,9 @@ msgstr "Selecione um plano"
 #. placeholder {0}: plans[0].stripeTrialPeriodDays
 msgid "Select a plan to get started. You won't be charged for the first {0} days. Switch or cancel anytime."
 msgstr "Selecione um plano para começar. Você não será cobrado pelos primeiros {0} dias. Mude ou cancele a qualquer momento."
+
+msgid "Select a process first to choose its supplier."
+msgstr "Selecione um processo primeiro para escolher seu fornecedor."
 
 msgid "Select a project"
 msgstr "Selecione um projeto"
@@ -12979,8 +12988,14 @@ msgstr "Até {0}"
 msgid "Thumbnail"
 msgstr "Miniatura"
 
+msgid "Thumbnail is still generating"
+msgstr ""
+
 msgid "Thumbnail removed"
 msgstr "Miniatura removida"
+
+msgid "Thumbnail updated"
+msgstr ""
 
 msgid "Thumbnail uploaded"
 msgstr "Miniatura enviada"

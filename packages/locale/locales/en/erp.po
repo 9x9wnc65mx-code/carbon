@@ -5371,6 +5371,9 @@ msgstr "Failed to load tracked entities"
 msgid "Failed to move account: {0}"
 msgstr "Failed to move account: {0}"
 
+msgid "Failed to regenerate thumbnail"
+msgstr "Failed to regenerate thumbnail"
+
 msgid "Failed to remove image: {errorMessage}"
 msgstr "Failed to remove image: {errorMessage}"
 
@@ -5484,9 +5487,6 @@ msgstr "Feature values suggested from drawing"
 
 msgid "Features"
 msgstr "Features"
-
-msgid "Feedback"
-msgstr "Feedback"
 
 msgid "Fees"
 msgstr "Fees"
@@ -6210,9 +6210,6 @@ msgstr "I'm Still Working"
 
 msgid "ID"
 msgstr "ID"
-
-msgid "Ideas, suggestions or problems with this page?"
-msgstr "Ideas, suggestions or problems with this page?"
 
 msgid "Ideas, suggestions or problems?"
 msgstr "Ideas, suggestions or problems?"
@@ -8320,6 +8317,9 @@ msgstr "No printer configured"
 msgid "No printers configured. Click \"Add Printer\" to create one."
 msgstr "No printers configured. Click \"Add Printer\" to create one."
 
+msgid "No process selected"
+msgstr "No process selected"
+
 msgid "No Quote"
 msgstr "No Quote"
 
@@ -10063,6 +10063,12 @@ msgstr "Refresh"
 msgid "Refresh exchange rate"
 msgstr "Refresh exchange rate"
 
+msgid "Regenerate"
+msgstr "Regenerate"
+
+msgid "Regenerating thumbnail…"
+msgstr "Regenerating thumbnail…"
+
 msgid "Register"
 msgstr "Register"
 
@@ -10873,6 +10879,9 @@ msgstr "Select a plan"
 #. placeholder {0}: plans[0].stripeTrialPeriodDays
 msgid "Select a plan to get started. You won't be charged for the first {0} days. Switch or cancel anytime."
 msgstr "Select a plan to get started. You won't be charged for the first {0} days. Switch or cancel anytime."
+
+msgid "Select a process first to choose its supplier."
+msgstr "Select a process first to choose its supplier."
 
 msgid "Select a project"
 msgstr "Select a project"
@@ -12979,8 +12988,14 @@ msgstr "Through {0}"
 msgid "Thumbnail"
 msgstr "Thumbnail"
 
+msgid "Thumbnail is still generating"
+msgstr "Thumbnail is still generating"
+
 msgid "Thumbnail removed"
 msgstr "Thumbnail removed"
+
+msgid "Thumbnail updated"
+msgstr "Thumbnail updated"
 
 msgid "Thumbnail uploaded"
 msgstr "Thumbnail uploaded"
