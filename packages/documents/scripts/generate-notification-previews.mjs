@@ -492,7 +492,7 @@ export default function ${p.name}Preview() {
       heading={${j(p.heading)}}
       preview={${j(p.heading)}}
       message={${j(p.message)}}${referenceProp}
-      recipientName={"Naveen"}
+      recipientName={"John Doe"}
       ctaLabel={${j(p.cta)}}
       ctaUrl={${j(p.url)}}${detailsProp}
     />

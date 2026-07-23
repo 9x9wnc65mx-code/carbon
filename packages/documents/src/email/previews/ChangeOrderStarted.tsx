@@ -9,7 +9,7 @@ export default function ChangeOrderStartedPreview() {
       preview={"Change order started"}
       message={"Change order ECO-000012 has started"}
       reference={"ECO-000012"}
-      recipientName={"Naveen"}
+      recipientName={"John Doe"}
       ctaLabel={"View change order"}
       ctaUrl={"https://app.carbon.ms/x/items/change-order/1/details"}
       details={[
