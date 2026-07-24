@@ -133,9 +133,10 @@ const ProductionPlanningTable = ({
         items: selectedRows
           .filter((row) => row.id)
           .map((row) => {
-            // Drawer edits win; fall back to auto-computed orders for unopened items
+            // Drawer edits win (even an emptied list); fall back to
+            // auto-computed orders only for items never opened in the drawer
             const sourceOrders =
-              ordersMap[row.id!] && ordersMap[row.id!]!.length > 0
+              row.id! in ordersMap
                 ? ordersMap[row.id!]!
                 : (ordersByItemId.get(row.id!) ?? []);
             const ordersWithPeriods = sourceOrders.map((order) => {
