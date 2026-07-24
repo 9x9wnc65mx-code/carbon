@@ -1162,8 +1162,6 @@ async function buildEventContent(
           .eq("id", changeOrderData.assignee)
           .maybeSingle();
         if (assignee.error) {
-          // Best-effort: the assignee row is decorative, so log and send the
-          // notification without it rather than failing the whole job.
           console.error("Failed to get change order assignee", assignee.error);
         }
         assigneeName = assignee.data?.fullName ?? null;

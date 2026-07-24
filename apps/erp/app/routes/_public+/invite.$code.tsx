@@ -92,9 +92,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       ]
     });
   } else {
-    // Carry the invited company through the magic link — after the callback
-    // establishes the session, /api/link switches the user into it. Otherwise
-    // a multi-company user lands in whatever company their cookie last held.
     const magicLink = await serviceRole.auth.admin.generateLink({
       type: "magiclink",
       email: accept.data.email,
@@ -104,10 +101,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
         )}`
       }
     });
-    // Also set the companyId cookie now, while the browser is on our origin:
-    // it survives the Supabase round trip even if GoTrue's redirect allow-list
-    // strips the query param above, and the callback's cookie-based company
-    // pick then lands the user in the invited company.
     throw redirect(magicLink.data?.properties?.action_link ?? path.to.root, {
       headers: [["Set-Cookie", setCompanyId(accept.data.companyId)]]
     });

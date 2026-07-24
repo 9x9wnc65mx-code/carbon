@@ -119,8 +119,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const link = resolve(event, documentId, documentType ?? undefined);
     redirectTo = link ?? path.to.authenticatedRoot;
   } else if (companyId) {
-    // Company-only link (e.g. invite acceptance) — no document, just the
-    // company-switch below before landing on the root.
     redirectTo = path.to.authenticatedRoot;
   } else {
     throw redirect(path.to.authenticatedRoot);
@@ -130,9 +128,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // recipient may currently be viewing a different one. If the linked company
   // is one the user belongs to, switch them into it before redirecting — the
   // same flow the company switcher uses — so the document actually resolves.
-  // The cookie is checked too, not just the session: a multi-company user
-  // fresh from the login callback has a session company but no companyId
-  // cookie, and without the cookie x+/_layout bounces them to the picker.
   if (
     companyId &&
     (companyId !== sessionCompanyId || companyId !== getCompanyId(request))

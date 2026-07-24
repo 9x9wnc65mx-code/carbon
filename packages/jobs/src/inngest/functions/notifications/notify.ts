@@ -287,10 +287,6 @@ export const notifyFunction = inngest.createFunction(
       if (payload.from) ids = ids.filter((id) => id !== payload.from);
       ids = [...new Set(ids)];
 
-      // Deactivation deletes the userToCompany row but leaves stale userId
-      // references behind (assignee columns, notification-group settings,
-      // workCenterEmployee), so keep only current company members — otherwise
-      // ex-employees keep receiving email/Slack notifications.
       if (ids.length > 0) {
         const members = await client
           .from("userToCompany")
