@@ -5372,7 +5372,7 @@ msgid "Failed to move account: {0}"
 msgstr "Impossible de déplacer le compte : {0}"
 
 msgid "Failed to regenerate thumbnail"
-msgstr ""
+msgstr "Échec de la régénération de la miniature"
 
 msgid "Failed to remove image: {errorMessage}"
 msgstr "Échec de la suppression de l'image : {errorMessage}"
@@ -10064,10 +10064,10 @@ msgid "Refresh exchange rate"
 msgstr "Actualiser le taux de change"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "Régénérer"
 
 msgid "Regenerating thumbnail…"
-msgstr ""
+msgstr "Régénération de la miniature en cours…"
 
 msgid "Register"
 msgstr "Enregistrer un Actif Existant"
@@ -12992,13 +12992,13 @@ msgid "Thumbnail"
 msgstr "Miniature"
 
 msgid "Thumbnail is still generating"
-msgstr ""
+msgstr "La miniature est toujours en cours de génération"
 
 msgid "Thumbnail removed"
 msgstr "Miniature supprimée"
 
 msgid "Thumbnail updated"
-msgstr ""
+msgstr "Miniature mise à jour"
 
 msgid "Thumbnail uploaded"
 msgstr "Miniature téléchargée"
