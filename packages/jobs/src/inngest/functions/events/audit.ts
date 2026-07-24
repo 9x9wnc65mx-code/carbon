@@ -1,7 +1,11 @@
 import { getCarbonServiceRole } from "@carbon/auth/client.server";
-import type { TableConfig } from "@carbon/database/audit.config";
+import type {
+  SnapshotFieldEntry,
+  TableConfig
+} from "@carbon/database/audit.config";
 import {
   auditConfig,
+  getAuditableTableNames,
   getCreateFields,
   getEntityConfigsForTable,
   getSnapshotFields,
@@ -19,6 +23,8 @@ import { getLogger } from "@carbon/logger";
 import { groupBy, tiptapToText } from "@carbon/utils";
 import { z } from "zod";
 import { inngest } from "../../client";
+import type { FkMap, FkMapRow } from "./fk-snapshots";
+import { parseFkMapRows, resolveSnapshotSpec } from "./fk-snapshots";
 
 const log = getLogger("jobs", "audit");
 
@@ -476,10 +482,48 @@ export const auditFunction = inngest.createFunction(
 );
 
 /**
- * For every entry whose tableConfig declares `snapshotFields`, look up the
- * FK target's display columns and freeze them onto the diff entry under
- * `snapshot.old` / `snapshot.new`. One batched query per target table —
- * proportional to distinct FK targets, not to entries.
+ * FK topology of the audited tables, fetched once per process from the
+ * `get_foreign_key_map` RPC (which reads pg_constraint). Cached forever:
+ * schema only changes on deploys, which restart the worker. Failures are
+ * not cached, so the next batch retries the fetch.
+ */
+let fkMapCache: FkMap | null = null;
+
+async function getFkMap(
+  client: ReturnType<typeof getCarbonServiceRole>
+): Promise<FkMap> {
+  if (fkMapCache) return fkMapCache;
+  try {
+    const { data, error } = await (client as any).rpc("get_foreign_key_map", {
+      p_table_names: getAuditableTableNames()
+    });
+    if (error || !data) {
+      log.error(
+        "get_foreign_key_map failed; only declared snapshotFields will resolve",
+        { error }
+      );
+      return new Map();
+    }
+    fkMapCache = parseFkMapRows(data as FkMapRow[]);
+    return fkMapCache;
+  } catch (err) {
+    log.error(
+      "get_foreign_key_map threw; only declared snapshotFields will resolve",
+      {
+        error: err
+      }
+    );
+    return new Map();
+  }
+}
+
+/**
+ * For every FK column that changed, look up the FK target's display columns
+ * and freeze them onto the diff entry under `snapshot.old` / `snapshot.new`.
+ * FK columns are discovered from the schema (`getFkMap`) with display
+ * columns from `fkDisplayRegistry`; per-column `snapshotFields` overrides
+ * win. One batched query per target table — proportional to distinct FK
+ * targets, not to entries.
  */
 async function applyFkSnapshots(
   client: ReturnType<typeof getCarbonServiceRole>,
@@ -502,32 +546,48 @@ async function applyFkSnapshots(
   const refs: Ref[] = [];
   const idsByTable = new Map<string, Set<string>>();
   const colsByTable = new Map<string, Set<string>>();
+  const companyScopedByTable = new Map<string, boolean>();
+  const fkMap = await getFkMap(client);
 
   for (const entry of entries) {
     if (!entry.diff) continue;
+
+    const overrides = new Map<string, SnapshotFieldEntry>();
     const configs = getEntityConfigsForTable(entry.tableName).filter(
       (c) => c.entityType === entry.entityType
     );
     for (const { tableConfig } of configs) {
-      const snapshots = getSnapshotFields(tableConfig as TableConfig);
-      for (const snap of snapshots) {
-        const change = entry.diff[snap.column];
-        if (!change) continue;
-        refs.push({
-          diffEntry: change,
-          table: snap.table,
-          displayColumns: snap.displayColumns
-        });
-
-        const ids = idsByTable.get(snap.table) ?? new Set<string>();
-        if (typeof change.old === "string") ids.add(change.old);
-        if (typeof change.new === "string") ids.add(change.new);
-        idsByTable.set(snap.table, ids);
-
-        const cols = colsByTable.get(snap.table) ?? new Set<string>();
-        for (const c of snap.displayColumns) cols.add(c);
-        colsByTable.set(snap.table, cols);
+      for (const snap of getSnapshotFields(tableConfig as TableConfig)) {
+        overrides.set(snap.column, snap);
       }
+    }
+
+    for (const [column, change] of Object.entries(entry.diff)) {
+      if (!change) continue;
+      const spec = resolveSnapshotSpec(
+        entry.tableName,
+        column,
+        overrides,
+        fkMap
+      );
+      if (!spec) continue;
+
+      refs.push({
+        diffEntry: change,
+        table: spec.table,
+        displayColumns: spec.displayColumns
+      });
+
+      const ids = idsByTable.get(spec.table) ?? new Set<string>();
+      if (typeof change.old === "string") ids.add(change.old);
+      if (typeof change.new === "string") ids.add(change.new);
+      idsByTable.set(spec.table, ids);
+
+      const cols = colsByTable.get(spec.table) ?? new Set<string>();
+      for (const c of spec.displayColumns) cols.add(c);
+      colsByTable.set(spec.table, cols);
+
+      companyScopedByTable.set(spec.table, spec.hasCompanyId);
     }
   }
 
@@ -543,11 +603,16 @@ async function applyFkSnapshots(
     const selectClause = ["id", ...cols].join(", ");
 
     try {
-      const { data, error } = await (client as any)
+      let query = (client as any)
         .from(table)
         .select(selectClause)
-        .eq("companyId", companyId)
         .in("id", Array.from(ids));
+      // Tenant-scope the lookup unless the target table has no companyId
+      // (e.g. "user" — global identity).
+      if (companyScopedByTable.get(table) !== false) {
+        query = query.eq("companyId", companyId);
+      }
+      const { data, error } = await query;
 
       if (error || !data) continue;
 

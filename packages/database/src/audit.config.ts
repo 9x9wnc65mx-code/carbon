@@ -581,6 +581,52 @@ export const auditConfig = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// FK display registry
+// ---------------------------------------------------------------------------
+
+/**
+ * Display columns per FK *target* table, keyed by the table being pointed at
+ * — one entry per referenced table, reused by every FK that points there.
+ *
+ * The audit handler discovers which diff columns are FKs (and what they
+ * reference) from the schema itself via the `get_foreign_key_map` RPC, then
+ * uses this registry to decide what to read from the target row and freeze
+ * into the diff as `snapshot.old` / `snapshot.new`. A target table missing
+ * from this registry degrades gracefully: the diff keeps the raw id.
+ *
+ * Per-column `snapshotFields` on a table config still win over this registry
+ * (use them to pick different columns for one specific FK).
+ *
+ * A single-column list renders as an inline pill in the audit drawer; a
+ * multi-column list renders as an expanded section.
+ */
+export const fkDisplayRegistry: {
+  [T in TableName]?: readonly ColumnOf<T>[];
+} = {
+  address: ["addressLine1", "city"],
+  contact: ["fullName"],
+  customer: ["name"],
+  customerLocation: ["name"],
+  customerStatus: ["name"],
+  customerType: ["name"],
+  department: ["name"],
+  employeeType: ["name"],
+  item: ["readableId"],
+  location: ["name"],
+  paymentTerm: ["name"],
+  process: ["name"],
+  shift: ["name"],
+  shippingMethod: ["name"],
+  shippingTerm: ["name"],
+  supplier: ["name"],
+  supplierLocation: ["name"],
+  supplierType: ["name"],
+  unitOfMeasure: ["name"],
+  user: ["fullName"],
+  workCenter: ["name"]
+} as const;
+
+// ---------------------------------------------------------------------------
 // Derived types
 // ---------------------------------------------------------------------------
 
