@@ -111,16 +111,26 @@ export async function action({ request }: ActionFunctionArgs) {
       });
     }
 
-    const sessionCookie = await setAuthSession(request, { authSession });
-    const headers: [string, string][] = [["Set-Cookie", sessionCookie]];
-
     // Only finalize the active company for single-company users. Multi-company
     // users must actively choose: we leave the companyId cookie unset and let
     // x+/_layout bounce them to the picker — its presence is the "has chosen
-    // this session" marker. Mirrors the magic-link callback contract.
-    const employeeCompanies =
-      (await getEmployeeCompanies(serviceRole, credRow.userId)).data ?? [];
-    if (employeeCompanies.length <= 1) {
+    // this session" marker. Mirrors the magic-link callback contract. If we
+    // can't determine the company count, fail rather than finalize an
+    // arbitrary company (which would skip the picker for multi-company users).
+    const employeeCompanies = await getEmployeeCompanies(
+      serviceRole,
+      credRow.userId
+    );
+    if (employeeCompanies.error) {
+      return data(error(null, "Sign-in failed. Please try again."), {
+        status: 500
+      });
+    }
+
+    const sessionCookie = await setAuthSession(request, { authSession });
+    const headers: [string, string][] = [["Set-Cookie", sessionCookie]];
+
+    if (employeeCompanies.data.length <= 1) {
       headers.push(["Set-Cookie", setCompanyId(authSession.companyId)]);
     }
 
