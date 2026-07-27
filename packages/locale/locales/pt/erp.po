@@ -4632,6 +4632,9 @@ msgstr "funcionários"
 msgid "Employees"
 msgstr "Funcionários"
 
+msgid "Empty"
+msgstr "Vazio"
+
 msgid "Empty = match every item"
 msgstr "Vazio = corresponder a todos os itens"
 

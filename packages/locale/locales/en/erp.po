@@ -4632,6 +4632,9 @@ msgstr "employees"
 msgid "Employees"
 msgstr "Employees"
 
+msgid "Empty"
+msgstr "Empty"
+
 msgid "Empty = match every item"
 msgstr "Empty = match every item"
 

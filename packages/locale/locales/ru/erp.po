@@ -4632,6 +4632,9 @@ msgstr "сотрудники"
 msgid "Employees"
 msgstr "Сотрудники"
 
+msgid "Empty"
+msgstr "Пусто"
+
 msgid "Empty = match every item"
 msgstr "Пусто = соответствует каждому товару"
 
