@@ -116,18 +116,15 @@ export const issueValidator = z.object({
   adjustmentType: z.enum(["Set Quantity", "Positive Adjmt.", "Negative Adjmt."])
 });
 
-export const feedbackValidator = z.object({
-  feedback: z.string().min(1, { message: "" }),
-  attachmentPath: z.string().optional(),
-  location: z.string()
-});
-
 export const suggestionValidator = z.object({
   suggestion: z.string().min(1, { message: "Suggestion is required" }),
   emoji: z.string().default("💡"),
   attachmentPath: z.string().optional(),
   path: z.string(),
-  userId: zfd.text(z.string().optional())
+  userId: zfd.text(z.string().optional()),
+  sendToCarbon: zfd
+    .text(z.string().optional())
+    .transform((value) => value === "true")
 });
 
 export const productionEventType = ["Setup", "Labor", "Machine"] as const;

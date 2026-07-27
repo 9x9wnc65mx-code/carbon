@@ -467,3 +467,53 @@ Format: `Context → Problem → Rule → Applies to`
 **Rule:** When two `ValidatedForm`s occupy the same conditional slot (`cond ? <VF/> : <VF/>`), give each a distinct, stable `key` (`key="new-part"` / `key="existing-item"`) so switching forces a fresh mount + fresh store that hydrates with the correct branch's `defaultValues`. Consequence: the fresh mount also needs any Select value the branch relies on seeded in its own `defaultValues` (e.g. `changeType: "New Part"`, added to `changeOrderNewPartValidator`) — a value the shared store previously carried over from the user's click is gone after remount. Symptom to watch for: a controlled Select rendering blank / submitting `""` right after a branch switch.
 
 **Applies to:** `apps/erp/app/modules/items/ui/ChangeOrder/AffectedItemForm.tsx`; any conditional twin-`ValidatedForm` pattern; `@carbon/form` controlled fields (`Select`/`Combobox`/anything on `useControlField`) that rely on `defaultValues` seeding.
+
+## A public SECURITY DEFINER function that calls net.http_post is a remote-DoS surface — put it in an internal schema
+
+**Context:** The push-based event-queue wake (`20260721184852_event-queue-wake.sql`) originally defined `wake_event_queue()` / `sweep_event_queue()` in the `public` schema. Both are SECURITY DEFINER and call `net.http_post` (pg_net) to POST to the `event-wake` edge function. The trigger (`dispatch_event_batch`) and pg_cron call them as the owner (superuser).
+
+**Problem:** Every `public` function is auto-exposed as a PostgREST RPC (`/rest/v1/rpc/<name>`), reachable by `anon`. Worse than mere exposure: referencing such a function as a **non-superuser** role segfaults the backend (pg_net 0.20 / PG15) — reproducible via `SET ROLE authenticated; EXPLAIN SELECT public.wake_event_queue();`, which crashed even though `EXPLAIN` never runs the body and the role lacked EXECUTE. The crash happens at plan/permission-resolution time, **before** the ACL check — so `REVOKE ALL … FROM PUBLIC, anon, authenticated` does NOT protect: an unauthenticated `POST /rpc/wake_event_queue` crash-loops the whole DB (postmaster reinitializes all backends → "database system is in recovery mode" for every client). Same-body call as superuser was fine, which is why the trigger/cron paths worked and masked it in end-to-end testing.
+
+**Rule:** Never define an internal SECURITY DEFINER helper (especially one calling `net.http_post` / pg_net) in `public`. Put it in the internal `util` schema (the existing Carbon/Supabase convention — cf. `util.process_embeddings`), where `anon`/`authenticated` have no `USAGE`, so the API can't reference it at all and a hostile call fails cleanly with `permission denied for schema util` before any crash-prone planning. Callers that are triggers/pg_cron run as owner and reach `util` fine; update their bodies to `util.<fn>()`. Keep `REVOKE ALL … FROM PUBLIC` on the util function as defense-in-depth, but the schema-USAGE gate is the real fix. Verify with `SET ROLE authenticated; SELECT util.<fn>();` → must be a clean `permission denied`, not a dropped connection. Note PostgREST-exposed schemas exclude `util`/`pgmq` but include `public`/`net` (`has_schema_privilege('anon', <schema>, 'USAGE')`).
+
+**Applies to:** any new SECURITY DEFINER function that calls pg_net/`net.http_post` or is meant to be trigger/cron-only (`packages/database/supabase/migrations/`). Trigger functions returning `trigger` are not RPC-exposed (safe in public), but VOID/scalar helpers are.
+
+## The local Inngest dev server (v1.19.4) can't handle `debounce` — it errors on every debounce item
+
+**Context:** The push-based event-queue drainer (`packages/jobs/src/inngest/functions/events/queue.ts`) was configured with `debounce: { period: "2s", timeout: "10s" }` to coalesce bursts of `carbon/event-queue.process` wake events into one run.
+
+**Problem:** The Dockerized dev server (`inngest/inngest:v1.19.4`, run by `crbn up`) logs `error unmarshalling debounce item: json: cannot unmarshal array into Go struct field DebounceItem.e.data of type map[string]interface {}` on every debounced event, fails to coalesce (a 20-write burst produced 21 runs, not ~1), and spams the error each time the function is triggered (including every pg_cron sweeper tick). Fails open — events still process, queue still drains, nothing is lost — but the optimization is absent in dev and the logs are noisy. Inngest Cloud honors debounce; the dev server does not.
+
+**Rule:** Don't rely on `debounce` for Carbon Inngest functions validated against the local dev server — it's broken there. For the event queue the coalescing was moved upstream: `dispatch_event_batch()` wakes at most once per transaction (txn-local GUC `carbon.event_wake_sent`), so the important bulk case (a CSV import = one transaction) is already one wake; `concurrency: 1` + loop-until-empty drain absorbs the rest (extra runs from many separate transactions are cheap no-ops that read an empty queue). If you must coalesce many *separate* transactions in a burst, do it at the DB/application layer, not with `debounce`. Verify any flow-control choice by watching `docker logs <inngest container>` for `error handling queue item` during a burst, not just by trusting the config.
+
+**Applies to:** `packages/jobs/src/inngest/functions/events/queue.ts`; any new Inngest function reaching for `debounce`/flow-control that will be exercised in local dev.
+
+## Regenerating `src/email/previews/` fixtures requires a follow-up biome format pass
+
+**Context:** Adding ChangeOrder* entries to `packages/documents/scripts/generate-notification-previews.mjs` and re-running it to emit the per-event preview fixtures.
+
+**Problem:** The generator writes raw `JSON.stringify(..., null, 6)` output (quoted keys, 6-space indent), but the committed fixtures are biome-formatted (unquoted keys, 2-space indent). Re-running the script therefore rewrites **all** existing fixtures into the raw style — 28 files of pure formatting churn drowning the 3 intended new files in the diff.
+
+**Rule:** After running `generate-notification-previews.mjs`, always run `pnpm exec biome check --write packages/documents/src/email/previews/` before reviewing the diff. Only intended fixture changes should remain; if pre-existing fixtures still show as modified, something else changed.
+
+**Applies to:** `packages/documents/scripts/generate-notification-previews.mjs`, `packages/documents/src/email/previews/*`, and any generator whose committed output is formatter-normalized.
+
+## Turbo typecheck/test runs can regenerate `@carbon/database` artifacts as ride-along churn
+
+**Context:** Running `pnpm exec turbo run typecheck --filter=erp` and `turbo run test --filter=@carbon/jobs` to verify unrelated changes (notification filter, invite-link fix).
+
+**Problem:** Turbo builds dependency packages first, and a `@carbon/database` build step regenerated `src/types.ts` (nondeterministic FK-relationship ordering), `src/swagger-docs-schema.ts`, and `supabase/functions/lib/types.ts` — none of which the task touched. Committing them would mix generated-file drift into an unrelated PR; the drift can also reflect whatever local DB happens to be running, not migrations.
+
+**Rule:** After any turbo run, check `git status` for modified generated files under `packages/database/` before committing. If you didn't intentionally run `pnpm run generate:types`, revert them (`git checkout -- packages/database/src/... packages/database/supabase/functions/lib/types.ts`). Regenerate deliberately and separately when schema actually changed.
+
+**Applies to:** `packages/database/src/types.ts`, `packages/database/src/swagger-docs-schema.ts`, `packages/database/supabase/functions/lib/types.ts`; any branch running turbo tasks that build `@carbon/database`.
+
+## Storage keys built from raw filenames break silently — always sanitize, and the portal share route regex is a hidden contract with every upload path shape
+
+**Context:** MES file/inspection step uploads (`RecordModal` in `apps/mes/app/components/JobOperation/components/Step.tsx`) put the raw `file.name` into the Supabase storage key. macOS screenshot names contain U+202F (narrow no-break space before "AM/PM"), which is outside Supabase storage's allowed-key charset.
+
+**Problem:** The upload fails with "Invalid key", but the modal had already rendered the file card (`setFile` before the await), so the operator saw the file "attached" with the Record button permanently disabled — no actionable error. Separately, the customer-portal file route (`share+/customer.$id.$.tsx`) validated paths with a regex hardcoded to the *old* flat layout `companyId/job/operationId/file`; when `032f8d0e` nested step uploads under `/stepId/nanoid/`, every portal file link started returning 403 and nobody noticed for months.
+
+**Rule:** (1) Any storage key that embeds a user-controlled filename must pass it through `stripSpecialCharacters` (canonical copy in `@carbon/utils`, re-exported by `~/utils/string` in ERP) with a `|| "file"` fallback for names that sanitize to empty. (2) The share-route path validation (`parseJobFilePath` in `apps/erp/app/utils/supabase.ts`, unit-tested) is coupled to every writer of the `companyId/job/...` prefix — changing an upload path shape requires updating the parser and its test in the same PR. (3) On upload failure, reset the picker UI so the user can retry; never leave a dead-end state.
+
+**Applies to:** all `storage.from(...).upload(...)` call sites in `apps/mes` and `apps/erp`; `share+/customer.$id.$.tsx`; any new externally-shared file route.

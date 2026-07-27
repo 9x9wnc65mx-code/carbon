@@ -1,3 +1,4 @@
+import { ASSEMBLER_SERVICE_URL } from "@carbon/auth";
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { getCarbonServiceRole } from "@carbon/auth/client.server";
 import type { LoaderFunctionArgs } from "react-router";
@@ -23,21 +24,44 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     .eq("companyId", companyId)
     .maybeSingle();
 
+  // A real query failure is a 5xx, not a 404 — don't mask a backend error as
+  // "no such model".
+  if (model.error) throw new Response("Internal error", { status: 500 });
+  // No such model for this tenant → 404, don't fabricate an all-nulls body. An
+  // all-nulls 200 is indistinguishable from "exists but not optimised", so the
+  // viewer's reuse guard can't tell the two apart and would auto-fire an
+  // optimise against an id that doesn't exist (→ a reoptimise 404 loop). The
+  // client query treats this 404 as "no artifacts", and never auto-fires.
+  if (!model.data) throw new Response("Not found", { status: 404 });
+
   // Raw-source pointer for the viewer's WASM fallback tier (renders the original
-  // upload when no artifact exists). `.zst`-compacted raws are skipped — they
-  // only exist after a successful optimise, which means an artifact exists too.
-  // Bucket split: current uploads land in `temp-staging`; pre-assembler rows
-  // lived in `private` — probe temp-staging and fall back.
+  // upload when no artifact exists). `.zst`-compacted raws are skipped — they only
+  // exist after a successful optimise, which means a GLB artifact exists too.
+  // A retained raw is relocated to the DURABLE `private` bucket; a just-uploaded
+  // one is briefly in ephemeral `temp-staging` before relocation; a pruned one is
+  // in neither (an oversized raw whose GLB preview is enough) → no raw tier.
   let rawPath: string | null = null;
-  let rawBucket = "temp-staging";
+  let rawBucket = "private";
   const modelPath = model.data?.modelPath ?? null;
   if (modelPath && !modelPath.toLowerCase().endsWith(".zst")) {
-    rawPath = modelPath;
-    const staged = await getCarbonServiceRole()
-      .storage.from("temp-staging")
-      .info(modelPath)
-      .catch(() => ({ data: null, error: true as const }));
-    if (staged.error || !staged.data) rawBucket = "private";
+    const svc = getCarbonServiceRole();
+    const probe = (bucket: string) =>
+      svc.storage
+        .from(bucket)
+        .info(modelPath)
+        .catch(() => ({ data: null, error: true as const }));
+    const inDurable = await probe("private");
+    if (!inDurable.error && inDurable.data) {
+      rawPath = modelPath;
+      rawBucket = "private";
+    } else {
+      const staged = await probe("temp-staging");
+      if (!staged.error && staged.data) {
+        rawPath = modelPath;
+        rawBucket = "temp-staging";
+      }
+      // Absent in both → pruned/gone; rawPath stays null (rely on the GLB).
+    }
   }
 
   return {
@@ -47,6 +71,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     thumbnailPath: model.data?.thumbnailPath ?? null,
     rawPath,
     rawBucket,
+    // Whether the optimiser is configured at all. When false, the viewer hides
+    // the "Optimize failed · Retry" affordance and never auto-fires an optimise.
+    optimizerAvailable: Boolean(ASSEMBLER_SERVICE_URL),
     optimizeStatus: model.data?.optimizeStatus ?? null,
     size: model.data?.originalSize ?? model.data?.size ?? null,
     optimizedSize: model.data?.optimizedSize ?? null
