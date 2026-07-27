@@ -66,7 +66,7 @@ DB triggers added via `attach_event_trigger(...)` push table changes onto a PGMQ
 `handlerType = 'AUDIT'`. The queue dispatcher (`packages/jobs/src/inngest/.../queue.ts`) batches AUDIT
 records and emits `carbon/event-audit`. `auditFunction` in
 `packages/jobs/src/inngest/functions/events/audit.ts` (Inngest id `event-handler-audit`) computes diffs
-(`computeDiff` / `computeCreateDiff` / `computeNestedDiff`, honoring `skipFields`), resolves FK snapshots
+(`computeDiff` / `computeCreateDiff` / `computeNestedDiff` in `events/diff.ts` — pure, unit-tested; honors `skipFields` and suppresses empty↔empty transitions like `null → {}` / `null → ""`), resolves FK snapshots
 (`applyFkSnapshots`: FK topology from `get_foreign_key_map` cached per process, display columns from
 `fkDisplayRegistry`, override precedence in `events/fk-snapshots.ts` → `resolveSnapshotSpec`, one batched
 lookup per target table), and writes via `client.rpc("insert_audit_log_batch", { p_company_id, p_entries })`.
