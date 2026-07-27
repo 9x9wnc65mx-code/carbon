@@ -5372,7 +5372,7 @@ msgid "Failed to move account: {0}"
 msgstr "Hesap taşınamadı: {0}"
 
 msgid "Failed to regenerate thumbnail"
-msgstr ""
+msgstr "Küçük resim yenileme başarısız"
 
 msgid "Failed to remove image: {errorMessage}"
 msgstr "Görsel kaldırılamadı: {errorMessage}"
@@ -10064,10 +10064,10 @@ msgid "Refresh exchange rate"
 msgstr "Döviz kurunu yenile"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "Yenile"
 
 msgid "Regenerating thumbnail…"
-msgstr ""
+msgstr "Küçük resim yenileniyor…"
 
 msgid "Register"
 msgstr "Mevcut Varlığı Kayıt Yap"
@@ -12992,13 +12992,13 @@ msgid "Thumbnail"
 msgstr "Küçük Resim"
 
 msgid "Thumbnail is still generating"
-msgstr ""
+msgstr "Küçük resim hala oluşturuluyor"
 
 msgid "Thumbnail removed"
 msgstr "Küçük resim kaldırıldı"
 
 msgid "Thumbnail updated"
-msgstr ""
+msgstr "Küçük resim güncellendi"
 
 msgid "Thumbnail uploaded"
 msgstr "Küçük resim yüklendi"

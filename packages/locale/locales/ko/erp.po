@@ -5372,7 +5372,7 @@ msgid "Failed to move account: {0}"
 msgstr "계정 이동 실패: {0}"
 
 msgid "Failed to regenerate thumbnail"
-msgstr ""
+msgstr "썸네일 재생성 실패"
 
 msgid "Failed to remove image: {errorMessage}"
 msgstr "이미지를 삭제하지 못했습니다: {errorMessage}"
@@ -10064,10 +10064,10 @@ msgid "Refresh exchange rate"
 msgstr "환율 새로고침"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "재생성"
 
 msgid "Regenerating thumbnail…"
-msgstr ""
+msgstr "썸네일 재생성 중…"
 
 msgid "Register"
 msgstr "등록"
@@ -12992,13 +12992,13 @@ msgid "Thumbnail"
 msgstr "썸네일"
 
 msgid "Thumbnail is still generating"
-msgstr ""
+msgstr "썸네일이 아직 생성 중입니다"
 
 msgid "Thumbnail removed"
 msgstr "썸네일 삭제됨"
 
 msgid "Thumbnail updated"
-msgstr ""
+msgstr "썸네일 업데이트됨"
 
 msgid "Thumbnail uploaded"
 msgstr "썸네일 업로드됨"

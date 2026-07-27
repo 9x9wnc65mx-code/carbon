@@ -5372,7 +5372,7 @@ msgid "Failed to move account: {0}"
 msgstr "勘定科目の移動に失敗しました: {0}"
 
 msgid "Failed to regenerate thumbnail"
-msgstr ""
+msgstr "サムネイルの再生成に失敗しました"
 
 msgid "Failed to remove image: {errorMessage}"
 msgstr "画像の削除に失敗しました: {errorMessage}"
@@ -10064,10 +10064,10 @@ msgid "Refresh exchange rate"
 msgstr "為替レートを更新"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "再生成"
 
 msgid "Regenerating thumbnail…"
-msgstr ""
+msgstr "サムネイルを再生成中…"
 
 msgid "Register"
 msgstr "既存資産を登録"
@@ -12992,13 +12992,13 @@ msgid "Thumbnail"
 msgstr "サムネイル"
 
 msgid "Thumbnail is still generating"
-msgstr ""
+msgstr "サムネイルはまだ生成中です"
 
 msgid "Thumbnail removed"
 msgstr "サムネイルが削除されました"
 
 msgid "Thumbnail updated"
-msgstr ""
+msgstr "サムネイルが更新されました"
 
 msgid "Thumbnail uploaded"
 msgstr "サムネイルがアップロードされました"
