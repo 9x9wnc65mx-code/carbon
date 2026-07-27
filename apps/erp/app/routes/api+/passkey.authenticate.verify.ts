@@ -111,12 +111,6 @@ export async function action({ request }: ActionFunctionArgs) {
       });
     }
 
-    // Only finalize the active company for single-company users. Multi-company
-    // users must actively choose: we leave the companyId cookie unset and let
-    // x+/_layout bounce them to the picker — its presence is the "has chosen
-    // this session" marker. Mirrors the magic-link callback contract. If we
-    // can't determine the company count, fail rather than finalize an
-    // arbitrary company (which would skip the picker for multi-company users).
     const employeeCompanies = await getEmployeeCompanies(
       serviceRole,
       credRow.userId
