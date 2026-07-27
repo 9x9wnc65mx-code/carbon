@@ -7709,9 +7709,6 @@ msgstr "आपूर्तिकर्ता गायब हैं"
 msgid "Mobile Phone"
 msgstr "मोबाइल फोन"
 
-msgid "Model data is missing"
-msgstr "मॉडल डेटा गायब है"
-
 msgid "Model Number"
 msgstr "मॉडल नंबर"
 
@@ -12697,6 +12694,9 @@ msgstr "कार्यों की क्रमित सूची जो इ�
 
 msgid "The ordered sequence of operations a job runs through, copied from the method's bill of process."
 msgstr "संचालन का क्रमित क्रम जो एक काम चलाता है, विधि के बिल ऑफ प्रोसेस से कॉपी किया गया।"
+
+msgid "The original model file is no longer available"
+msgstr ""
 
 msgid "The outbound posting document that takes goods out of stock to a customer, posting COGS as it goes."
 msgstr "बाहरी पोस्टिंग दस्तावेज़ जो स्टॉक से माल को ग्राहक के पास ले जाता है, रास्ते में COGS पोस्ट करता है।"

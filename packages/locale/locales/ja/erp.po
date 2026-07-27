@@ -7709,9 +7709,6 @@ msgstr "サプライヤーが見つかりません"
 msgid "Mobile Phone"
 msgstr "携帯電話"
 
-msgid "Model data is missing"
-msgstr "モデルデータが見つかりません"
-
 msgid "Model Number"
 msgstr "型番"
 
@@ -12697,6 +12694,9 @@ msgstr "このワークフローを使用するイシューが完了する必要
 
 msgid "The ordered sequence of operations a job runs through, copied from the method's bill of process."
 msgstr "メソッドのプロセス一覧から コピーされた、ジョブが実行される操作の順序付きシーケンス。"
+
+msgid "The original model file is no longer available"
+msgstr ""
 
 msgid "The outbound posting document that takes goods out of stock to a customer, posting COGS as it goes."
 msgstr "在庫から顧客に商品を取り出す発信転記文書。転記時にCOGSを転記します。"

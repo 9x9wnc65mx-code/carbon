@@ -7709,9 +7709,6 @@ msgstr "Brakujący dostawcy"
 msgid "Mobile Phone"
 msgstr "Telefon komórkowy"
 
-msgid "Model data is missing"
-msgstr "Brakuje danych modelu"
-
 msgid "Model Number"
 msgstr "Numer modelu"
 
@@ -12697,6 +12694,9 @@ msgstr "Uporządkowana lista zadań, które problemy korzystające z tego przep�
 
 msgid "The ordered sequence of operations a job runs through, copied from the method's bill of process."
 msgstr "Uporządkowana sekwencja operacji, przez którą przechodzi zadanie, skopiowana z listy procesów metody."
+
+msgid "The original model file is no longer available"
+msgstr ""
 
 msgid "The outbound posting document that takes goods out of stock to a customer, posting COGS as it goes."
 msgstr "Dokument buchowania wychodzącego, który wyjmuje towary z magazynu do klienta, księgując COGS w drodze."

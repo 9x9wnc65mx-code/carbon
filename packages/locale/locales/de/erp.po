@@ -7709,9 +7709,6 @@ msgstr "Fehlende Lieferanten"
 msgid "Mobile Phone"
 msgstr "Mobiltelefon"
 
-msgid "Model data is missing"
-msgstr "Modelldaten fehlen"
-
 msgid "Model Number"
 msgstr "Modellnummer"
 
@@ -12697,6 +12694,9 @@ msgstr "Die geordnete Liste der Aufgaben, die Probleme mit diesem Workflow ausf�
 
 msgid "The ordered sequence of operations a job runs through, copied from the method's bill of process."
 msgstr "Die geordnete Abfolge von Operationen, die ein Auftrag durchläuft, kopiert aus der Prozeßliste des Verfahrens."
+
+msgid "The original model file is no longer available"
+msgstr ""
 
 msgid "The outbound posting document that takes goods out of stock to a customer, posting COGS as it goes."
 msgstr "Das ausgehende Buchungsdokument, das Waren aus dem Lager zu einem Kunden herausnimmt und dabei COGS bucht."

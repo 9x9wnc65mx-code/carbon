@@ -1971,7 +1971,6 @@ export type Database = {
       }
       agentThread: {
         Row: {
-          archivedAt: string | null
           companyId: string
           createdAt: string
           createdBy: string
@@ -1984,7 +1983,6 @@ export type Database = {
           userId: string
         }
         Insert: {
-          archivedAt?: string | null
           companyId: string
           createdAt?: string
           createdBy: string
@@ -1997,7 +1995,6 @@ export type Database = {
           userId: string
         }
         Update: {
-          archivedAt?: string | null
           companyId?: string
           createdAt?: string
           createdBy?: string
@@ -6660,7 +6657,6 @@ export type Database = {
           accountsPayableEmail: string | null
           accountsReceivableAddress: boolean | null
           accountsReceivableEmail: string | null
-          aiAgentEnabled: boolean
           assetTaxDepreciationEnabled: boolean
           assetTaxRate: number | null
           consoleEnabled: boolean
@@ -6705,7 +6701,6 @@ export type Database = {
           accountsPayableEmail?: string | null
           accountsReceivableAddress?: boolean | null
           accountsReceivableEmail?: string | null
-          aiAgentEnabled?: boolean
           assetTaxDepreciationEnabled?: boolean
           assetTaxRate?: number | null
           consoleEnabled?: boolean
@@ -6750,7 +6745,6 @@ export type Database = {
           accountsPayableEmail?: string | null
           accountsReceivableAddress?: boolean | null
           accountsReceivableEmail?: string | null
-          aiAgentEnabled?: boolean
           assetTaxDepreciationEnabled?: boolean
           assetTaxRate?: number | null
           consoleEnabled?: boolean
@@ -27980,6 +27974,7 @@ export type Database = {
           optimizedSize: number | null
           optimizeError: string | null
           optimizeStatus: Database["public"]["Enums"]["modelProcessingStatus"]
+          originalPath: string | null
           originalSize: number | null
           processedAt: string | null
           processingError: string | null
@@ -28005,6 +28000,7 @@ export type Database = {
           optimizedSize?: number | null
           optimizeError?: string | null
           optimizeStatus?: Database["public"]["Enums"]["modelProcessingStatus"]
+          originalPath?: string | null
           originalSize?: number | null
           processedAt?: string | null
           processingError?: string | null
@@ -28030,6 +28026,7 @@ export type Database = {
           optimizedSize?: number | null
           optimizeError?: string | null
           optimizeStatus?: Database["public"]["Enums"]["modelProcessingStatus"]
+          originalPath?: string | null
           originalSize?: number | null
           processedAt?: string | null
           processingError?: string | null
@@ -63188,14 +63185,14 @@ export type Database = {
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["supplierLocationId"]
+            columns: ["id"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["id"]
+            columns: ["supplierLocationId"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
@@ -68221,14 +68218,14 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["shipmentCountryCode"]
+            columns: ["customerCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["alpha2"]
           },
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["customerCountryCode"]
+            columns: ["shipmentCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["alpha2"]
@@ -74157,6 +74154,14 @@ export type Database = {
         Args: { p_new: Json; p_old: Json; p_operation: string; p_table: string }
         Returns: undefined
       }
+      recompute_service_line_fulfillment: {
+        Args: {
+          p_company_id: string
+          p_sales_order_line_id: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       resolve_shelf_life_start_for_receipt: {
         Args: { p_item_id: string; p_receipt_id: string }
         Returns: string
@@ -74368,6 +74373,10 @@ export type Database = {
         Returns: undefined
       }
       sync_job_complete_or_canceled: {
+        Args: { p_new: Json; p_old: Json; p_operation: string; p_table: string }
+        Returns: undefined
+      }
+      sync_job_recompute_service_line: {
         Args: { p_new: Json; p_old: Json; p_operation: string; p_table: string }
         Returns: undefined
       }

@@ -7709,9 +7709,6 @@ msgstr "缺少供应商"
 msgid "Mobile Phone"
 msgstr "手机"
 
-msgid "Model data is missing"
-msgstr "模型数据缺失"
-
 msgid "Model Number"
 msgstr "型号"
 
@@ -12697,6 +12694,9 @@ msgstr "使用此工作流的问题必须完成的任务的有序列表；此处
 
 msgid "The ordered sequence of operations a job runs through, copied from the method's bill of process."
 msgstr "工作执行的操作的有序序列，从方法的流程清单中复制。"
+
+msgid "The original model file is no longer available"
+msgstr ""
 
 msgid "The outbound posting document that takes goods out of stock to a customer, posting COGS as it goes."
 msgstr "将商品从库存中取出给客户的出账凭证，沿途过账销售成本。"
