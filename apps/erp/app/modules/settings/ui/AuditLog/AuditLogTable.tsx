@@ -12,6 +12,7 @@ import { memo, useCallback, useMemo } from "react";
 import { LuFilePen, LuFilePlus, LuFileX } from "react-icons/lu";
 import { Link } from "react-router";
 import { EmployeeAvatar, Table } from "~/components";
+import { isEmptyDiffValue } from "~/components/AuditLog";
 import { useDateFormatter } from "~/hooks";
 import { path } from "~/utils/path";
 
@@ -48,18 +49,6 @@ function formatValue(value: unknown): string {
   if (typeof value === "number" || typeof value === "boolean")
     return String(value);
   return JSON.stringify(value);
-}
-
-/**
- * Whether a diff side holds no real value (null/undefined, empty string,
- * empty object/array). Rendered as a muted "Empty" pill instead of the
- * literal "null". Scalars like 0 and false are real values.
- */
-function isEmptyDiffValue(value: unknown): boolean {
-  if (value === null || value === undefined || value === "") return true;
-  if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === "object") return Object.keys(value).length === 0;
-  return false;
 }
 
 function DiffValue({

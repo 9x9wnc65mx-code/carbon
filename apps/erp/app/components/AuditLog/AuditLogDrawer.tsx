@@ -35,6 +35,7 @@ import {
 } from "~/components/UpgradeOverlay";
 import { useDateFormatter, usePermissions, useRouteData } from "~/hooks";
 import { path } from "~/utils/path";
+import { isEmptyDiffValue } from "./utils";
 
 type AuditLogDrawerProps = {
   isOpen: boolean;
@@ -331,19 +332,6 @@ function formatValue(value: unknown): string {
   return JSON.stringify(value);
 }
 
-/**
- * Whether a diff side holds no real value (null/undefined, empty string,
- * empty object/array). Rendered as a muted "Empty" pill instead of the
- * literal "null" — first-time sets read as "Empty → Net 15", not
- * "null → Net 15". Scalars like 0 and false are real values.
- */
-function isEmptyDiffValue(value: unknown): boolean {
-  if (value === null || value === undefined || value === "") return true;
-  if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === "object") return Object.keys(value).length === 0;
-  return false;
-}
-
 // Convert a column name into a Linear-style human label. When a snapshot
 // exists, strip the trailing `Id` so a FK column reads as its referenced
 // entity (e.g. `triggerProcessId` → `Trigger Process`). Without a
@@ -378,7 +366,11 @@ function ChangePill({
   display?: unknown;
   variant: "old" | "new";
 }) {
-  const hasDisplay = display !== undefined && display !== null;
+  // An empty-string display (e.g. a snapshot row whose name is blank) is no
+  // display at all — fall through so an empty value renders the "Empty" pill
+  // rather than a blank colored one.
+  const hasDisplay =
+    display !== undefined && display !== null && display !== "";
   if (!hasDisplay && isEmptyDiffValue(value)) {
     return (
       <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground italic">
