@@ -51,9 +51,11 @@ type ItemDocumentsProps = {
   modelUpload?: ModelUpload;
   type: ItemType;
   // Read-only: hide the upload affordances and disable delete. Used when the
-  // owning record is closed (e.g. a completed/cancelled change order). Defaults
+  // owning record is closed (e.g. a completed/cancelled change notice). Defaults
   // to editable so the part detail page is unchanged.
   isReadOnly?: boolean;
+  // Rendered beside the title when the embedding surface locked this card.
+  titleExtras?: React.ReactNode;
 };
 
 const ItemDocuments = ({
@@ -61,7 +63,8 @@ const ItemDocuments = ({
   itemId,
   modelUpload,
   type,
-  isReadOnly = false
+  isReadOnly = false,
+  titleExtras
 }: ItemDocumentsProps) => {
   const { t } = useLingui();
   const { formatDate } = useDateFormatter();
@@ -104,8 +107,9 @@ const ItemDocuments = ({
     <Card className="flex-grow">
       <HStack className="justify-between items-start">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="flex flex-row items-center gap-2">
             <Trans>Files</Trans>
+            {titleExtras}
           </CardTitle>
         </CardHeader>
         {!isReadOnly && (
