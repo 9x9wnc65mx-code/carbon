@@ -22939,6 +22939,21 @@ export default {
             $ref: "#/parameters/rowFilter.companies.logoWatermark"
           },
           {
+            $ref: "#/parameters/rowFilter.companies.industryId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.companies.customIndustryDescription"
+          },
+          {
+            $ref: "#/parameters/rowFilter.companies.selectedModules"
+          },
+          {
+            $ref: "#/parameters/rowFilter.companies.featureRequests"
+          },
+          {
+            $ref: "#/parameters/rowFilter.companies.registrationNumber"
+          },
+          {
             $ref: "#/parameters/rowFilter.companies.userId"
           },
           {
@@ -64849,6 +64864,9 @@ export default {
             $ref: "#/parameters/rowFilter.company.featureRequests"
           },
           {
+            $ref: "#/parameters/rowFilter.company.registrationNumber"
+          },
+          {
             $ref: "#/parameters/select"
           },
           {
@@ -65010,6 +65028,9 @@ export default {
             $ref: "#/parameters/rowFilter.company.featureRequests"
           },
           {
+            $ref: "#/parameters/rowFilter.company.registrationNumber"
+          },
+          {
             $ref: "#/parameters/preferReturn"
           }
         ],
@@ -65123,6 +65144,9 @@ export default {
           },
           {
             $ref: "#/parameters/rowFilter.company.featureRequests"
+          },
+          {
+            $ref: "#/parameters/rowFilter.company.registrationNumber"
           },
           {
             $ref: "#/parameters/body.company"
@@ -105301,6 +105325,31 @@ export default {
           format: "text",
           type: "string"
         },
+        industryId: {
+          description:
+            "Note:\nThis is a Foreign Key to `industry.id`.<fk table='industry' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        customIndustryDescription: {
+          format: "text",
+          type: "string"
+        },
+        selectedModules: {
+          format: "text[]",
+          items: {
+            type: "string"
+          },
+          type: "array"
+        },
+        featureRequests: {
+          format: "text",
+          type: "string"
+        },
+        registrationNumber: {
+          format: "text",
+          type: "string"
+        },
         userId: {
           description:
             "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
@@ -125291,6 +125340,10 @@ export default {
           type: "array"
         },
         featureRequests: {
+          format: "text",
+          type: "string"
+        },
+        registrationNumber: {
           format: "text",
           type: "string"
         }
@@ -146711,6 +146764,36 @@ export default {
     },
     "rowFilter.companies.logoWatermark": {
       name: "logoWatermark",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.companies.industryId": {
+      name: "industryId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.companies.customIndustryDescription": {
+      name: "customIndustryDescription",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.companies.selectedModules": {
+      name: "selectedModules",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.companies.featureRequests": {
+      name: "featureRequests",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.companies.registrationNumber": {
+      name: "registrationNumber",
       required: false,
       in: "query",
       type: "string"
@@ -168915,6 +168998,12 @@ export default {
     },
     "rowFilter.company.featureRequests": {
       name: "featureRequests",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.company.registrationNumber": {
+      name: "registrationNumber",
       required: false,
       in: "query",
       type: "string"

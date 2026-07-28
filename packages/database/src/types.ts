@@ -6083,6 +6083,7 @@ export type Database = {
           parentCompanyId: string | null
           phone: string | null
           postalCode: string | null
+          registrationNumber: string | null
           selectedModules: string[] | null
           slackChannel: string | null
           stateProvince: string | null
@@ -6119,6 +6120,7 @@ export type Database = {
           parentCompanyId?: string | null
           phone?: string | null
           postalCode?: string | null
+          registrationNumber?: string | null
           selectedModules?: string[] | null
           slackChannel?: string | null
           stateProvince?: string | null
@@ -6155,6 +6157,7 @@ export type Database = {
           parentCompanyId?: string | null
           phone?: string | null
           postalCode?: string | null
+          registrationNumber?: string | null
           selectedModules?: string[] | null
           slackChannel?: string | null
           stateProvince?: string | null
@@ -58655,11 +58658,14 @@ export type Database = {
           companyId: string | null
           countryCode: string | null
           createdAt: string | null
+          customIndustryDescription: string | null
           email: string | null
           employeeType: string | null
           eori: string | null
           fax: string | null
+          featureRequests: string | null
           id: string | null
+          industryId: string | null
           isEliminationEntity: boolean | null
           logoDark: string | null
           logoDarkIcon: string | null
@@ -58671,7 +58677,9 @@ export type Database = {
           parentCompanyId: string | null
           phone: string | null
           postalCode: string | null
+          registrationNumber: string | null
           role: Database["public"]["Enums"]["role"] | null
+          selectedModules: string[] | null
           slackChannel: string | null
           stateProvince: string | null
           suggestionNotificationGroup: string[] | null
@@ -58729,6 +58737,13 @@ export type Database = {
             columns: ["companyGroupId"]
             isOneToOne: false
             referencedRelation: "companyGroup"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_industryId_fkey"
+            columns: ["industryId"]
+            isOneToOne: false
+            referencedRelation: "industry"
             referencedColumns: ["id"]
           },
           {
