@@ -47,26 +47,33 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const rawCandidate =
     model.data?.originalPath ??
     (modelPath && !modelPath.toLowerCase().endsWith(".zst") ? modelPath : null);
-  if (rawCandidate) {
-    const svc = getCarbonServiceRole();
-    const probe = (bucket: string) =>
-      svc.storage
+  const svc = getCarbonServiceRole();
+  const exists = async (path: string) => {
+    for (const bucket of ["private", "temp-staging"] as const) {
+      const info = await svc.storage
         .from(bucket)
-        .info(rawCandidate)
+        .info(path)
         .catch(() => ({ data: null, error: true as const }));
-    const inDurable = await probe("private");
-    if (!inDurable.error && inDurable.data) {
-      rawPath = rawCandidate;
-      rawBucket = "private";
-    } else {
-      const staged = await probe("temp-staging");
-      if (!staged.error && staged.data) {
-        rawPath = rawCandidate;
-        rawBucket = "temp-staging";
-      }
-      // Absent in both → pruned/gone; rawPath stays null (rely on the GLB).
+      if (!info.error && info.data) return bucket;
     }
+    return null;
+  };
+  if (rawCandidate) {
+    const bucket = await exists(rawCandidate);
+    if (bucket) {
+      rawPath = rawCandidate;
+      rawBucket = bucket;
+    }
+    // Absent in both → pruned/gone; rawPath stays null (rely on the GLB).
   }
+  // Whether a reoptimise has a source to read: the `modelPath` object (an
+  // `.xbf.zst` counts — it re-tessellates). A pruned/dangling source means the
+  // refresh affordance would only ever fail — the client hides it.
+  const sourceAvailable = modelPath
+    ? rawCandidate === modelPath
+      ? rawPath !== null
+      : (await exists(modelPath)) !== null
+    : false;
 
   return {
     optimizedModelPath: model.data?.optimizedModelPath ?? null,
@@ -84,6 +91,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     // Cache-buster for the optimised GLB: it lives at a STABLE path behind an
     // immutable-cached preview URL, so a re-optimise would otherwise keep
     // serving the browser-cached old mesh.
-    optimizedAt: model.data?.optimizedAt ?? null
+    optimizedAt: model.data?.optimizedAt ?? null,
+    sourceAvailable
   };
 }

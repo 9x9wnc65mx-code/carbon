@@ -292,10 +292,12 @@ const CadModel = ({
               )}
               {artifacts?.size && artifacts?.optimizedSize ? (
                 <div className="group absolute bottom-2 left-2 z-10 flex items-center gap-1.5 rounded-md border border-border bg-popover px-2 py-1 text-xs text-muted-foreground shadow-sm">
-                  {artifacts.optimizerAvailable ? (
+                  {artifacts.optimizerAvailable &&
+                  artifacts.sourceAvailable !== false ? (
                     // Hovering the badge swaps the lightning for a refresh
                     // action: re-run the optimise from the source file (e.g.
-                    // to pick up improved quality settings).
+                    // to pick up improved quality settings). Hidden when the
+                    // source no longer exists — nothing to re-run from.
                     <button
                       type="button"
                       aria-label="Reoptimize from source file"

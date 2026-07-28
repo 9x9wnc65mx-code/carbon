@@ -11,6 +11,10 @@ export type ModelArtifacts = {
   /** When the optimised GLB last landed — the client cache-buster for its
    * stable, immutable-cached URL. */
   optimizedAt?: string | null;
+  /** Whether the reoptimise SOURCE (the modelPath object) still exists in
+   * storage — pruned/dangling rows can't be re-optimised, so hosts hide the
+   * refresh affordance. Absent (older server) → treat as available. */
+  sourceAvailable?: boolean;
   lodPath: string | null;
   glbPath: string | null;
   thumbnailPath: string | null;
@@ -222,6 +226,8 @@ export function useOptimizedModel({
     if (autoFiredRef.current === modelUploadId) return;
     // No optimiser configured → firing reoptimise just no-ops server-side; skip it.
     if (artifacts.optimizerAvailable === false) return;
+    // No source left in storage → the run can only fail; don't fire.
+    if (artifacts.sourceAvailable === false) return;
     if (
       hasInteractive ||
       optimizeInFlight ||
@@ -296,9 +302,12 @@ export function useOptimizedModel({
     artifacts?.optimizerAvailable !== false;
 
   // Whether a manual retry can possibly succeed. When the optimiser isn't
-  // configured, hosts must not wire `onRetry` — otherwise ModelPreview's
-  // settled/no-preview state renders a retry button advertising a dead action.
-  const canRetry = artifacts?.optimizerAvailable !== false;
+  // configured — or the reoptimise SOURCE no longer exists in storage — hosts
+  // must not wire `onRetry`: ModelPreview's settled/no-preview state would
+  // render a retry button advertising a dead action.
+  const canRetry =
+    artifacts?.optimizerAvailable !== false &&
+    artifacts?.sourceAvailable !== false;
 
   return {
     artifacts,
