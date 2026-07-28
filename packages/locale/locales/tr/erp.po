@@ -6928,6 +6928,9 @@ msgstr "Öğeler ve Üretim"
 msgid "Items inside this window get a yellow badge."
 msgstr "Bu aralıktaki ürünler sarı bir rozet alır."
 
+msgid "Items whose bill of materials includes this item"
+msgstr "Malzeme listesinde bu ürünü içeren ürünler"
+
 msgid "Items: item master, BOMs, Bill of Process, engineering changes, CAD"
 msgstr "Öğeler: öğe ana verileri, BOM'lar, İşlem Şeması, mühendislik değişiklikleri, CAD"
 
@@ -6966,6 +6969,9 @@ msgstr "Devam eden işler"
 
 msgid "Jobs Required"
 msgstr "İşler Gerekli"
+
+msgid "Jobs that have this item on their bill of materials"
+msgstr "Malzeme listesinde bu ürünü içeren işler"
 
 #. placeholder {0}: company?.name ?? "Company"
 msgid "Join {0}"
@@ -10043,6 +10049,9 @@ msgstr "Teklif Kimliği"
 
 msgid "Quote Line"
 msgstr "Teklif Satırı"
+
+msgid "Quote lines whose bill of materials includes this item"
+msgstr "Malzeme listesinde bu ürünü içeren teklif satırları"
 
 msgid "Quote Location"
 msgstr "Teklif Konumu"

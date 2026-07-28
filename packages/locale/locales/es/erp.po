@@ -6928,6 +6928,9 @@ msgstr "Artículos y Producción"
 msgid "Items inside this window get a yellow badge."
 msgstr "Los artículos dentro de esta ventana obtienen una insignia amarilla."
 
+msgid "Items whose bill of materials includes this item"
+msgstr "Artículos cuya lista de materiales incluye este artículo"
+
 msgid "Items: item master, BOMs, Bill of Process, engineering changes, CAD"
 msgstr "Artículos: maestro de artículos, BOMs, Bill of Process, cambios de ingeniería, CAD"
 
@@ -6966,6 +6969,9 @@ msgstr "Trabajos en progreso"
 
 msgid "Jobs Required"
 msgstr "Trabajos Requeridos"
+
+msgid "Jobs that have this item on their bill of materials"
+msgstr "Trabajos que tienen este artículo en su lista de materiales"
 
 #. placeholder {0}: company?.name ?? "Company"
 msgid "Join {0}"
@@ -10043,6 +10049,9 @@ msgstr "ID de Cotización"
 
 msgid "Quote Line"
 msgstr "Línea de Cotización"
+
+msgid "Quote lines whose bill of materials includes this item"
+msgstr "Líneas de cotización cuya lista de materiales incluye este artículo"
 
 msgid "Quote Location"
 msgstr "Ubicación de Cotización"

@@ -6928,6 +6928,9 @@ msgstr "Pozycje i produkcja"
 msgid "Items inside this window get a yellow badge."
 msgstr "Elementy w tym oknie otrzymują żółty znaczek."
 
+msgid "Items whose bill of materials includes this item"
+msgstr "Artykuły, których zestawienie materiałów zawiera ten przedmiot"
+
 msgid "Items: item master, BOMs, Bill of Process, engineering changes, CAD"
 msgstr "Pozycje: główny katalog pozycji, BOM, Bill of Process, zmiany inżynierskie, CAD"
 
@@ -6966,6 +6969,9 @@ msgstr "Zadania w toku"
 
 msgid "Jobs Required"
 msgstr "Wymagane zadania"
+
+msgid "Jobs that have this item on their bill of materials"
+msgstr "Zadania zawierające ten przedmiot w zestawieniu materiałów"
 
 #. placeholder {0}: company?.name ?? "Company"
 msgid "Join {0}"
@@ -10043,6 +10049,9 @@ msgstr "ID Oferty"
 
 msgid "Quote Line"
 msgstr "Linia oferty"
+
+msgid "Quote lines whose bill of materials includes this item"
+msgstr "Linie oferty, których zestawienie materiałów zawiera ten przedmiot"
 
 msgid "Quote Location"
 msgstr "Lokalizacja oferty"

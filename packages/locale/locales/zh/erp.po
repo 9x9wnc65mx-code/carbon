@@ -6928,6 +6928,9 @@ msgstr "项目与生产"
 msgid "Items inside this window get a yellow badge."
 msgstr "此窗口内的项目会获得黄色徽章。"
 
+msgid "Items whose bill of materials includes this item"
+msgstr "物料清单中包含此物品的物品"
+
 msgid "Items: item master, BOMs, Bill of Process, engineering changes, CAD"
 msgstr "项目：项目主数据、物料清单、工艺流程、工程变更、CAD"
 
@@ -6966,6 +6969,9 @@ msgstr "进行中的工作"
 
 msgid "Jobs Required"
 msgstr "所需的工作"
+
+msgid "Jobs that have this item on their bill of materials"
+msgstr "物料清单中包含此物品的工作"
 
 #. placeholder {0}: company?.name ?? "Company"
 msgid "Join {0}"
@@ -10043,6 +10049,9 @@ msgstr "报价单ID"
 
 msgid "Quote Line"
 msgstr "报价行"
+
+msgid "Quote lines whose bill of materials includes this item"
+msgstr "物料清单中包含此物品的报价行"
 
 msgid "Quote Location"
 msgstr "报价地点"

@@ -6928,6 +6928,9 @@ msgstr "Товары и производство"
 msgid "Items inside this window get a yellow badge."
 msgstr "Товары в этом диапазоне получают жёлтый значок."
 
+msgid "Items whose bill of materials includes this item"
+msgstr "Товары, чья спецификация материалов включает этот товар"
+
 msgid "Items: item master, BOMs, Bill of Process, engineering changes, CAD"
 msgstr "Товары: справочник товаров, спецификации, технологические процессы, инженерные изменения, САПР"
 
@@ -6966,6 +6969,9 @@ msgstr "Задания в процессе"
 
 msgid "Jobs Required"
 msgstr "Требуются работы"
+
+msgid "Jobs that have this item on their bill of materials"
+msgstr "Работы, содержащие этот товар в спецификации материалов"
 
 #. placeholder {0}: company?.name ?? "Company"
 msgid "Join {0}"
@@ -10043,6 +10049,9 @@ msgstr "ID предложения"
 
 msgid "Quote Line"
 msgstr "Строка предложения"
+
+msgid "Quote lines whose bill of materials includes this item"
+msgstr "Строки предложения, чья спецификация материалов включает этот товар"
 
 msgid "Quote Location"
 msgstr "Местоположение предложения"
