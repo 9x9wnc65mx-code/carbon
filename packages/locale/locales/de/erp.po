@@ -4846,6 +4846,9 @@ msgstr "Angestellte"
 msgid "Employees"
 msgstr "Mitarbeiter"
 
+msgid "Empty"
+msgstr "Leer"
+
 msgid "Empty = match every item"
 msgstr "Leer = alle Artikel abgleichen"
 
