@@ -212,7 +212,11 @@ impl Src {
 /// `LARGE`. Always error-bounded and per-mesh adaptive — never unbounded ratio
 /// targeting.
 fn derive_auto_error(input_bytes: usize) -> Option<f32> {
-    const SMALL: f64 = 2.0 * 1024.0 * 1024.0; // 2 MiB — below this, lossless
+    // 3 MiB — below this, lossless. Sized against the 0.15 rad angular default:
+    // the same geometry tessellates ~1.6x heavier than it did at 0.25 rad, so a
+    // 2 MiB cut would push parts that used to stay lossless back into the
+    // simplifier and undo the roundness the tighter angle just bought.
+    const SMALL: f64 = 3.0 * 1024.0 * 1024.0;
     const LARGE: f64 = 32.0 * 1024.0 * 1024.0; // 32 MiB
     const MAX_ERR: f64 = 0.02; // 2% of extent — heavier but still reasonable
     if (input_bytes as f64) <= SMALL {
@@ -466,7 +470,7 @@ mod tests {
         let base = optimize::DEFAULT_AUTO_ERROR;
         // Small models get NO simplification — lossless encode only.
         assert_eq!(derive_auto_error(64 * 1024), None);
-        assert_eq!(derive_auto_error(2 * 1024 * 1024), None);
+        assert_eq!(derive_auto_error(3 * 1024 * 1024), None);
         // Large models decimate harder, capped at 2%.
         assert!((derive_auto_error(64 * 1024 * 1024).unwrap() - 0.02).abs() < 1e-6);
         // Monotonic through the ramp, within bounds.
