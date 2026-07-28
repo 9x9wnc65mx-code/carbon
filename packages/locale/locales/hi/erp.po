@@ -1217,6 +1217,9 @@ msgstr "क्या आप {0} को हटाना सुनिश्चि�
 msgid "Are you sure you want to delete {0}? This cannot be undone."
 msgstr "क्या आप सुनिश्चित हैं कि आप {0} को हटाना चाहते हैं? यह पूर्ववत नहीं किया जा सकता।"
 
+msgid "Are you sure you want to delete {name}? This cannot be undone."
+msgstr "क्या आप सुनिश्चित हैं कि आप {name} को हटाना चाहते हैं? यह पूर्ववत नहीं किया जा सकता।"
+
 #. placeholder {0}: selectedCustomField?.name
 msgid "Are you sure you want to delete the {0} field?"
 msgstr "क्या आप सुनिश्चित हैं कि आप {0} फ़ील्ड को हटाना चाहते हैं?"
@@ -3790,7 +3793,7 @@ msgid "Delete"
 msgstr "हटाएं"
 
 msgid "Delete {name}"
-msgstr "Delete {name} को हटाएं"
+msgstr "{name} को हटाएं"
 
 msgid "Delete {periodLabel}"
 msgstr "{periodLabel} हटाएँ"
