@@ -8920,6 +8920,9 @@ msgstr "Operatörler, PIN kimlik doğrulaması ile ortak iş istasyonlarını ku
 msgid "Opportunity"
 msgstr "Fırsat"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "İsteğe bağlı"
 
@@ -10297,8 +10300,8 @@ msgstr "Yenile"
 msgid "Refresh exchange rate"
 msgstr "Döviz kurunu yenile"
 
-msgid "Regenerate"
-msgstr "Yeniden Oluştur"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "Küçük resim yenileniyor…"

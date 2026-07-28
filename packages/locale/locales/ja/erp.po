@@ -8920,6 +8920,9 @@ msgstr "オペレーターはPIN認証を使用して共有ワークステーシ
 msgid "Opportunity"
 msgstr "機会"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "オプション"
 
@@ -10297,8 +10300,8 @@ msgstr "更新"
 msgid "Refresh exchange rate"
 msgstr "為替レートを更新"
 
-msgid "Regenerate"
-msgstr "再生成"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "サムネイルを再生成中…"

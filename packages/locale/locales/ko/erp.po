@@ -8920,6 +8920,9 @@ msgstr "작업자는 PIN 인증을 통해 공유 워크스테이션을 사용할
 msgid "Opportunity"
 msgstr "기회"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "선택 사항"
 
@@ -10297,8 +10300,8 @@ msgstr "새로고침"
 msgid "Refresh exchange rate"
 msgstr "환율 새로고침"
 
-msgid "Regenerate"
-msgstr "재생성"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "썸네일 재생성 중…"

@@ -30,7 +30,7 @@ import { Trans } from "@lingui/react/macro";
 import { nanoid } from "nanoid";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { LuCloudUpload, LuZap } from "react-icons/lu";
+import { LuCloudUpload, LuRefreshCw, LuZap } from "react-icons/lu";
 import { useFetcher, useRevalidator } from "react-router";
 import { useModelUpload, useUser } from "~/hooks";
 import { getPrivateUrl, getRawModelUrl, path } from "~/utils/path";
@@ -86,8 +86,10 @@ const CadModel = ({
     optimizeFailed,
     canRetry,
     optimizeQueued,
+    optimizeInFlight,
     retry: onRetry,
     retryLabel,
+    regenerate,
     cancel: onCancelWait,
     actionBusy
   } = useOptimizedModel({ modelPath, companyId, file });
@@ -232,7 +234,13 @@ const CadModel = ({
                 optimizeFailed={optimizeFailed}
                 optimizedUrl={
                   artifacts?.optimizedModelPath
-                    ? getPrivateUrl(artifacts.optimizedModelPath)
+                    ? // ?v= busts the immutable preview cache on the STABLE
+                      // optimized.glb path when a re-optimise lands.
+                      `${getPrivateUrl(artifacts.optimizedModelPath)}${
+                        artifacts.optimizedAt
+                          ? `?v=${encodeURIComponent(artifacts.optimizedAt)}`
+                          : ""
+                      }`
                     : null
                 }
                 glbUrl={
@@ -283,8 +291,36 @@ const CadModel = ({
                 </div>
               )}
               {artifacts?.size && artifacts?.optimizedSize ? (
-                <div className="pointer-events-none absolute bottom-2 left-2 z-10 flex items-center gap-1.5 rounded-md border border-border bg-popover px-2 py-1 text-xs text-muted-foreground shadow-sm">
-                  <LuZap className="size-3 shrink-0 text-emerald-500" />
+                <div className="group absolute bottom-2 left-2 z-10 flex items-center gap-1.5 rounded-md border border-border bg-popover px-2 py-1 text-xs text-muted-foreground shadow-sm">
+                  {artifacts.optimizerAvailable ? (
+                    // Hovering the badge swaps the lightning for a refresh
+                    // action: re-run the optimise from the source file (e.g.
+                    // to pick up improved quality settings).
+                    <button
+                      type="button"
+                      aria-label="Reoptimize from source file"
+                      title="Reoptimize from source file"
+                      // Locked while a regen is in flight: rapid re-clicks would
+                      // race the job's per-model singleton (a burst of events can
+                      // get wholly skipped on the local Inngest dev server), and
+                      // the spin is the only signal the silent background regen
+                      // is running.
+                      disabled={actionBusy || optimizeInFlight}
+                      onClick={regenerate}
+                      className="relative -m-2 flex size-7 shrink-0 items-center justify-center disabled:opacity-50"
+                    >
+                      {actionBusy || optimizeInFlight ? (
+                        <LuRefreshCw className="size-3 animate-spin text-emerald-500" />
+                      ) : (
+                        <>
+                          <LuZap className="size-3 text-emerald-500 group-hover:hidden" />
+                          <LuRefreshCw className="hidden size-3 text-emerald-500 group-hover:block" />
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <LuZap className="size-3 shrink-0 text-emerald-500" />
+                  )}
                   <span>Optimized GLB</span>
                   <span className="font-mono tabular-nums">
                     {convertKbToString(Math.round(artifacts.size / 1024))}

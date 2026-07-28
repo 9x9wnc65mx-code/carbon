@@ -8920,6 +8920,9 @@ msgstr "Operatorzy mogą używać wspólnych stanowisk pracy z uwierzytelnianiem
 msgid "Opportunity"
 msgstr "Okazja"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "Opcjonalnie"
 
@@ -10297,8 +10300,8 @@ msgstr "Odśwież"
 msgid "Refresh exchange rate"
 msgstr "Odśwież kurs wymiany"
 
-msgid "Regenerate"
-msgstr "Regeneruj"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "Ponownie generowanie miniatury…"

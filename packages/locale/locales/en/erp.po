@@ -8920,6 +8920,9 @@ msgstr "Operators can use shared workstations with PIN authentication."
 msgid "Opportunity"
 msgstr "Opportunity"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr "Optimized for fast previews — downloads always serve the original uploaded file"
+
 msgid "Optional"
 msgstr "Optional"
 
@@ -10297,8 +10300,8 @@ msgstr "Refresh"
 msgid "Refresh exchange rate"
 msgstr "Refresh exchange rate"
 
-msgid "Regenerate"
-msgstr "Regenerate"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr "Regenerate thumbnail from the 3D model"
 
 msgid "Regenerating thumbnail…"
 msgstr "Regenerating thumbnail…"

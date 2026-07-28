@@ -8920,6 +8920,9 @@ msgstr "操作员可以使用带有PIN身份验证的共享工作站。"
 msgid "Opportunity"
 msgstr "机会"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "可选"
 
@@ -10297,8 +10300,8 @@ msgstr "刷新"
 msgid "Refresh exchange rate"
 msgstr "刷新汇率"
 
-msgid "Regenerate"
-msgstr "重新生成"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "正在重新生成缩略图…"

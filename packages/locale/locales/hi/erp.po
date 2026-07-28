@@ -8920,6 +8920,9 @@ msgstr "ऑपरेटर PIN प्रमाणीकरण के साथ �
 msgid "Opportunity"
 msgstr "अवसर"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "वैकल्पिक"
 
@@ -10297,8 +10300,8 @@ msgstr "ताज़ा करें"
 msgid "Refresh exchange rate"
 msgstr "विनिमय दर को ताज़ा करें"
 
-msgid "Regenerate"
-msgstr "पुनः जेनरेट करें"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "थंबनेल को पुनः उत्पन्न किया जा रहा है…"

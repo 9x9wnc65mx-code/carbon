@@ -8920,6 +8920,9 @@ msgstr "Операторы могут использовать общие раб
 msgid "Opportunity"
 msgstr "Возможность"
 
+msgid "Optimized for fast previews — downloads always serve the original uploaded file"
+msgstr ""
+
 msgid "Optional"
 msgstr "Опционально"
 
@@ -10297,8 +10300,8 @@ msgstr "Обновить"
 msgid "Refresh exchange rate"
 msgstr "Обновить курс обмена"
 
-msgid "Regenerate"
-msgstr "Переген​ерировать"
+msgid "Regenerate thumbnail from the 3D model"
+msgstr ""
 
 msgid "Regenerating thumbnail…"
 msgstr "Создание миниатюры…"
