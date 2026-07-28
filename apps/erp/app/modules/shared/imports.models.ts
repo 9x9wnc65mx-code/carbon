@@ -178,6 +178,32 @@ const unitOfMeasureFetcher = async (
   return { data: data.map((u) => ({ name: u.name, id: u.code })) };
 };
 
+// Material-taxonomy parent fetchers, shared by the material-property imports
+// (finish/grade/type reference a substance; dimension/type reference a form).
+// Both global system rows (companyId IS NULL) and company rows are returned so a
+// CSV can reference either; the FieldMappings step matches by name → id.
+const materialSubstanceFetcher = async (
+  client: SupabaseClient<Database>,
+  companyId: string
+) => {
+  return client
+    .from("materialSubstance")
+    .select("id, name")
+    .or(`companyId.eq.${companyId},companyId.is.null`)
+    .order("name");
+};
+
+const materialFormFetcher = async (
+  client: SupabaseClient<Database>,
+  companyId: string
+) => {
+  return client
+    .from("materialForm")
+    .select("id, name")
+    .or(`companyId.eq.${companyId},companyId.is.null`)
+    .order("name");
+};
+
 // Row-type discriminator + explicit parent key. Spread into every method entry.
 const methodParentKeyFields = {
   rowType: {
@@ -1602,6 +1628,126 @@ export const fieldMappings = {
       required: false,
       type: "string"
     }
+  },
+  // Material taxonomy lookups. Each is a standalone import; child taxonomies
+  // (finish/grade/type/dimension) reference their parent substance/form by name
+  // via the enum fetchers above — the parent must already exist. Duplicates are
+  // skipped in the edge function (see material-property-import.ts).
+  materialSubstance: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    code: {
+      label: "Code",
+      required: true,
+      type: "string"
+    }
+  },
+  materialForm: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    code: {
+      label: "Code",
+      required: true,
+      type: "string"
+    }
+  },
+  materialFinish: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    materialSubstanceId: {
+      label: "Substance",
+      required: true,
+      type: "enum",
+      enumData: {
+        description:
+          "The substance this finish belongs to — match by substance name",
+        fetcher: materialSubstanceFetcher,
+        default: ""
+      }
+    }
+  },
+  materialGrade: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    materialSubstanceId: {
+      label: "Substance",
+      required: true,
+      type: "enum",
+      enumData: {
+        description:
+          "The substance this grade belongs to — match by substance name",
+        fetcher: materialSubstanceFetcher,
+        default: ""
+      }
+    }
+  },
+  materialType: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    code: {
+      label: "Code",
+      required: true,
+      type: "string"
+    },
+    materialSubstanceId: {
+      label: "Substance",
+      required: true,
+      type: "enum",
+      enumData: {
+        description:
+          "The substance this type belongs to — match by substance name",
+        fetcher: materialSubstanceFetcher,
+        default: ""
+      }
+    },
+    materialFormId: {
+      label: "Shape",
+      required: true,
+      type: "enum",
+      enumData: {
+        description: "The shape this type belongs to — match by shape name",
+        fetcher: materialFormFetcher,
+        default: ""
+      }
+    }
+  },
+  materialDimension: {
+    name: {
+      label: "Name",
+      required: true,
+      type: "string"
+    },
+    materialFormId: {
+      label: "Shape",
+      required: true,
+      type: "enum",
+      enumData: {
+        description:
+          "The shape this dimension belongs to — match by shape name",
+        fetcher: materialFormFetcher,
+        default: ""
+      }
+    },
+    isMetric: {
+      label: "Metric",
+      required: false,
+      type: "boolean"
+    }
   }
 } as const;
 
@@ -1620,7 +1766,13 @@ export const importPermissions: Record<keyof typeof fieldMappings, string> = {
   consumable: "parts",
   workCenter: "production",
   process: "production",
-  fixedAsset: "accounting"
+  fixedAsset: "accounting",
+  materialSubstance: "parts",
+  materialForm: "parts",
+  materialFinish: "parts",
+  materialGrade: "parts",
+  materialType: "parts",
+  materialDimension: "parts"
 };
 
 // Zod fragments for the method imports. Every method cell is an optional string at
@@ -2254,5 +2406,77 @@ export const importSchemas: Record<
       .string()
       .optional()
       .describe("The location ID where the asset is located")
+  }),
+  materialSubstance: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the material substance (e.g. Steel, Aluminum)"),
+    code: z
+      .string()
+      .min(1, { message: "Code is required" })
+      .describe("A short code for the substance (e.g. ST, AL)")
+  }),
+  materialForm: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the shape/form (e.g. Sheet, Plate, Round Bar)"),
+    code: z
+      .string()
+      .min(1, { message: "Code is required" })
+      .describe("A short code for the shape (e.g. SHT, PL)")
+  }),
+  materialFinish: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the finish"),
+    materialSubstanceId: z
+      .string()
+      .optional()
+      .describe("The substance this finish belongs to")
+  }),
+  materialGrade: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the grade"),
+    materialSubstanceId: z
+      .string()
+      .optional()
+      .describe("The substance this grade belongs to")
+  }),
+  materialType: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the material type"),
+    code: z
+      .string()
+      .min(1, { message: "Code is required" })
+      .describe("A short code for the material type"),
+    materialSubstanceId: z
+      .string()
+      .optional()
+      .describe("The substance this type belongs to"),
+    materialFormId: z
+      .string()
+      .optional()
+      .describe("The shape this type belongs to")
+  }),
+  materialDimension: z.object({
+    name: z
+      .string()
+      .min(1, { message: "Name is required" })
+      .describe("The name of the dimension"),
+    materialFormId: z
+      .string()
+      .optional()
+      .describe("The shape this dimension belongs to"),
+    isMetric: z
+      .string()
+      .optional()
+      .describe("Whether the dimension is metric (true/false)")
   })
 } as const;
