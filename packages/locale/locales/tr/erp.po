@@ -7213,6 +7213,9 @@ msgstr "Jira Sorununu Bağla"
 msgid "Link Linear Issue"
 msgstr "Linear sorununu bağla"
 
+msgid "Link to sales order line"
+msgstr "Satış siparişi satırına bağla"
+
 #. placeholder {0}: r.linkedSum
 #. placeholder {1}: r.quantity
 msgid "Linked entity quantity ({0}) does not match row quantity ({1})."
@@ -8476,6 +8479,12 @@ msgstr "Notlar yok"
 msgid "No open invoices"
 msgstr "Açık fatura yok"
 
+msgid "No open orders for this item are available to link."
+msgstr "Bu öğe için bağlanacak açık siparişler mevcut değil."
+
+msgid "No open sales order lines"
+msgstr "Açık satış sipariş satırı yok"
+
 msgid "No operations require picking at this location"
 msgstr "Bu konumda toplama gerektiren işlem yok"
 
@@ -8927,7 +8936,7 @@ msgid "Opportunity"
 msgstr "Fırsat"
 
 msgid "Optimized for fast previews — downloads always serve the original uploaded file"
-msgstr ""
+msgstr "Hızlı önizlemeler için optimize edildi — indirmeler her zaman yüklenen orijinal dosyayı sunar"
 
 msgid "Optional"
 msgstr "İsteğe bağlı"
@@ -10310,7 +10319,7 @@ msgid "Refresh exchange rate"
 msgstr "Döviz kurunu yenile"
 
 msgid "Regenerate thumbnail from the 3D model"
-msgstr ""
+msgstr "3D modelinden küçük resmi yeniden oluştur"
 
 msgid "Regenerating thumbnail…"
 msgstr "Küçük resim yenileniyor…"

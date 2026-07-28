@@ -7213,6 +7213,9 @@ msgstr "Vincular problema de Jira"
 msgid "Link Linear Issue"
 msgstr "Vincular problema de Linear"
 
+msgid "Link to sales order line"
+msgstr "Vincular a una línea de orden de venta"
+
 #. placeholder {0}: r.linkedSum
 #. placeholder {1}: r.quantity
 msgid "Linked entity quantity ({0}) does not match row quantity ({1})."
@@ -8476,6 +8479,12 @@ msgstr "Sin notas"
 msgid "No open invoices"
 msgstr "Sin facturas abiertas"
 
+msgid "No open orders for this item are available to link."
+msgstr "No hay pedidos abiertos disponibles para este artículo."
+
+msgid "No open sales order lines"
+msgstr "Sin líneas de pedido de venta abiertas"
+
 msgid "No operations require picking at this location"
 msgstr "No se requieren operaciones de picking en esta ubicación"
 
@@ -8927,7 +8936,7 @@ msgid "Opportunity"
 msgstr "Oportunidad"
 
 msgid "Optimized for fast previews — downloads always serve the original uploaded file"
-msgstr ""
+msgstr "Optimizado para vistas previas rápidas — las descargas siempre sirven el archivo original cargado"
 
 msgid "Optional"
 msgstr "Opcional"
@@ -10310,7 +10319,7 @@ msgid "Refresh exchange rate"
 msgstr "Actualizar tipo de cambio"
 
 msgid "Regenerate thumbnail from the 3D model"
-msgstr ""
+msgstr "Regenerar miniatura del modelo 3D"
 
 msgid "Regenerating thumbnail…"
 msgstr "Regenerando miniatura…"

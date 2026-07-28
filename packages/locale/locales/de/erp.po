@@ -7213,6 +7213,9 @@ msgstr "Jira-Problem verknüpfen"
 msgid "Link Linear Issue"
 msgstr "Linear-Problem verknüpfen"
 
+msgid "Link to sales order line"
+msgstr "Mit Verkaufsauftragszeile verknüpfen"
+
 #. placeholder {0}: r.linkedSum
 #. placeholder {1}: r.quantity
 msgid "Linked entity quantity ({0}) does not match row quantity ({1})."
@@ -8476,6 +8479,12 @@ msgstr "Keine Notizen"
 msgid "No open invoices"
 msgstr "Keine offenen Rechnungen"
 
+msgid "No open orders for this item are available to link."
+msgstr "Für diesen Artikel sind keine offenen Bestellungen zum Verknüpfen verfügbar."
+
+msgid "No open sales order lines"
+msgstr "Keine offenen Verkaufsbestellpositionen"
+
 msgid "No operations require picking at this location"
 msgstr "Keine Operationen erfordern Kommissionierung an diesem Standort"
 
@@ -8927,7 +8936,7 @@ msgid "Opportunity"
 msgstr "Gelegenheit"
 
 msgid "Optimized for fast previews — downloads always serve the original uploaded file"
-msgstr ""
+msgstr "Optimiert für schnelle Vorschau — Downloads liefern immer die ursprüngliche hochgeladene Datei"
 
 msgid "Optional"
 msgstr "Optional"
@@ -10310,7 +10319,7 @@ msgid "Refresh exchange rate"
 msgstr "Wechselkurs aktualisieren"
 
 msgid "Regenerate thumbnail from the 3D model"
-msgstr ""
+msgstr "Miniaturansicht aus dem 3D-Modell neu generieren"
 
 msgid "Regenerating thumbnail…"
 msgstr "Miniaturansicht wird neu generiert…"
