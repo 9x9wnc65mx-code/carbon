@@ -9588,9 +9588,6 @@ msgstr "Авансовые платежи"
 msgid "Posting Date"
 msgstr "Дата публикации"
 
-msgid "Posting Groups"
-msgstr "Группы учета"
-
 msgid "Potential Data Loss"
 msgstr "Потенциальная потеря данных"
 

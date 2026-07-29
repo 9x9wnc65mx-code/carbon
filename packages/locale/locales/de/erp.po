@@ -9588,9 +9588,6 @@ msgstr "Vorauszahlungen"
 msgid "Posting Date"
 msgstr "Buchungsdatum"
 
-msgid "Posting Groups"
-msgstr "Buchungsgruppen"
-
 msgid "Potential Data Loss"
 msgstr "Möglicher Datenverlust"
 
