@@ -1,6 +1,6 @@
 {
-  "generated": "2026-07-29T06:52:00.739Z",
-  "totalTools": 1398,
+  "generated": "2026-07-29T14:23:29.561Z",
+  "totalTools": 1400,
   "modules": 15,
   "tools": [
     {
@@ -40946,6 +40946,64 @@
         },
         "required": [
           "showCustomerReadableId"
+        ]
+      }
+    },
+    {
+      "name": "settings_updateAutoSelectMaterialWithoutPickingListSetting",
+      "module": "settings",
+      "classification": "WRITE",
+      "description": "update auto select material without picking list setting",
+      "paramCount": 1,
+      "serviceParams": [
+        "client",
+        "companyId",
+        "autoSelectMaterialWithoutPickingList"
+      ],
+      "injectAuth": [
+        "companyId",
+        "updatedBy"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "autoSelectMaterialWithoutPickingList": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "autoSelectMaterialWithoutPickingList"
+        ]
+      }
+    },
+    {
+      "name": "settings_updateIncompletePickingListPolicySetting",
+      "module": "settings",
+      "classification": "WRITE",
+      "description": "update incomplete picking list policy setting",
+      "paramCount": 1,
+      "serviceParams": [
+        "client",
+        "companyId",
+        "incompletePickingListPolicy"
+      ],
+      "injectAuth": [
+        "companyId",
+        "updatedBy"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "incompletePickingListPolicy": {
+            "type": "string",
+            "enum": [
+              "warn",
+              "error"
+            ]
+          }
+        },
+        "required": [
+          "incompletePickingListPolicy"
         ]
       }
     },
