@@ -2434,7 +2434,7 @@ export const importSchemas: Record<
       .describe("The name of the finish"),
     materialSubstanceId: z
       .string()
-      .optional()
+      .min(1, { message: "Substance is required" })
       .describe("The substance this finish belongs to")
   }),
   materialGrade: z.object({
@@ -2444,7 +2444,7 @@ export const importSchemas: Record<
       .describe("The name of the grade"),
     materialSubstanceId: z
       .string()
-      .optional()
+      .min(1, { message: "Substance is required" })
       .describe("The substance this grade belongs to")
   }),
   materialType: z.object({
@@ -2458,11 +2458,11 @@ export const importSchemas: Record<
       .describe("A short code for the material type"),
     materialSubstanceId: z
       .string()
-      .optional()
+      .min(1, { message: "Substance is required" })
       .describe("The substance this type belongs to"),
     materialFormId: z
       .string()
-      .optional()
+      .min(1, { message: "Shape is required" })
       .describe("The shape this type belongs to")
   }),
   materialDimension: z.object({
@@ -2472,7 +2472,7 @@ export const importSchemas: Record<
       .describe("The name of the dimension"),
     materialFormId: z
       .string()
-      .optional()
+      .min(1, { message: "Shape is required" })
       .describe("The shape this dimension belongs to"),
     isMetric: z
       .string()

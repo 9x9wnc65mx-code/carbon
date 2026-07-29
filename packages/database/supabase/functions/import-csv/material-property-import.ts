@@ -47,6 +47,15 @@ const SUBSTANCE_UNMATCHED =
 const SHAPE_UNMATCHED =
   "Shape could not be matched — make sure the shape exists and is mapped in the wizard";
 
+// A child taxonomy's parent reference: the record field carrying the resolved
+// parent id, the parent table the id must belong to, and the reason to report
+// when it is blank or points outside the tenant's allowlist.
+type ParentSpec = {
+  field: "materialSubstanceId" | "materialFormId";
+  table: "materialSubstance" | "materialForm";
+  reason: string;
+};
+
 type TableConfig = {
   // Validate a mapped row; return an error reason, or null if the row is usable.
   validate: (r: Rec) => string | null;
@@ -68,6 +77,45 @@ type TableConfig = {
     companyId: string,
     userId: string
   ) => Promise<number>;
+  // Parent references whose resolved id must be validated against a tenant-scoped
+  // allowlist. Empty/undefined for the root substance/form tables.
+  parents?: ParentSpec[];
+};
+
+// Ids the company may legitimately reference: its own rows plus global system
+// rows (companyId IS NULL). A resolved parent id (which comes from the
+// client-supplied enum mapping) that isn't in here would let a child row point at
+// another tenant's parent while still satisfying the FK — so it must be rejected.
+const loadParentIds = async (
+  trx: Transaction<DB>,
+  table: "materialSubstance" | "materialForm",
+  companyId: string
+): Promise<Set<string>> => {
+  // Explicit per-table branches (not a union `selectFrom`) to keep each query
+  // fully type-checked, matching the fetchLiveEntityIds pattern in index.ts.
+  const rows =
+    table === "materialSubstance"
+      ? await trx
+          .selectFrom("materialSubstance")
+          .select(["id"])
+          .where((eb) =>
+            eb.or([
+              eb("companyId", "=", companyId),
+              eb("companyId", "is", null),
+            ])
+          )
+          .execute()
+      : await trx
+          .selectFrom("materialForm")
+          .select(["id"])
+          .where((eb) =>
+            eb.or([
+              eb("companyId", "=", companyId),
+              eb("companyId", "is", null),
+            ])
+          )
+          .execute();
+  return new Set(rows.map((x) => x.id));
 };
 
 const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
@@ -152,6 +200,13 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
     },
   },
   materialFinish: {
+    parents: [
+      {
+        field: "materialSubstanceId",
+        table: "materialSubstance",
+        reason: SUBSTANCE_UNMATCHED,
+      },
+    ],
     validate: (r) =>
       !r.name?.trim()
         ? "Name is required"
@@ -189,6 +244,13 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
     },
   },
   materialGrade: {
+    parents: [
+      {
+        field: "materialSubstanceId",
+        table: "materialSubstance",
+        reason: SUBSTANCE_UNMATCHED,
+      },
+    ],
     validate: (r) =>
       !r.name?.trim()
         ? "Name is required"
@@ -226,6 +288,18 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
     },
   },
   materialType: {
+    parents: [
+      {
+        field: "materialSubstanceId",
+        table: "materialSubstance",
+        reason: SUBSTANCE_UNMATCHED,
+      },
+      {
+        field: "materialFormId",
+        table: "materialForm",
+        reason: SHAPE_UNMATCHED,
+      },
+    ],
     validate: (r) =>
       !r.name?.trim()
         ? "Name is required"
@@ -281,6 +355,13 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
     },
   },
   materialDimension: {
+    parents: [
+      {
+        field: "materialFormId",
+        table: "materialForm",
+        reason: SHAPE_UNMATCHED,
+      },
+    ],
     validate: (r) =>
       !r.name?.trim()
         ? "Name is required"
@@ -346,6 +427,16 @@ export async function importMaterialProperties(
 
   await db.transaction().execute(async (trx) => {
     const existingKeys = await config.loadExistingKeys(trx, companyId);
+
+    // Tenant-scoped allowlist of parent ids (company + global) per referenced
+    // parent table, so a crafted/stale enum mapping can't point a child row at
+    // another tenant's substance/form (the FK alone wouldn't catch it).
+    const parentSpecs = config.parents ?? [];
+    const parentIds = new Map<string, Set<string>>();
+    for (const parentTable of new Set(parentSpecs.map((p) => p.table))) {
+      parentIds.set(parentTable, await loadParentIds(trx, parentTable, companyId));
+    }
+
     const seenKeys = new Set<string>();
     const accepted: Rec[] = [];
 
@@ -353,6 +444,16 @@ export async function importMaterialProperties(
       const reason = config.validate(record);
       if (reason) {
         summary.errors.push({ row: rowIndex, reason });
+        continue;
+      }
+
+      // Reject a resolved parent id that isn't this company's own or a global
+      // system row — prevents cross-tenant parent references.
+      const foreignParent = parentSpecs.find(
+        (p) => !parentIds.get(p.table)?.has((record[p.field] ?? "").trim())
+      );
+      if (foreignParent) {
+        summary.errors.push({ row: rowIndex, reason: foreignParent.reason });
         continue;
       }
 
