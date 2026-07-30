@@ -2951,14 +2951,29 @@ msgstr "Eğitim adını kopyala"
 msgid "Copy training unique identifier"
 msgstr "Eğitim benzersiz tanımlayıcısını kopyala"
 
+msgid "Correct"
+msgstr "Doğru"
+
 msgid "Correct Answer"
 msgstr "Doğru Cevap"
 
 msgid "Correct Answers"
 msgstr "Doğru Cevaplar"
 
+msgid "Correct Quantity"
+msgstr "Miktarı Düzelt"
+
+msgid "Correct Stock Movement"
+msgstr "Stok Hareketi Düzelt"
+
+msgid "Corrected Quantity"
+msgstr "Düzeltilen Miktar"
+
 msgid "Correction"
 msgstr "Düzeltme"
+
+msgid "Correction {correctionNumber}"
+msgstr "Düzeltme {correctionNumber}"
 
 msgid "Corrections"
 msgstr "Düzeltmeler"
@@ -3673,7 +3688,7 @@ msgid "Decide what an operator sees if they try to issue a batch or serial that'
 msgstr "Operatörün zaten süresi dolmuş bir parti veya seri çıkarmaya çalışması durumunda ne göreceğini belirleyin."
 
 msgid "Decide what happens when an operator presses Finish on the shop floor with material still unpicked."
-msgstr ""
+msgstr "Bir operatör, malzeme henüz seçilmemiş olarak üretim alanında Bitir'e bastığında ne olacağını belirleyin."
 
 msgid "Decimal Places"
 msgstr "Ondalık Basamaklar"
@@ -5019,6 +5034,9 @@ msgstr "Seri numarası girin veya tarayın"
 msgid "Enter PO number"
 msgstr "PO numarasını girin"
 
+msgid "Enter the quantity this movement should have been. An opposite movement for the difference is posted next to the original, in the original's time period."
+msgstr "Bu hareketin olması gereken miktarı girin. Farktaki ters hareket, orijinalin zaman döneminde orijinalin yanında deftere kaydedilir."
+
 msgid "Entered At Receipt"
 msgstr "Alındığında Girildi"
 
@@ -5782,10 +5800,10 @@ msgid "Finishes"
 msgstr "Kaplamalar"
 
 msgid "Finishing an incomplete pick"
-msgstr ""
+msgstr "Eksik Seçimi Bitirme"
 
 msgid "Finishing is refused until every line is picked or marked Short."
-msgstr ""
+msgstr "Bitirme, her satır seçilene veya Kısa olarak işaretlenene kadar reddedilir."
 
 msgid "First Name"
 msgstr "Adı Soyad"
@@ -7295,6 +7313,9 @@ msgstr "Son yüklenen, kesme noktasında hemen, bu nedenle bakiyeler günceldir.
 
 msgid "Loading associated jobs..."
 msgstr "İlgili işler yükleniyor..."
+
+msgid "Loading current quantity…"
+msgstr "Geçerli miktar yükleniyor…"
 
 msgid "Loading item details..."
 msgstr "Ürün detayları yükleniyor..."
@@ -8987,7 +9008,7 @@ msgid "Operator must pick a different batch/serial."
 msgstr "Operatör farklı bir parti/seri seçmelidir."
 
 msgid "Operator sees the missing items, can acknowledge & finish. The list is flagged Partial."
-msgstr ""
+msgstr "Operatör eksik öğeleri görür, kabul edebilir ve bitirebilir. Liste Kısmi olarak işaretlenir."
 
 msgid "Operators"
 msgstr "Operatörler"
@@ -9232,7 +9253,7 @@ msgid "Part Supersession"
 msgstr "Parça Yerini Alma"
 
 msgid "Partial"
-msgstr ""
+msgstr "Kısmi"
 
 msgid "Partner"
 msgstr "İş Ortağı"
@@ -9588,14 +9609,14 @@ msgstr "Gönderilen Tarih"
 msgid "Posted By"
 msgstr "Gönderen"
 
-msgid "Posted once, no rectifications."
-msgstr "Bir kez gönderildi, düzeltme yapılmadı."
+msgid "Posted once, corrected {corrections} times."
+msgstr "Bir kez deftere kaydedildi, {corrections} kez düzeltildi."
 
-msgid "Posted once, rectified {rectifications} times."
-msgstr "Bir kez gönderildi, {rectifications} kez düzeltildi."
+msgid "Posted once, corrected 1 time."
+msgstr "Bir kez deftere kaydedildi, 1 kez düzeltildi."
 
-msgid "Posted once, rectified 1 time."
-msgstr "Bir kez gönderildi, 1 kez düzeltildi."
+msgid "Posted once, no corrections."
+msgstr "Bir kez deftere kaydedildi, düzeltme yok."
 
 msgid "Posting"
 msgstr "Ön Ödemeler"
@@ -9610,7 +9631,7 @@ msgid "Pre-filled for a new item when expiry is Fixed Duration."
 msgstr "Son kullanma tarihi Sabit Süre olduğunda yeni bir ürün için önceden doldurulur."
 
 msgid "Pre-select material without a picking list"
-msgstr ""
+msgstr "Seçim listesi olmadan malzemeyi önceden seç"
 
 msgid "Preferred Supplier"
 msgstr "Tercih Edilen Tedarikçi"
@@ -10362,12 +10383,6 @@ msgstr "Kayıtlar"
 
 msgid "Recovery Period"
 msgstr "Kayıt Yap"
-
-msgid "Rectification {rectifyNumber}"
-msgstr "Düzeltme {rectifyNumber}"
-
-msgid "Rectify"
-msgstr "Düzelt"
 
 msgid "Redirecting to verification page..."
 msgstr "Doğrulama sayfasına yönlendiriliyor..."
@@ -11766,6 +11781,9 @@ msgstr "Bu sorun kapatılmadan önce kaydedilmesi gereken onaylar; iş akışı 
 msgid "Signed in as {name}"
 msgstr "Oturum açıldı olarak {name}"
 
+msgid "Signed quantity — negative for outbound movements"
+msgstr "İmzalı miktar — giden hareketler için negatif"
+
 msgid "Sites & locations"
 msgstr "Siteler & konumlar"
 
@@ -12009,6 +12027,9 @@ msgstr "Adımlar montaj talimatından devralınır."
 
 msgid "Steps are inherited from the inspection plan."
 msgstr "Adımlar muayene planından devralınır."
+
+msgid "Stock movement corrected"
+msgstr "Stok hareketi düzeltildi"
 
 msgid "Stock Transfer ID"
 msgstr "Stok Transfer Kimliği"
@@ -14588,7 +14609,7 @@ msgid "When on, this rule fires for every target of its type. Assignment rows ar
 msgstr "Açıkken bu kural, türündeki her hedef için tetiklenir. Atama satırları yok sayılır ancak korunur."
 
 msgid "When on, tracked material is pre-selected by pick order (FEFO) even without a picking list. When off, operators start on the Scan tab."
-msgstr ""
+msgstr "Açık olduğunda, izlenen malzeme, seçim listesi olmasa bile seçim sırasına (FEFO) göre önceden seçilir. Kapalı olduğunda, operatörler Tarama sekmesinde başlar."
 
 msgid "When supplier responses are expected back; suppliers see this date on the RFQ portal and Carbon stops accepting late responses after it (configurable)."
 msgstr "Tedarikçi yanıtlarının ne zaman beklenmesi gerektiği; tedarikçiler RFQ portalında bu tarihi görür ve Carbon bundan sonra geç yanıtları kabul etmeyi durdurur (yapılandırılabilir)."
