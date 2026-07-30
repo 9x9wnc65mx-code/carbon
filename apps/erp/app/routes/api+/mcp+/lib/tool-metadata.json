@@ -1,6 +1,6 @@
 {
-  "generated": "2026-07-30T16:43:25.338Z",
-  "totalTools": 1401,
+  "generated": "2026-07-30T18:22:37.513Z",
+  "totalTools": 1402,
   "modules": 15,
   "tools": [
     {
@@ -7613,6 +7613,32 @@
         },
         "required": [
           "locationId"
+        ]
+      }
+    },
+    {
+      "name": "inventory_getUnresolvedPickingListLines",
+      "module": "inventory",
+      "classification": "READ",
+      "description": "get unresolved picking list lines",
+      "paramCount": 1,
+      "serviceParams": [
+        "client",
+        "pickingListId",
+        "companyId"
+      ],
+      "injectAuth": [
+        "companyId"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "pickingListId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "pickingListId"
         ]
       }
     },
