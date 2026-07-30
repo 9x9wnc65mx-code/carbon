@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-30T13:32:35.031Z",
+  "generated": "2026-07-30T14:40:04.298Z",
   "totalTools": 1401,
   "modules": 15,
   "tools": [
@@ -6151,6 +6151,57 @@
       }
     },
     {
+      "name": "inventory_getStockMovementEffectiveQuantity",
+      "module": "inventory",
+      "classification": "READ",
+      "description": "get stock movement effective quantity",
+      "paramCount": 1,
+      "serviceParams": [
+        "client",
+        "companyId",
+        "itemLedgerId"
+      ],
+      "injectAuth": [
+        "companyId"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "itemLedgerId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemLedgerId"
+        ]
+      }
+    },
+    {
+      "name": "inventory_correctStockMovement",
+      "module": "inventory",
+      "classification": "WRITE",
+      "description": "correct stock movement",
+      "paramCount": 2,
+      "serviceParams": [
+        "client",
+        "correction"
+      ],
+      "injectAuth": [
+        "companyId"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "correctedQuantity": {
+            "type": "number"
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
       "name": "inventory_getInventoryCounts",
       "module": "inventory",
       "classification": "READ",
@@ -6420,29 +6471,6 @@
         "required": [
           "inventoryCountId",
           "locationId"
-        ]
-      }
-    },
-    {
-      "name": "inventory_rectifyInventoryCount",
-      "module": "inventory",
-      "classification": "WRITE",
-      "description": "rectify inventory count",
-      "paramCount": 1,
-      "serviceParams": [
-        "db",
-        "args"
-      ],
-      "injectAuth": [
-        "companyId"
-      ],
-      "schema": {
-        "type": "object",
-        "properties": {
-          "args": {}
-        },
-        "required": [
-          "args"
         ]
       }
     },
@@ -7987,31 +8015,6 @@
         },
         "required": [
           "id"
-        ]
-      }
-    },
-    {
-      "name": "invoicing_computeInvoiceDateDue",
-      "module": "invoicing",
-      "classification": "WRITE",
-      "description": "compute invoice date due",
-      "paramCount": 2,
-      "serviceParams": [
-        "client",
-        "args"
-      ],
-      "injectAuth": [
-        "companyId"
-      ],
-      "schema": {
-        "type": "object",
-        "properties": {
-          "dateIssued": {},
-          "paymentTermId": {}
-        },
-        "required": [
-          "dateIssued",
-          "paymentTermId"
         ]
       }
     },
