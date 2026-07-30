@@ -80,33 +80,76 @@ export async function action({ request }: ActionFunctionArgs) {
         .in("id", ids as string[]);
     case "dateIssued":
       if (ids.length === 1) {
-        const paymentTerms = await client
-          .from("paymentTerm")
-          .select("*")
-          .eq("id", value as string)
+        const invoice = await client
+          .from("purchaseInvoice")
+          .select("paymentTermId")
+          .eq("id", ids[0] as string)
           .single();
-        if (paymentTerms.data) {
+        const paymentTerm = invoice.data?.paymentTermId
+          ? await client
+              .from("paymentTerm")
+              .select("daysDue")
+              .eq("id", invoice.data.paymentTermId)
+              .single()
+          : null;
+        if (value && paymentTerm?.data) {
           return await client
             .from("purchaseInvoice")
             .update({
               dateIssued: value,
-              dateDue: parseDate(value as string)
-                .add({ days: paymentTerms.data.daysDue })
+              dateDue: parseDate(value)
+                .add({ days: paymentTerm.data.daysDue })
                 .toString(),
               updatedBy: userId,
               updatedAt: new Date().toISOString()
             })
             .eq("id", ids[0] as string);
-        } else {
+        }
+        return await client
+          .from("purchaseInvoice")
+          .update({
+            dateIssued: value ? value : null,
+            updatedBy: userId,
+            updatedAt: new Date().toISOString()
+          })
+          .eq("id", ids[0] as string);
+      }
+      break;
+    case "paymentTermId":
+      if (ids.length === 1) {
+        const invoice = await client
+          .from("purchaseInvoice")
+          .select("dateIssued")
+          .eq("id", ids[0] as string)
+          .single();
+        const paymentTerm = value
+          ? await client
+              .from("paymentTerm")
+              .select("daysDue")
+              .eq("id", value as string)
+              .single()
+          : null;
+        if (invoice.data?.dateIssued && paymentTerm?.data) {
           return await client
             .from("purchaseInvoice")
             .update({
-              [field]: value ? value : null,
+              paymentTermId: value,
+              dateDue: parseDate(invoice.data.dateIssued)
+                .add({ days: paymentTerm.data.daysDue })
+                .toString(),
               updatedBy: userId,
               updatedAt: new Date().toISOString()
             })
-            .in("id", ids as string[]);
+            .eq("id", ids[0] as string);
         }
+        return await client
+          .from("purchaseInvoice")
+          .update({
+            paymentTermId: value ? value : null,
+            updatedBy: userId,
+            updatedAt: new Date().toISOString()
+          })
+          .eq("id", ids[0] as string);
       }
       break;
     // don't break -- just let it catch the next case
@@ -135,7 +178,6 @@ export async function action({ request }: ActionFunctionArgs) {
     case "invoiceSupplierLocationId":
     case "locationId":
     case "supplierReference":
-    case "paymentTermId":
     case "exchangeRate":
     case "dateDue":
     case "datePaid":
