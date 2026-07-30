@@ -85,19 +85,51 @@ export const RAW_STAGING_BUCKET = "temp-staging";
 export const RAW_DURABLE_BUCKET = "private";
 
 /**
- * Relocate a staged object into the durable bucket, same key, server-side (no
- * download — storage-js `move` with `destinationBucket`). Idempotent-ish: if the
- * source is already gone (previously moved) it returns the storage error string,
- * which callers treat as "already durable". Returns null on success.
+ * COPY a staged object into the durable bucket, same key, server-side (no
+ * download — storage-js `copy` with `destinationBucket`). Deliberately not a
+ * move: a move deletes the staging object instantly, and a concurrent
+ * optimize/convert/plan that already resolved `temp-staging` as its source
+ * bucket then signs a path that no longer exists ("Object not found") and
+ * fails. The staged copy stays behind and the scheduled cleanup prunes it once
+ * it's stale (see cleanup.ts `prune-staged-raw-models`). Idempotent: an
+ * already-existing durable copy counts as success. Returns null on success,
+ * else the storage error message.
  */
-export async function moveRawToDurable(
+export async function copyRawToDurable(
   client: SupabaseClient<Database>,
   path: string
 ): Promise<string | null> {
   const { error } = await client.storage
     .from(RAW_STAGING_BUCKET)
-    .move(path, path, { destinationBucket: RAW_DURABLE_BUCKET });
-  return error ? error.message : null;
+    .copy(path, path, { destinationBucket: RAW_DURABLE_BUCKET });
+  if (!error) return null;
+  return /already exists|duplicate/i.test(error.message) ? null : error.message;
+}
+
+/**
+ * Sign a read URL for a job's source object. A missing object throws
+ * `NonRetriableError` — the source is gone for good (deleted, staging cleared,
+ * or the upload never completed), so retrying only delays the Failed stamp the
+ * viewer needs before it can settle. Any other signing failure stays retriable.
+ */
+export async function signSourceUrl(
+  client: SupabaseClient<Database>,
+  bucket: string,
+  path: string,
+  expiresInSeconds: number
+): Promise<string> {
+  const source = await client.storage
+    .from(bucket)
+    .createSignedUrl(path, expiresInSeconds);
+  if (source.error) {
+    if (/not.?found/i.test(source.error.message)) {
+      throw new NonRetriableError(
+        `Source file no longer exists in storage: ${bucket}/${path}`
+      );
+    }
+    throw new Error(`Failed to sign source URL: ${source.error.message}`);
+  }
+  return source.data.signedUrl;
 }
 
 /**

@@ -1792,6 +1792,7 @@ export const JobOperation = ({
                 awaitingModel={modelPending}
                 optimizing={backgroundOptimizing}
                 optimizeFailed={optimizeFailed}
+                sourceMissing={artifacts?.sourceAvailable === false}
                 optimizedUrl={
                   artifacts?.optimizedModelPath
                     ? // ?v= busts the immutable preview cache on the STABLE
