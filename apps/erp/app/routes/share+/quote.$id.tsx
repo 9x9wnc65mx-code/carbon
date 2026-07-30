@@ -45,6 +45,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   LuChevronRight,
+  LuCircleX,
   LuCreditCard,
   LuImage,
   LuTruck,
@@ -899,6 +900,24 @@ const LinePricingOptions = ({
             </Tbody>
           </Table>
         </div>
+      )}
+
+      {selectedLine.quantity !== 0 && quote.status === "Sent" && (
+        <HStack spacing={2} className="w-full justify-end items-center">
+          <Button
+            variant="secondary"
+            leftIcon={<LuCircleX />}
+            onClick={() => {
+              setSelectedValue("0");
+              setSelectedLines((prev) => ({
+                ...prev,
+                [line.id!]: deselectedLine
+              }));
+            }}
+          >
+            <Trans>Remove</Trans>
+          </Button>
+        </HStack>
       )}
     </VStack>
   );
