@@ -1,6 +1,6 @@
 {
-  "generated": "2026-07-29T06:52:00.739Z",
-  "totalTools": 1398,
+  "generated": "2026-07-30T13:10:17.436Z",
+  "totalTools": 1399,
   "modules": 15,
   "tools": [
     {
@@ -7987,6 +7987,31 @@
         },
         "required": [
           "id"
+        ]
+      }
+    },
+    {
+      "name": "invoicing_computeInvoiceDateDue",
+      "module": "invoicing",
+      "classification": "WRITE",
+      "description": "compute invoice date due",
+      "paramCount": 2,
+      "serviceParams": [
+        "client",
+        "args"
+      ],
+      "injectAuth": [
+        "companyId"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {
+          "dateIssued": {},
+          "paymentTermId": {}
+        },
+        "required": [
+          "dateIssued",
+          "paymentTermId"
         ]
       }
     },

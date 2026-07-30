@@ -1,6 +1,6 @@
 import type { Database, Json } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import {
@@ -31,6 +31,42 @@ import type {
   salesInvoiceStatusType,
   salesInvoiceValidator
 } from "./invoicing.models";
+
+/**
+ * Compute an invoice's Due Date from its Issue Date and Payment Term.
+ * Returns null when either input is missing, the payment term can't be found
+ * for the company, or the stored date can't be parsed — callers fall back to a
+ * plain field update in that case. The payment term read is scoped by
+ * companyId for tenant isolation (defense in depth alongside RLS).
+ */
+export async function computeInvoiceDateDue(
+  client: SupabaseClient<Database>,
+  args: {
+    dateIssued: string | null | undefined;
+    paymentTermId: string | null | undefined;
+    companyId: string;
+  }
+): Promise<string | null> {
+  const { dateIssued, paymentTermId, companyId } = args;
+  if (!dateIssued || !paymentTermId) return null;
+
+  const paymentTerm = await client
+    .from("paymentTerm")
+    .select("daysDue")
+    .eq("id", paymentTermId)
+    .eq("companyId", companyId)
+    .single();
+
+  if (paymentTerm.error || !paymentTerm.data) return null;
+
+  try {
+    return parseDate(dateIssued)
+      .add({ days: paymentTerm.data.daysDue })
+      .toString();
+  } catch {
+    return null;
+  }
+}
 
 export async function createPurchaseInvoiceFromPurchaseOrder(
   client: SupabaseClient<Database>,
