@@ -34,10 +34,13 @@ import type {
 
 /**
  * Compute an invoice's Due Date from its Issue Date and Payment Term.
- * Returns null when either input is missing, the payment term can't be found
- * for the company, or the stored date can't be parsed — callers fall back to a
- * plain field update in that case. The payment term read is scoped by
- * companyId for tenant isolation (defense in depth alongside RLS).
+ * Returns null when either input is missing, the payment term genuinely doesn't
+ * exist for the company, or the stored date can't be parsed — callers fall back
+ * to a plain field update in that case. A payment-term *query failure* is
+ * different: it throws, so callers abort instead of writing the invoice with a
+ * stale dateDue. The read is scoped by companyId for tenant isolation (defense
+ * in depth alongside RLS) and uses maybeSingle so an absent row is data: null
+ * (not an error) — keeping "missing" distinguishable from "failed".
  */
 export async function computeInvoiceDateDue(
   client: SupabaseClient<Database>,
@@ -55,9 +58,14 @@ export async function computeInvoiceDateDue(
     .select("daysDue")
     .eq("id", paymentTermId)
     .eq("companyId", companyId)
-    .single();
+    .maybeSingle();
 
-  if (paymentTerm.error || !paymentTerm.data) return null;
+  if (paymentTerm.error) {
+    throw new Error(
+      `Failed to load payment term ${paymentTermId} while recomputing invoice due date: ${paymentTerm.error.message}`
+    );
+  }
+  if (!paymentTerm.data) return null;
 
   try {
     return parseDate(dateIssued)
