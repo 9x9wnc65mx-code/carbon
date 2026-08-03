@@ -3051,6 +3051,9 @@ msgstr "領域を分析できませんでした: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "PDFを作成できませんでした。もう一度お試しください。"
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "分析用の領域画像を準備できませんでした"
 
@@ -5344,11 +5347,18 @@ msgstr "有効期限トレース"
 msgid "Export"
 msgstr "エクスポート"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "CSVをエクスポート"
 
 msgid "Export Lines to CSV"
 msgstr "CSVにラインをエクスポート"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "拡張価格"
@@ -13603,6 +13613,9 @@ msgstr "許容差+"
 
 msgid "Tolerance (+/-)"
 msgstr "許容範囲 (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "ツール"

@@ -3051,6 +3051,9 @@ msgstr "Не удалось проанализировать регион: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "Не удалось создать PDF. Попробуйте еще раз."
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "Не удалось подготовить изображение региона для анализа"
 
@@ -5344,11 +5347,18 @@ msgstr "Трассировка срока годности"
 msgid "Export"
 msgstr "Экспорт"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "Экспортировать CSV"
 
 msgid "Export Lines to CSV"
 msgstr "Экспортировать строки в CSV"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "Расширенная цена"
@@ -13603,6 +13613,9 @@ msgstr "Допуск+"
 
 msgid "Tolerance (+/-)"
 msgstr "Допуск (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "Инструмент"

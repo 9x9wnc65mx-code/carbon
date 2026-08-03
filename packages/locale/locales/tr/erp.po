@@ -3051,6 +3051,9 @@ msgstr "Bölge analiz edilemedi: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "PDF oluşturulamadı. Lütfen tekrar deneyin."
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "Bölge görüntüsü analiz için hazırlanamadı"
 
@@ -5344,11 +5347,18 @@ msgstr "Son kullanma tarihi izi"
 msgid "Export"
 msgstr "Dışa Aktar"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "CSV'ye Aktar"
 
 msgid "Export Lines to CSV"
 msgstr "Satırları CSV'ye Dışa Aktar"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "Genelletilmiş Fiyat"
@@ -13603,6 +13613,9 @@ msgstr "Tolerans+"
 
 msgid "Tolerance (+/-)"
 msgstr "Tolerans (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "Araç"

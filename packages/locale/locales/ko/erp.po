@@ -3051,6 +3051,9 @@ msgstr "영역을 분석할 수 없습니다: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "PDF를 생성할 수 없습니다. 다시 시도하세요."
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "분석을 위한 영역 이미지를 준비할 수 없습니다"
 
@@ -5344,11 +5347,18 @@ msgstr "만료 추적"
 msgid "Export"
 msgstr "내보내기"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "CSV 내보내기"
 
 msgid "Export Lines to CSV"
 msgstr "라인을 CSV로 내보내기"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "확장 가격"
@@ -13603,6 +13613,9 @@ msgstr "공차+"
 
 msgid "Tolerance (+/-)"
 msgstr "공차(+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "공구"

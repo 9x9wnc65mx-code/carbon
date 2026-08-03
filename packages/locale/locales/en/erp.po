@@ -3051,6 +3051,9 @@ msgstr "Could not analyze region: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "Could not build PDF. Try again."
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr "Could not export all rows. Downloading this page instead."
+
 msgid "Could not prepare region image for analysis"
 msgstr "Could not prepare region image for analysis"
 
@@ -5344,11 +5347,18 @@ msgstr "Expiry trace"
 msgid "Export"
 msgstr "Export"
 
+msgid "Export all ({count})"
+msgstr "Export all ({count})"
+
 msgid "Export CSV"
 msgstr "Export CSV"
 
 msgid "Export Lines to CSV"
 msgstr "Export Lines to CSV"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr "Export this page ({0})"
 
 msgid "Extended Price"
 msgstr "Extended Price"
@@ -13603,6 +13613,9 @@ msgstr "Tol+"
 
 msgid "Tolerance (+/-)"
 msgstr "Tolerance (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
 
 msgid "tool"
 msgstr "tool"

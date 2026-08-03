@@ -3051,6 +3051,9 @@ msgstr "क्षेत्र का विश्लेषण नहीं क�
 msgid "Could not build PDF. Try again."
 msgstr "PDF नहीं बना सके। फिर से कोशिश करें।"
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "विश्लेषण के लिए क्षेत्र छवि तैयार नहीं की जा सकी"
 
@@ -5344,11 +5347,18 @@ msgstr "समाप्ति ट्रेस"
 msgid "Export"
 msgstr "निर्यात करें"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "CSV निर्यात करें"
 
 msgid "Export Lines to CSV"
 msgstr "CSV में लाइनें निर्यात करें"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "विस्तारित मूल्य"
@@ -13603,6 +13613,9 @@ msgstr "Tol+"
 
 msgid "Tolerance (+/-)"
 msgstr "सहनशीलता (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "उपकरण"

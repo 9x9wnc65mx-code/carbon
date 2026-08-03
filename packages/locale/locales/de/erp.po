@@ -3051,6 +3051,9 @@ msgstr "Region konnte nicht analysiert werden: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "PDF konnte nicht erstellt werden. Versuchen Sie es erneut."
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "Konnte Regionsbild nicht für die Analyse vorbereiten"
 
@@ -5344,11 +5347,18 @@ msgstr "Verfallsdatum-Nachverfolgung"
 msgid "Export"
 msgstr "Exportieren"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "CSV exportieren"
 
 msgid "Export Lines to CSV"
 msgstr "Zeilen als CSV exportieren"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "Erweiterte Preis"
@@ -13603,6 +13613,9 @@ msgstr "Tol+"
 
 msgid "Tolerance (+/-)"
 msgstr "Toleranz (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "Werkzeug"

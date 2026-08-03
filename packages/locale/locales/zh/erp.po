@@ -3051,6 +3051,9 @@ msgstr "无法分析区域：{0}"
 msgid "Could not build PDF. Try again."
 msgstr "无法生成 PDF。请重试。"
 
+msgid "Could not export all rows. Downloading this page instead."
+msgstr ""
+
 msgid "Could not prepare region image for analysis"
 msgstr "无法准备区域图像以进行分析"
 
@@ -5344,11 +5347,18 @@ msgstr "过期追踪"
 msgid "Export"
 msgstr "导出"
 
+msgid "Export all ({count})"
+msgstr ""
+
 msgid "Export CSV"
 msgstr "导出 CSV"
 
 msgid "Export Lines to CSV"
 msgstr "导出行到 CSV"
+
+#. placeholder {0}: data.length
+msgid "Export this page ({0})"
+msgstr ""
 
 msgid "Extended Price"
 msgstr "扩展价格"
@@ -13603,6 +13613,9 @@ msgstr "公差+"
 
 msgid "Tolerance (+/-)"
 msgstr "容差 (+/-)"
+
+msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
+msgstr ""
 
 msgid "tool"
 msgstr "工具"
