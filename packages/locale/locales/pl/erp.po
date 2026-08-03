@@ -3051,9 +3051,6 @@ msgstr "Nie można analizować regionu: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "Nie można było zbudować pliku PDF. Spróbuj ponownie."
 
-msgid "Could not export all rows. Downloading this page instead."
-msgstr ""
-
 msgid "Could not prepare region image for analysis"
 msgstr "Nie można przygotować obrazu regionu do analizy"
 
@@ -5347,18 +5344,11 @@ msgstr "Ślad wygaśnięcia"
 msgid "Export"
 msgstr "Eksportuj"
 
-msgid "Export all ({count})"
-msgstr ""
-
 msgid "Export CSV"
 msgstr "Eksportuj CSV"
 
 msgid "Export Lines to CSV"
 msgstr "Eksportuj linie do CSV"
-
-#. placeholder {0}: data.length
-msgid "Export this page ({0})"
-msgstr ""
 
 msgid "Extended Price"
 msgstr "Cena rozszerzona"
@@ -8576,6 +8566,9 @@ msgstr "Brak wyników dla „{query}\". Spróbuj innego terminu wyszukiwania."
 msgid "No matches. Type to create one."
 msgstr "Brak dopasowań. Wpisz, aby utworzyć jeden."
 
+msgid "No matching bins"
+msgstr ""
+
 msgid "No new notifications"
 msgstr "Brak nowych powiadomień"
 
@@ -8800,6 +8793,10 @@ msgstr "Notatki"
 
 msgid "Notes (optional)"
 msgstr "Notatki (opcjonalnie)"
+
+#. placeholder {0}: search.trim()
+msgid "Nothing at this location matches \"{0}\"."
+msgstr ""
 
 msgid "Nothing else at this location has stock to pull from."
 msgstr "W tym miejscu nic innego nie ma zapasów do pobrania."
@@ -13613,9 +13610,6 @@ msgstr "Tol+"
 
 msgid "Tolerance (+/-)"
 msgstr "Tolerancja (+/-)"
-
-msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
-msgstr ""
 
 msgid "tool"
 msgstr "Narzędzie"

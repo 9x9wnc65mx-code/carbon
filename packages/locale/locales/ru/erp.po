@@ -3051,9 +3051,6 @@ msgstr "Не удалось проанализировать регион: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "Не удалось создать PDF. Попробуйте еще раз."
 
-msgid "Could not export all rows. Downloading this page instead."
-msgstr ""
-
 msgid "Could not prepare region image for analysis"
 msgstr "Не удалось подготовить изображение региона для анализа"
 
@@ -5347,18 +5344,11 @@ msgstr "Трассировка срока годности"
 msgid "Export"
 msgstr "Экспорт"
 
-msgid "Export all ({count})"
-msgstr ""
-
 msgid "Export CSV"
 msgstr "Экспортировать CSV"
 
 msgid "Export Lines to CSV"
 msgstr "Экспортировать строки в CSV"
-
-#. placeholder {0}: data.length
-msgid "Export this page ({0})"
-msgstr ""
 
 msgid "Extended Price"
 msgstr "Расширенная цена"
@@ -8576,6 +8566,9 @@ msgstr "Нет совпадений для \"{query}\". Попробуйте д�
 msgid "No matches. Type to create one."
 msgstr "Совпадений не найдено. Введите текст для создания."
 
+msgid "No matching bins"
+msgstr ""
+
 msgid "No new notifications"
 msgstr "Нет новых уведомлений"
 
@@ -8800,6 +8793,10 @@ msgstr "Примечания"
 
 msgid "Notes (optional)"
 msgstr "Примечания (опционально)"
+
+#. placeholder {0}: search.trim()
+msgid "Nothing at this location matches \"{0}\"."
+msgstr ""
 
 msgid "Nothing else at this location has stock to pull from."
 msgstr "На этом месте больше нечего извлекать из запаса."
@@ -13613,9 +13610,6 @@ msgstr "Допуск+"
 
 msgid "Tolerance (+/-)"
 msgstr "Допуск (+/-)"
-
-msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
-msgstr ""
 
 msgid "tool"
 msgstr "Инструмент"

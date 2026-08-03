@@ -3051,9 +3051,6 @@ msgstr "領域を分析できませんでした: {0}"
 msgid "Could not build PDF. Try again."
 msgstr "PDFを作成できませんでした。もう一度お試しください。"
 
-msgid "Could not export all rows. Downloading this page instead."
-msgstr ""
-
 msgid "Could not prepare region image for analysis"
 msgstr "分析用の領域画像を準備できませんでした"
 
@@ -5347,18 +5344,11 @@ msgstr "有効期限トレース"
 msgid "Export"
 msgstr "エクスポート"
 
-msgid "Export all ({count})"
-msgstr ""
-
 msgid "Export CSV"
 msgstr "CSVをエクスポート"
 
 msgid "Export Lines to CSV"
 msgstr "CSVにラインをエクスポート"
-
-#. placeholder {0}: data.length
-msgid "Export this page ({0})"
-msgstr ""
 
 msgid "Extended Price"
 msgstr "拡張価格"
@@ -8576,6 +8566,9 @@ msgstr "\"{query}\"に一致するものがありません。別の検索用語�
 msgid "No matches. Type to create one."
 msgstr "一致するものがありません。作成するには入力してください。"
 
+msgid "No matching bins"
+msgstr ""
+
 msgid "No new notifications"
 msgstr "新しい通知はありません"
 
@@ -8800,6 +8793,10 @@ msgstr "メモ"
 
 msgid "Notes (optional)"
 msgstr "メモ（オプション）"
+
+#. placeholder {0}: search.trim()
+msgid "Nothing at this location matches \"{0}\"."
+msgstr ""
 
 msgid "Nothing else at this location has stock to pull from."
 msgstr "この場所には他に引き出す在庫がありません。"
@@ -13613,9 +13610,6 @@ msgstr "許容差+"
 
 msgid "Tolerance (+/-)"
 msgstr "許容範囲 (+/-)"
-
-msgid "Too many rows to export ({count}) — filter to {MAX_EXPORT_ALL_ROWS} or fewer"
-msgstr ""
 
 msgid "tool"
 msgstr "ツール"
