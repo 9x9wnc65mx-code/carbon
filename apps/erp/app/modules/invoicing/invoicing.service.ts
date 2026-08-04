@@ -52,6 +52,10 @@ import type {
  * - "End of Month": daysDue days after the end of the issue month.
  * - "Day of Month": due on day daysDue of the month — the first occurrence on
  *   or after the issue date, clamped to the month's length (31 → Feb 28).
+ *
+ * Mirrors calculateDueDate in
+ * packages/database/supabase/functions/shared/calculate-due-date.ts (used when
+ * posting invoices) — keep the two in sync.
  */
 export async function computeInvoiceDateDue(
   client: SupabaseClient<Database>,
