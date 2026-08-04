@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-04T13:12:13.628Z",
+  "generated": "2026-08-04T13:23:06.779Z",
   "totalTools": 1411,
   "modules": 15,
   "tools": [
@@ -8047,7 +8047,7 @@
     {
       "name": "invoicing_computeInvoiceDateDue",
       "module": "invoicing",
-      "classification": "WRITE",
+      "classification": "READ",
       "description": "compute invoice date due",
       "paramCount": 2,
       "serviceParams": [
