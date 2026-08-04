@@ -174,6 +174,7 @@ type JobOperationProps = {
   job: Job;
   thumbnailPath: string | null;
   trackedEntities: TrackedEntity[];
+  isFirstOperation: boolean;
   workCenter: Promise<
     PostgrestSingleResponse<{
       name: string;
@@ -227,6 +228,7 @@ export const JobOperation = ({
   procedure,
   thumbnailPath,
   trackedEntities,
+  isFirstOperation,
   workCenter
 }: JobOperationProps) => {
   const { t } = useLingui();
@@ -296,8 +298,15 @@ export const JobOperation = ({
     operation: originalOperation,
     events,
     trackedEntities,
+    isFirstOperation,
     pauseInterval: isModalOpen,
-    procedure
+    procedure,
+    // First operation only (no labels to scan yet): auto-select the next unit.
+    // `activeStep` follows `trackedEntityId` via the sync effect above, so setting
+    // the URL param is all that's needed.
+    onAdvanceToUnit: (entity) => {
+      setParams({ trackedEntityId: entity.id });
+    }
   });
 
   const controlsHeight = useMemo(() => {
@@ -501,7 +510,7 @@ export const JobOperation = ({
                   <Trans>Model</Trans>
                 </TabsTrigger>
                 <TabsTrigger value="procedure">
-                  <Trans>Procedure</Trans>
+                  <Trans>Instructions</Trans>
                 </TabsTrigger>
                 <TabsTrigger value="chat">
                   <Trans>Chat</Trans>
@@ -1728,11 +1737,26 @@ export const JobOperation = ({
                             >
                               <Td>
                                 <div className="flex gap-2 items-center">
-                                  <span>{entity.id}</span>
+                                  <div className="flex flex-col min-w-0">
+                                    {entity.readableId ? (
+                                      <>
+                                        <span className="font-medium truncate">
+                                          {entity.readableId}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground font-mono truncate">
+                                          {entity.id}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className="font-mono truncate">
+                                        {entity.id}
+                                      </span>
+                                    )}
+                                  </div>
                                   {entity.id === trackedEntityId && (
-                                    <LuCheck className="text-emerald-500 size-4" />
+                                    <LuCheck className="text-emerald-500 size-4 shrink-0" />
                                   )}
-                                  <Copy text={entity.id} />
+                                  <Copy text={entity.readableId || entity.id} />
                                 </div>
                               </Td>
 

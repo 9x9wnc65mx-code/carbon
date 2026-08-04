@@ -120,6 +120,9 @@ msgstr "{from}–{to} of {count}"
 msgid "{inserted} inserted, {updated} updated, {0} need fixing, {1} skipped."
 msgstr "{inserted} inserted, {updated} updated, {0} need fixing, {1} skipped."
 
+msgid "{linesCount, plural, one {# line} other {# lines}}"
+msgstr "{linesCount, plural, one {# line} other {# lines}}"
+
 msgid "{maxSizeMB}MB limit"
 msgstr "{maxSizeMB}MB limit"
 
@@ -137,6 +140,9 @@ msgstr "{total} phases to get your company live on Carbon. Each one ends at a ch
 
 msgid "{total} phases to go live"
 msgstr "{total} phases to go live"
+
+msgid "{totalQuantity, plural, one {# unit} other {# units}}"
+msgstr "{totalQuantity, plural, one {# unit} other {# units}}"
 
 msgid "{uncounted, plural, one {# uncounted line} other {# uncounted lines}}"
 msgstr "{uncounted, plural, one {# uncounted line} other {# uncounted lines}}"
@@ -776,6 +782,9 @@ msgstr "Add Step"
 msgid "Add steps to preview the operator view."
 msgstr "Add steps to preview the operator view."
 
+msgid "Add Stock Transfer"
+msgstr "Add Stock Transfer"
+
 msgid "Add Supplier"
 msgstr "Add Supplier"
 
@@ -1384,6 +1393,9 @@ msgstr "Are you sure you want to delete the sales order line for {0} {1}? This c
 #. placeholder {0}: scrapReason.name
 msgid "Are you sure you want to delete the scrap reason: {0}? This cannot be undone."
 msgstr "Are you sure you want to delete the scrap reason: {0}? This cannot be undone."
+
+msgid "Are you sure you want to delete the serial number sequence for {itemLabel}? This cannot be undone."
+msgstr "Are you sure you want to delete the serial number sequence for {itemLabel}? This cannot be undone."
 
 msgid "Are you sure you want to delete the shift: {name} from {locationName}? This cannot be undone."
 msgstr "Are you sure you want to delete the shift: {name} from {locationName}? This cannot be undone."
@@ -2310,6 +2322,9 @@ msgstr "Choose a batch number"
 msgid "Choose a company"
 msgstr "Choose a company"
 
+msgid "Choose a row on the left to see where its stock can come from."
+msgstr "Choose a row on the left to see where its stock can come from."
+
 msgid "Choose a serial number"
 msgstr "Choose a serial number"
 
@@ -3156,6 +3171,9 @@ msgstr "Create Revision"
 
 msgid "Create Rule"
 msgstr "Create Rule"
+
+msgid "Create Transfer"
+msgstr "Create Transfer"
 
 msgid "Create User"
 msgstr "Create User"
@@ -4789,6 +4807,9 @@ msgstr "Edit Scheduled Maintenance"
 msgid "Edit Sequence"
 msgstr "Edit Sequence"
 
+msgid "Edit Serial Number"
+msgstr "Edit Serial Number"
+
 msgid "Edit Service"
 msgstr "Edit Service"
 
@@ -5031,9 +5052,6 @@ msgstr "Enter a quantity between 1 and {0}."
 msgid "Enter and approve vendor bills against a PO (three-way match)"
 msgstr "Enter and approve vendor bills against a PO (three-way match)"
 
-msgid "Enter or scan serial number"
-msgstr "Enter or scan serial number"
-
 msgid "Enter PO number"
 msgstr "Enter PO number"
 
@@ -5057,9 +5075,6 @@ msgstr "Entities to split off"
 
 msgid "Entity"
 msgstr "Entity"
-
-msgid "Entity is {status}"
-msgstr "Entity is {status}"
 
 msgid "Entity Type"
 msgstr "Entity Type"
@@ -5144,9 +5159,6 @@ msgstr "Error removing model from sales invoice line"
 
 msgid "Error removing model from sales order line"
 msgstr "Error removing model from sales order line"
-
-msgid "Error validating serial number"
-msgstr "Error validating serial number"
 
 msgid "Escalate to the project leads"
 msgstr "Escalate to the project leads"
@@ -6589,6 +6601,9 @@ msgstr "Income Statement"
 msgid "Income/Balance"
 msgstr "Income/Balance"
 
+msgid "incoming"
+msgstr "incoming"
+
 msgid "Incoming"
 msgstr "Incoming"
 
@@ -6919,9 +6934,6 @@ msgstr "item"
 msgid "Item"
 msgstr "Item"
 
-msgid "Item {scannedItem} is not the same as the item {expectedItem}"
-msgstr "Item {scannedItem} is not the same as the item {expectedItem}"
-
 msgid "Item / Location"
 msgstr "Item / Location"
 
@@ -6963,6 +6975,9 @@ msgstr "Item must match a selected type AND a selected group"
 
 msgid "Item must match a selected type OR a selected group"
 msgstr "Item must match a selected type OR a selected group"
+
+msgid "Item Name"
+msgstr "Item Name"
 
 msgid "Item Scope"
 msgstr "Item Scope"
@@ -8275,6 +8290,9 @@ msgstr "New Sales Order Line"
 msgid "New Scheduled Maintenance"
 msgstr "New Scheduled Maintenance"
 
+msgid "New Serial Number"
+msgstr "New Serial Number"
+
 msgid "New Service"
 msgstr "New Service"
 
@@ -8524,8 +8542,14 @@ msgstr "No issue types configured"
 msgid "No items"
 msgstr "No items"
 
+msgid "No items have inventory activity here yet."
+msgstr "No items have inventory activity here yet."
+
 msgid "No lines to map"
 msgstr "No lines to map"
+
+msgid "No lines yet"
+msgstr "No lines yet"
 
 msgid "No locations found."
 msgstr "No locations found."
@@ -8541,6 +8565,9 @@ msgstr "No matches for \"{query}\". Try a different search term."
 
 msgid "No matches. Type to create one."
 msgstr "No matches. Type to create one."
+
+msgid "No matching bins"
+msgstr "No matching bins"
 
 msgid "No new notifications"
 msgstr "No new notifications"
@@ -8568,6 +8595,9 @@ msgstr "No option found."
 
 msgid "No options found."
 msgstr "No options found."
+
+msgid "No other bins hold this item"
+msgstr "No other bins hold this item"
 
 msgid "No other employees found. Add employees to enable ownership transfer."
 msgstr "No other employees found. Add employees to enable ownership transfer."
@@ -8653,8 +8683,14 @@ msgstr "No sorts applied to this view"
 msgid "No stock"
 msgstr "No stock"
 
+msgid "No stock at this location"
+msgstr "No stock at this location"
+
 msgid "No stockout projected in the next 48 weeks"
 msgstr "No stockout projected in the next 48 weeks"
+
+msgid "No storage unit"
+msgstr "No storage unit"
 
 msgid "No suppliers yet"
 msgstr "No suppliers yet"
@@ -8758,6 +8794,13 @@ msgstr "Notes"
 msgid "Notes (optional)"
 msgstr "Notes (optional)"
 
+#. placeholder {0}: search.trim()
+msgid "Nothing at this location matches \"{0}\"."
+msgstr "Nothing at this location matches \"{0}\"."
+
+msgid "Nothing else at this location has stock to pull from."
+msgstr "Nothing else at this location has stock to pull from."
+
 msgid "Nothing in the archive"
 msgstr "Nothing in the archive"
 
@@ -8796,6 +8839,9 @@ msgstr "Oldest first"
 
 msgid "On cutover day, work the checklist below in order. Acceptance tests come from your in-scope requirements. Support details are at the bottom."
 msgstr "On cutover day, work the checklist below in order. Acceptance tests come from your in-scope requirements. Support details are at the bottom."
+
+msgid "on hand"
+msgstr "on hand"
 
 msgid "On hand"
 msgstr "On hand"
@@ -8931,6 +8977,9 @@ msgstr "Open in MES"
 
 msgid "Open Issues"
 msgstr "Open Issues"
+
+msgid "Open job demand plus outstanding transfers out of this bin"
+msgstr "Open job demand plus outstanding transfers out of this bin"
 
 msgid "Open jobs"
 msgstr "Open jobs"
@@ -9443,6 +9492,9 @@ msgstr "Pick List"
 
 msgid "Pick Order"
 msgstr "Pick Order"
+
+msgid "Pick the bin that needs stock, then pick the bins to pull it from."
+msgstr "Pick the bin that needs stock, then pick the bins to pull it from."
 
 msgid "Pick tracked item"
 msgstr "Pick tracked item"
@@ -10508,8 +10560,8 @@ msgstr "Remove Filters"
 msgid "Remove from Price List"
 msgstr "Remove from Price List"
 
-msgid "Remove item"
-msgstr "Remove item"
+msgid "Remove line"
+msgstr "Remove line"
 
 msgid "Remove order"
 msgstr "Remove order"
@@ -10758,6 +10810,9 @@ msgstr "Reverse the related journal entries"
 
 msgid "Reversed"
 msgstr "Reversed"
+
+msgid "Review"
+msgstr "Review"
 
 msgid "Review each item's changes, then confirm — releasing can't be undone."
 msgstr "Review each item's changes, then confirm — releasing can't be undone."
@@ -11079,6 +11134,12 @@ msgstr "Scan"
 msgid "Scan a label or search by item ID or tracking ID."
 msgstr "Scan a label or search by item ID or tracking ID."
 
+msgid "Scan or choose a batch number"
+msgstr "Scan or choose a batch number"
+
+msgid "Scan or choose a serial number"
+msgstr "Scan or choose a serial number"
+
 msgid "Scan or enter tracked entity ID, serial, or batch"
 msgstr "Scan or enter tracked entity ID, serial, or batch"
 
@@ -11090,9 +11151,6 @@ msgstr "Scan or search..."
 
 msgid "Scan or select a tracked entity from this lot to add it as a sample column, then record its result in the grid."
 msgstr "Scan or select a tracked entity from this lot to add it as a sample column, then record its result in the grid."
-
-msgid "Scan the tracking ID for this line"
-msgstr "Scan the tracking ID for this line"
 
 msgid "SCAR"
 msgstr "SCAR"
@@ -11193,6 +11251,9 @@ msgstr "Search fields..."
 msgid "Search for existing or create a new one"
 msgstr "Search for existing or create a new one"
 
+msgid "Search items or bins"
+msgstr "Search items or bins"
+
 msgid "Search Job"
 msgstr "Search Job"
 
@@ -11234,6 +11295,9 @@ msgstr "Select a assignee"
 
 msgid "Select a default approver"
 msgstr "Select a default approver"
+
+msgid "Select a destination"
+msgstr "Select a destination"
 
 msgid "Select a document"
 msgstr "Select a document"
@@ -11453,11 +11517,14 @@ msgstr "Serial items require a sales order"
 msgid "Serial Number"
 msgstr "Serial Number"
 
-msgid "Serial number not found"
-msgstr "Serial number not found"
-
 msgid "Serial Number:"
 msgstr "Serial Number:"
+
+msgid "Serial Numbers"
+msgstr "Serial Numbers"
+
+msgid "Serial numbers are only generated for serial- or batch-tracked items."
+msgstr "Serial numbers are only generated for serial- or batch-tracked items."
 
 msgid "Serial or Batch Tracking Required"
 msgstr "Serial or Batch Tracking Required"
@@ -11762,6 +11829,10 @@ msgstr "Show Supplier IDs"
 
 msgid "Show sync options"
 msgstr "Show sync options"
+
+#. placeholder {0}: data.length
+msgid "Showing {0} of {totalCount} — refine your search"
+msgstr "Showing {0} of {totalCount} — refine your search"
 
 msgid "Shown as a faint background behind every page of generated PDFs"
 msgstr "Shown as a faint background behind every page of generated PDFs"
@@ -13310,6 +13381,9 @@ msgstr "This is the month your fiscal year starts."
 msgid "This is the month your tax year starts."
 msgstr "This is the month your tax year starts."
 
+msgid "this item"
+msgstr "this item"
+
 msgid "This item is built via a configurator and resolves its components per-order; jobs created for it inherit the configurator's resolved BOM."
 msgstr "This item is built via a configurator and resolves its components per-order; jobs created for it inherit the configurator's resolved BOM."
 
@@ -13644,9 +13718,6 @@ msgstr "Tracked entity"
 
 msgid "Tracked Entity"
 msgstr "Tracked Entity"
-
-msgid "Tracked entity already picked"
-msgstr "Tracked entity already picked"
 
 msgid "Tracked entity ID is required but none was found"
 msgstr "Tracked entity ID is required but none was found"
