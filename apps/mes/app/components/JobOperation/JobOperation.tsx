@@ -1702,6 +1702,7 @@ export const JobOperation = ({
                             variant="secondary"
                             size="lg"
                             leftIcon={<LuBarcode />}
+                            onClick={serialModal.onOpen}
                           >
                             <Trans>Scan</Trans>
                           </Button>
