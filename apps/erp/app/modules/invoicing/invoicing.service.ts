@@ -1,6 +1,11 @@
 import type { Database, Json } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
-import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+import {
+  endOfMonth,
+  getLocalTimeZone,
+  parseDate,
+  today
+} from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import {
@@ -41,6 +46,12 @@ import type {
  * stale dateDue. The read is scoped by companyId for tenant isolation (defense
  * in depth alongside RLS) and uses maybeSingle so an absent row is data: null
  * (not an error) — keeping "missing" distinguishable from "failed".
+ *
+ * The term's calculationMethod decides the anchor for daysDue:
+ * - "Net": daysDue days after the issue date.
+ * - "End of Month": daysDue days after the end of the issue month.
+ * - "Day of Month": due on day daysDue of the month — the first occurrence on
+ *   or after the issue date, clamped to the month's length (31 → Feb 28).
  */
 export async function computeInvoiceDateDue(
   client: SupabaseClient<Database>,
@@ -55,7 +66,7 @@ export async function computeInvoiceDateDue(
 
   const paymentTerm = await client
     .from("paymentTerm")
-    .select("daysDue")
+    .select("daysDue, calculationMethod")
     .eq("id", paymentTermId)
     .eq("companyId", companyId)
     .maybeSingle();
@@ -67,10 +78,25 @@ export async function computeInvoiceDateDue(
   }
   if (!paymentTerm.data) return null;
 
+  const { daysDue, calculationMethod } = paymentTerm.data;
+
   try {
-    return parseDate(dateIssued)
-      .add({ days: paymentTerm.data.daysDue })
-      .toString();
+    const issued = parseDate(dateIssued);
+    switch (calculationMethod) {
+      case "End of Month":
+        return endOfMonth(issued).add({ days: daysDue }).toString();
+      case "Day of Month": {
+        // set() clamps daysDue to the month's length
+        const sameMonth = issued.set({ day: daysDue });
+        return (
+          sameMonth.compare(issued) >= 0
+            ? sameMonth
+            : issued.add({ months: 1 }).set({ day: daysDue })
+        ).toString();
+      }
+      default:
+        return issued.add({ days: daysDue }).toString();
+    }
   } catch {
     return null;
   }
