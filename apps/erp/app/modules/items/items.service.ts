@@ -1261,6 +1261,11 @@ export async function getMaterialsList(
   );
 }
 
+function buildSearchFilter(search: string, columns: string[]) {
+  const value = `"%${search.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}%"`;
+  return columns.map((column) => `${column}.ilike.${value}`).join(",");
+}
+
 export async function getMaterialDimension(
   client: SupabaseClient<Database>,
   id: string
@@ -1282,7 +1287,9 @@ export async function getMaterialDimensions(
     .or(`companyId.eq.${companyId},companyId.is.null`);
 
   if (args?.search) {
-    query = query.ilike("name", `%${args.search}%`);
+    query = query.or(
+      buildSearchFilter(args.search, ["name", "formName", "id"])
+    );
   }
 
   if (args) {
@@ -1329,7 +1336,9 @@ export async function getMaterialFinishes(
     .or(`companyId.eq.${companyId},companyId.is.null`);
 
   if (args?.search) {
-    query = query.ilike("name", `%${args.search}%`);
+    query = query.or(
+      buildSearchFilter(args.search, ["name", "substanceName", "id"])
+    );
   }
 
   if (args) {
@@ -1410,7 +1419,9 @@ export async function getMaterialGrades(
     .or(`companyId.eq.${companyId},companyId.is.null`);
 
   if (args?.search) {
-    query = query.ilike("name", `%${args.search}%`);
+    query = query.or(
+      buildSearchFilter(args.search, ["name", "substanceName", "id"])
+    );
   }
 
   if (args) {
@@ -4691,7 +4702,14 @@ export async function getMaterialTypes(
     .or(`companyId.eq.${companyId},companyId.is.null`);
 
   if (args?.search) {
-    query = query.ilike("name", `%${args.search}%`);
+    query = query.or(
+      buildSearchFilter(args.search, [
+        "name",
+        "substanceName",
+        "formName",
+        "id"
+      ])
+    );
   }
 
   query = setGenericQueryFilters(query, args ?? {});
