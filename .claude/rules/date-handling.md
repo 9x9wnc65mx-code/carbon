@@ -42,17 +42,25 @@ must not do.
 `getLocalTimeZone()` on a server is the SERVER's zone, not the user's, and
 `new Date().toISOString().split("T")[0]` is the UTC day — both are banned in
 server paths (`*.service.ts`, `*.server.ts`, `packages/jobs`,
-`supabase/functions`) and enforced by the `no-local-timezone` conformance check
-in `@carbon/checks`. Instead:
+`supabase/functions`, and **route `loader`/`action` bodies** under
+`apps/{erp,mes}/app/routes`) and enforced by the `no-local-timezone` conformance
+check in `@carbon/checks`. Route modules are server AND client in one file, so
+`sources/server-files.ts` masks out the default export, `clientLoader`/
+`clientAction`, and PascalCase/`use*` declarations before scanning — module-level
+helpers a loader calls ARE scanned. Instead:
 
 - `datetime.timestamp()` — UTC instant string for `createdAt`/`updatedAt`/instant columns (the only tz-free method).
 - `datetime.today(tz)` / `datetime.now(tz)` — calendar day / zoned now in an explicit IANA timezone.
 - `datetime.businessDay(instantStr, tz)` — which day a stored instant falls on in tz.
 - Resolve `tz` with `getCompanyTimeZone(client, companyId)` (ledger-scoped: posting dates, accounting periods, sequences, aging) or `getLocationTimeZone(client, locationId, companyId)` (operational: scheduling, shifts, MES, expiry) from `@carbon/database`. Deno edge functions use the mirror in `functions/lib/datetime.ts` (`getCompanyTimeZoneDb`/`getLocationTimeZoneDb` for Kysely).
-- SQL functions use `company_today(p_company_id)` (migration `20260805023439`) instead of `CURRENT_DATE` for business dates.
+- SQL functions use `company_today(p_company_id)` (migration `20260805023439`) or `location_today(p_location_id, p_company_id)` (migration `20260805201623`) instead of `CURRENT_DATE` for business dates. Read-only "is it overdue?" views still compare against `CURRENT_DATE` — they render a status rather than storing one.
 
-Client components keep `today(getLocalTimeZone())` etc. — in the browser the
-local timezone IS the user's and is correct for pickers and display.
+Client components keep `today(getLocalTimeZone())` etc. for **display** — in the
+browser the local timezone IS the user's and is correct for pickers and
+formatting. But a form default that will be **persisted as a business date**
+(`postingDate`, `orderDate`, `dateIssued`, `openDate`, …) must use
+`useCompanyToday()` from `~/hooks`: the stored value belongs to the company's
+calendar, not to whichever zone the person filling the form happens to be in.
 
 ## Repo patterns to copy
 

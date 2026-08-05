@@ -56,6 +56,7 @@ import { DateKanban } from "~/modules/production/ui/Schedule/Kanban/DateKanban";
 import { ScheduleNavigation } from "~/modules/production/ui/Schedule/Kanban/ScheuleNavigation";
 import { getLocationsList } from "~/modules/resources";
 import { getTagsList } from "~/modules/shared";
+import { getLocationTimeZone } from "~/modules/shared/timezone.server";
 import { getUserDefaults } from "~/modules/users/users.server";
 import { usePeople } from "~/stores";
 import type { Handle } from "~/utils/handle";
@@ -83,11 +84,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const filterParam = searchParams.getAll("filter");
   const view = (searchParams.get("view") as ViewType) ?? "week";
   const dateParam = searchParams.get("date");
-
-  const timezone = getLocalTimeZone();
-  const currentDate = dateParam
-    ? parseDate(dateParam)
-    : toCalendarDate(now(timezone));
 
   let selectedSalesOrderIds: string[] = [];
   let selectedTags: string[] = [];
@@ -148,6 +144,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
     locationId = locations.data?.[0].id as string;
   }
+
+  // The board's "today" and its week/month windows belong to the plant being
+  // scheduled, not the server — resolved after locationId settles.
+  const timezone = await getLocationTimeZone(client, locationId, companyId);
+  const currentDate = dateParam
+    ? parseDate(dateParam)
+    : toCalendarDate(now(timezone));
 
   // Calculate date range based on view
   let startDate: string;

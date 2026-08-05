@@ -82,7 +82,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...locationData,
     name: "Headquarters",
     companyId,
-    timezone: getLocalTimeZone(),
+    // timezone comes from locationData — HQ shares the company's timezone.
     createdBy: userId
   });
 

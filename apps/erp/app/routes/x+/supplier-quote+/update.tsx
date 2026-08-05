@@ -1,14 +1,14 @@
 import { requirePermissions } from "@carbon/auth/auth.server";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import type { ActionFunctionArgs } from "react-router";
 import { getCurrencyByCode } from "~/modules/accounting";
 import { isSupplierQuoteLocked } from "~/modules/purchasing";
+import { getCompanyTimeZone } from "~/modules/shared/timezone.server";
 import { requireUnlockedBulk } from "~/utils/lockedGuard.server";
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { client, companyGroupId, userId } = await requirePermissions(request, {
-    update: "purchasing"
-  });
+  const { client, companyGroupId, companyId, userId } =
+    await requirePermissions(request, { update: "purchasing" });
 
   const formData = await request.formData();
   const ids = formData.getAll("ids");
@@ -100,11 +100,16 @@ export async function action({ request }: ActionFunctionArgs) {
         .in("id", ids as string[]);
 
     case "expirationDate":
+      // Expiry is judged on the company's calendar — one set of books, one
+      // "today" — not the server's or the editing user's.
+      const companyToday = datetime
+        .today(await getCompanyTimeZone(client, companyId))
+        .toString();
       return await client
         .from("supplierQuote")
         .update({
           status: value
-            ? today(getLocalTimeZone()).toString() > value
+            ? companyToday > value
               ? "Expired"
               : "Active"
             : "Active",

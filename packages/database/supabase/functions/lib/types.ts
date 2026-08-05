@@ -76074,6 +76074,10 @@ export type Database = {
         }[]
       }
       jsonb_to_text_array: { Args: { "": Json }; Returns: string[] }
+      location_today: {
+        Args: { p_company_id: string; p_location_id: string }
+        Returns: string
+      }
       matchIntercompanyTransactions: {
         Args: { p_company_group_id: string }
         Returns: {

@@ -2,7 +2,7 @@ import { assertIsPost, error, success } from "@carbon/auth";
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { flash } from "@carbon/auth/session.server";
 import { validationError, validator } from "@carbon/form";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { redirect, useLoaderData, useNavigate } from "react-router";
 import {
@@ -11,10 +11,13 @@ import {
   upsertCustomerItemPriceOverride
 } from "~/modules/sales";
 import PriceOverrideForm from "~/modules/sales/ui/Pricing/PriceOverrideForm";
+import { getCompanyTimeZone } from "~/modules/shared/timezone.server";
 import { getParams, path } from "~/utils/path";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requirePermissions(request, { create: "sales" });
+  const { client, companyId } = await requirePermissions(request, {
+    create: "sales"
+  });
 
   const url = new URL(request.url);
   const customerId = url.searchParams.get("customerId") ?? undefined;
@@ -31,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       itemId: url.searchParams.get("itemId") ?? "",
       validFrom:
         url.searchParams.get("validFrom") ??
-        today(getLocalTimeZone()).toString()
+        datetime.today(await getCompanyTimeZone(client, companyId)).toString()
     },
     initialScope
   };
