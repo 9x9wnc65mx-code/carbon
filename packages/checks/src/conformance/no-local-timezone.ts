@@ -21,10 +21,12 @@ const BANNED = [
       "Server code: resolve company/location timezone and use datetime.today(tz) — getLocalTimeZone() is the process zone, not the user's."
   },
   {
+    // [^)]* also catches supplied instants: new Date(eventAt).toISOString()
+    // .slice(0, 10) is that event's UTC day, not its business day.
     pattern:
-      /new Date\(\)\s*\.toISOString\(\)\s*\.(?:split\(\s*["']T["']\s*\)\s*\[0\]|slice\(\s*0,\s*10\s*\))/g,
+      /new Date\([^)]*\)\s*\.toISOString\(\)\s*\.(?:split\(\s*["']T["']\s*\)\s*\[0\]|slice\(\s*0,\s*10\s*\))/g,
     message:
-      "Server code: this is the UTC calendar day — use datetime.today(tz) with the company/location timezone."
+      "Server code: this is the UTC calendar day — use datetime.today(tz) / datetime.businessDay(instant, tz) with the company/location timezone."
   },
   {
     pattern: /new Date\(\)\s*\.get(?:Day|Date|Month|FullYear|Hours|Minutes)\(/g,

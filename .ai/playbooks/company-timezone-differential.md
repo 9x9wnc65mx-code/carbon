@@ -15,8 +15,9 @@ timezone, not UTC — by setting a timezone whose calendar day differs from UTC.
 
 ## Steps
 ### 1. Pick a differential zone
-- If UTC time is BEFORE ~10:00, `Pacific/Kiritimati` (UTC+14) is already tomorrow.
-- If UTC time is AFTER ~12:00, `Pacific/Niue` (UTC-11) is still yesterday.
+- If UTC time is 10:00 OR LATER, `Pacific/Kiritimati` (UTC+14) is already tomorrow.
+- If UTC time is BEFORE 11:00, `Pacific/Niue` (UTC-11) is still yesterday.
+- (So one of the two always differs; between 10:00-11:00 UTC both do.)
 - Confirm in SQL: `SELECT now()::date, company_today('<companyId>');` — they must differ.
 
 ### 2. Set company timezone
@@ -28,13 +29,13 @@ timezone, not UTC — by setting a timezone whose calendar day differs from UTC.
 
 ### 3. Create a PO
 - /x/purchase-order/new → select supplier (first combobox) → requestSubmit "Save".
-- Verify: `SELECT "orderDate", "createdAt" FROM "purchaseOrder" ORDER BY "createdAt" DESC LIMIT 1;`
+- Verify: `SELECT "orderDate", "createdAt" FROM "purchaseOrder" WHERE "companyId"='<companyId>' ORDER BY "createdAt" DESC LIMIT 1;`
   → orderDate must be the COMPANY's day, createdAt shows the UTC instant.
 
 ### 4. Post an inventory adjustment (Deno edge-fn path)
 - /x/inventory/quantities → click the item row → "Update Inventory" button →
   modal is prefilled (Set Quantity, HQ location) → requestSubmit "Save".
-- Verify: `SELECT "postingDate", "createdAt" FROM "itemLedger" ORDER BY "createdAt" DESC LIMIT 1;`
+- Verify: `SELECT "postingDate", "createdAt" FROM "itemLedger" WHERE "companyId"='<companyId>' ORDER BY "createdAt" DESC LIMIT 1;`
   → postingDate = company day (proves functions/lib/datetime.ts + getCompanyTimeZoneDb).
 
 ### 5. Accounting period + journal (accounting enabled)
@@ -43,10 +44,10 @@ timezone, not UTC — by setting a timezone whose calendar day differs from UTC.
   for the adjustment to post a non-zero journal (FIFO/LIFO increases cost from
   empty layers = 0 = no journal). `UPDATE "itemCost" SET "costingMethod"='Average',"unitCost"=25 WHERE ...`.
 - Post an Increase adjustment (as in step 4).
-- Verify: `SELECT j."postingDate", ap."startDate", ap."endDate", ap."periodNumber", j.status FROM journal j JOIN "accountingPeriod" ap ON ap.id=j."accountingPeriodId" WHERE j."companyId"='<id>' ORDER BY j."createdAt" DESC LIMIT 1;`
+- Verify: `SELECT j."postingDate", ap."startDate", ap."endDate", ap."periodNumber", j.status FROM journal j JOIN "accountingPeriod" ap ON ap.id=j."accountingPeriodId" AND ap."companyId"=j."companyId" WHERE j."companyId"='<companyId>' ORDER BY j."createdAt" DESC LIMIT 1;`
   → journal.postingDate = company day; the period is lazily created for the
   company's month (proves getCurrentAccountingPeriod uses companyToday.year/month).
-- **costLedger must match itemLedger**: `SELECT "postingDate" FROM "costLedger" ORDER BY "createdAt" DESC LIMIT 1;`
+- **costLedger must match itemLedger**: `SELECT "postingDate" FROM "costLedger" WHERE "companyId"='<companyId>' ORDER BY "createdAt" DESC LIMIT 1;`
   must equal the itemLedger postingDate (both = company day). If costLedger shows
   the UTC day, a costLedger insert is missing `postingDate:` and fell back to
   `DEFAULT CURRENT_DATE` — regression guard.
@@ -69,5 +70,5 @@ timezone, not UTC — by setting a timezone whose calendar day differs from UTC.
   city/postalCode/countryCode → validation errors below the fields. Fill address first.
 - `agent-browser type "text"` without a ref treats the text as a selector and
   times out — always pass the element ref, or use the native-setter eval.
-- Constraint check: `UPDATE company SET timezone='Fake/Zone'` must FAIL
-  (company_timezone_valid) — use this as a negative test.
+- Constraint check: `UPDATE company SET timezone='Fake/Zone' WHERE id='<companyId>'`
+  must FAIL (company_timezone_valid) — use this as a negative test.

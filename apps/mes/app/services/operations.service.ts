@@ -659,8 +659,17 @@ export async function getJobMaterialsByOperationId(
       .select("companyId")
       .eq("id", operation.jobId)
       .single();
+    // A missing job row must not silently degrade the expiry cutoff to UTC
+    // (getCompanyTimeZone("") resolves no company and falls back).
+    if (job.error || !job.data) {
+      throw new Error(
+        `Failed to resolve job ${operation.jobId} for the expiry check: ${
+          job.error?.message ?? "not found"
+        }`
+      );
+    }
     const todayStr = datetime
-      .today(await getCompanyTimeZone(client, job.data?.companyId ?? ""))
+      .today(await getCompanyTimeZone(client, job.data.companyId))
       .toString();
     expiredConsumed = await client
       .from("trackedEntity")

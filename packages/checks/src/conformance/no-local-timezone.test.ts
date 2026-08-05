@@ -21,6 +21,16 @@ describe("noLocalTimezone", () => {
     expect(v).toHaveLength(1);
   });
 
+  it("flags UTC day-slicing of a supplied instant", () => {
+    const cases = [
+      'const day = new Date(eventAt).toISOString().split("T")[0];',
+      "const day = new Date(entry.clockIn).toISOString().slice(0, 10);"
+    ];
+    for (const ts of cases) {
+      expect(noLocalTimezone.scan("f.ts", ts)).toHaveLength(1);
+    }
+  });
+
   it("flags local date-parts of now", () => {
     const cases = [
       "const today = dayNames[new Date().getDay()];",

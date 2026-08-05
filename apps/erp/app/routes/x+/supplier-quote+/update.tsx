@@ -1,5 +1,7 @@
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { datetime } from "@carbon/utils";
+import type { CalendarDate } from "@internationalized/date";
+import { parseDate } from "@internationalized/date";
 import type { ActionFunctionArgs } from "react-router";
 import { getCurrencyByCode } from "~/modules/accounting";
 import { isSupplierQuoteLocked } from "~/modules/purchasing";
@@ -99,25 +101,38 @@ export async function action({ request }: ActionFunctionArgs) {
         })
         .in("id", ids as string[]);
 
-    case "expirationDate":
+    case "expirationDate": {
+      // Reject non-canonical dates before comparing — a malformed string would
+      // otherwise produce a status that disagrees with the stored date.
+      let expirationDate: CalendarDate | null = null;
+      if (value) {
+        try {
+          expirationDate = parseDate(value);
+        } catch {
+          return {
+            error: { message: "Invalid expiration date" },
+            data: null
+          };
+        }
+      }
       // Expiry is judged on the company's calendar — one set of books, one
       // "today" — not the server's or the editing user's.
-      const companyToday = datetime
-        .today(await getCompanyTimeZone(client, companyId))
-        .toString();
+      const companyToday = datetime.today(
+        await getCompanyTimeZone(client, companyId)
+      );
       return await client
         .from("supplierQuote")
         .update({
-          status: value
-            ? companyToday > value
+          status:
+            expirationDate && companyToday.compare(expirationDate) > 0
               ? "Expired"
-              : "Active"
-            : "Active",
-          expirationDate: value ? value : null,
+              : "Active",
+          expirationDate: expirationDate ? expirationDate.toString() : null,
           updatedBy: userId,
           updatedAt: new Date().toISOString()
         })
         .in("id", ids as string[]);
+    }
     default:
       return { error: { message: "Invalid field" }, data: null };
   }

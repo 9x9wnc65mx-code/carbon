@@ -107,6 +107,13 @@ export async function getCompanyTimeZone(
     .select("timezone")
     .eq("id", companyId)
     .maybeSingle();
+  // A failed read must not silently become a (wrong) business calendar —
+  // fall back to UTC only when the query succeeded and found nothing.
+  if (company.error) {
+    throw new Error(
+      `Failed to resolve company timezone: ${company.error.message}`
+    );
+  }
   return company.data?.timezone ?? "UTC";
 }
 
@@ -141,5 +148,10 @@ export async function getLocationTimeZone(
     .eq("id", locationId)
     .eq("companyId", companyId)
     .maybeSingle();
+  if (location.error) {
+    throw new Error(
+      `Failed to resolve location timezone: ${location.error.message}`
+    );
+  }
   return location.data?.timezone || getCompanyTimeZone(db, companyId);
 }

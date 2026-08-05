@@ -33,7 +33,7 @@ Same pattern in two loader-called helpers — give `getWeekBounds` a `tz: string
 - `apps/erp/app/routes/x+/person+/$personId.timecard.tsx:70-79` (loader at :148)
 - `apps/mes/app/routes/x+/timecard.tsx:53-61` (loader at :125)
 
-`from` = `startOfWeek(today(tz).add({weeks: offset}), "en-GB").toDate(tz).toISOString()`; `to` = next Monday's midnight minus 1ms (preserves the current lte semantics). Do NOT touch `getShiftTimesForDate` / `toLocalDatetimeInput` — verified client-called only (datetime-local input prefill; browser tz is correct there).
+Both consume `datetime.weekBounds(tz, offset?)` — the tested Monday→Sunday helper in `@carbon/utils` (Deno mirror in `functions/lib/datetime.ts`) — rather than hand-rolling `startOfWeek(...).toDate(tz)` per site. Do NOT touch `getShiftTimesForDate` / `toLocalDatetimeInput` — verified client-called only (datetime-local input prefill; browser tz is correct there).
 
 ### 4. Sequence preview tz (#1, #10)
 
@@ -58,8 +58,8 @@ Edit `packages/database/supabase/migrations/20260805201623_company-today-sql-wri
 
 ### 8. Jobs-package local-day fixes (#8, #13, + flagged)
 
-- `packages/jobs/src/inngest/functions/extraction/extract-document.ts:24` — use `getUTCFullYear/getUTCMonth/getUTCDate` (document-intrinsic date; UTC makes parse→format roundtrip stable under any process tz).
-- `packages/jobs/src/inngest/functions/scheduled/audit-archive.ts:52-54` — same UTC getters for the archive path (storage key, comment it).
+- `packages/jobs/src/inngest/functions/extraction/extract-document.ts:24` — non-ISO text is parsed by `Date.parse` in the PROCESS zone, so local getters are the symmetric round-trip (ISO forms short-circuit earlier); UTC getters would shift the written date west of UTC.
+- `packages/jobs/src/inngest/functions/scheduled/audit-archive.ts:52-54` — archive path (storage key) derives from `datetime.today("UTC")` — explicit UTC calendar via the sanctioned API.
 - `packages/database/supabase/functions/update-purchased-prices/index.ts:219` — replace the `setFullYear(getFullYear()-1)` construction with instant arithmetic (`new Date(Date.now() - 365 * 86400_000)`) — rolling window, day-precision irrelevant.
 
 ### 9. ISO-week dedup (#9)

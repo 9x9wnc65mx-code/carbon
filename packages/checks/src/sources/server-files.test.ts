@@ -75,6 +75,53 @@ describe("maskClientCode", () => {
     expect(scan(src)).toHaveLength(0);
   });
 
+  it("does not swallow server code after an expression-bodied component", () => {
+    const src = [
+      "const Toolbar = () => null;",
+      "",
+      "export async function loader() {",
+      "  const d = today(getLocalTimeZone());",
+      "}"
+    ].join("\n");
+    const violations = scan(src);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.line).toBe(4);
+  });
+
+  it("closes a paren-wrapped expression-bodied component at its `)` closer", () => {
+    const src = [
+      "const Header = () => (",
+      "  <div>{today(getLocalTimeZone()).toString()}</div>",
+      ");",
+      "",
+      "export async function loader() {",
+      "  const d = today(getLocalTimeZone());",
+      "}"
+    ].join("\n");
+    const violations = scan(src);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.line).toBe(6);
+  });
+
+  it("keeps masking a hook whose signature spans multiple lines", () => {
+    // The `) {` that closes a multi-line parameter list must NOT end the
+    // region — the body is still ahead.
+    const src = [
+      "function useProgressByOperation(",
+      "  items: Item[]",
+      ") {",
+      "  return now(getLocalTimeZone());",
+      "}",
+      "",
+      "export async function loader() {",
+      "  const d = today(getLocalTimeZone());",
+      "}"
+    ].join("\n");
+    const violations = scan(src);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.line).toBe(8);
+  });
+
   it("resumes scanning after a client region closes", () => {
     const src = [
       "export default function Route() {",

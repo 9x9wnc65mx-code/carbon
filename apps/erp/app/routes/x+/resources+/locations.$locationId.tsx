@@ -44,7 +44,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   assertIsPost(request);
-  const { client, userId } = await requirePermissions(request, {
+  const { client, companyId, userId } = await requirePermissions(request, {
     create: "resources"
   });
 
@@ -76,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // location.timezone may have changed — drop the cached resolution.
-  await invalidateLocationTimeZone(id);
+  await invalidateLocationTimeZone(id, companyId);
 
   throw redirect(
     path.to.locations,

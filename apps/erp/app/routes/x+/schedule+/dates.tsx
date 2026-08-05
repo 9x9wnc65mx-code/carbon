@@ -25,7 +25,6 @@ import {
 import {
   endOfMonth,
   endOfWeek,
-  getLocalTimeZone,
   now,
   parseDate,
   startOfMonth,
@@ -499,7 +498,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     tags: tags.data ?? [],
     locationId,
     view,
-    currentDate: currentDate.toString()
+    currentDate: currentDate.toString(),
+    timezone
   };
 }
 
@@ -529,10 +529,9 @@ function DateKanbanSchedule() {
     tags,
     locationId,
     view,
-    currentDate
+    currentDate,
+    timezone
   } = useLoaderData<typeof loader>();
-
-  const timezone = getLocalTimeZone();
 
   // Reformat column titles using user locale
   const columns = useMemo(() => {
@@ -655,25 +654,24 @@ function DateKanbanSchedule() {
 
   const getDateSpanLabel = useCallback(
     (date: typeof parsedDate, viewType: ViewType) => {
-      const tz = getLocalTimeZone();
       if (viewType === "week") {
         const weekStart = startOfWeek(date, "en-GB");
         const weekEnd = endOfWeek(date, "en-GB");
-        return `${weekStart.toDate(tz).toLocaleDateString(locale, {
+        return `${weekStart.toDate(timezone).toLocaleDateString(locale, {
           month: "short",
           day: "numeric"
-        })} - ${weekEnd.toDate(tz).toLocaleDateString(locale, {
+        })} - ${weekEnd.toDate(timezone).toLocaleDateString(locale, {
           month: "short",
           day: "numeric"
         })}`;
       } else {
-        return date.toDate(tz).toLocaleDateString(locale, {
+        return date.toDate(timezone).toLocaleDateString(locale, {
           month: "short",
           year: "numeric"
         });
       }
     },
-    [locale]
+    [locale, timezone]
   );
 
   const getSpanStartDate = useCallback(

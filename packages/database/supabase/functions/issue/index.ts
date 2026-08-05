@@ -17,7 +17,7 @@ import { Database } from "../lib/types.ts";
 import { TrackedEntityAttributes, credit, debit, journalReference } from "../lib/utils.ts";
 
 import { buildBatchSplitRecords } from "../shared/batch-split.ts";
-import { getCurrentAccountingPeriod } from "../shared/get-accounting-period.ts";
+import { getAccountingPeriodForDate } from "../shared/get-accounting-period.ts";
 import { getNextSequence } from "../shared/get-next-sequence.ts";
 import { getNextSerialNumbers } from "../shared/get-next-serial-number.ts";
 import {
@@ -449,7 +449,9 @@ async function issueJobOperationMaterials(
     }
 
     if (journalLineInserts.length > 0) {
-      const accountingPeriodId = await getCurrentAccountingPeriod(client, companyId, trx);
+      // Resolve the period from the SAME hoisted `today` the ledger rows used —
+      // a midnight rollover mid-transaction must not split journal and ledger.
+      const accountingPeriodId = await getAccountingPeriodForDate(client, companyId, trx, today);
       const journalEntryId = await getNextSequence(trx, "journalEntry", companyId);
 
       const journalResult = await trx
@@ -458,7 +460,7 @@ async function issueJobOperationMaterials(
           journalEntryId,
           accountingPeriodId,
           description: `Material Issue to Job ${job?.jobId ?? jobId}`,
-          postingDate: datetime.today(await getCompanyTimeZone(client, companyId)).toString(),
+          postingDate: today,
           companyId,
           sourceType: "Job Consumption",
           status: "Posted",
@@ -715,7 +717,8 @@ async function createMaterialWipEntries(
 
   if (journalLineInserts.length === 0) return;
 
-  const accountingPeriodId = await getCurrentAccountingPeriod(client, companyId, trx);
+  // Same hoisted `today` as this function's ledger rows (see above).
+  const accountingPeriodId = await getAccountingPeriodForDate(client, companyId, trx, today);
   const journalEntryId = await getNextSequence(trx, "journalEntry", companyId);
 
   const journalResult = await trx
@@ -724,7 +727,7 @@ async function createMaterialWipEntries(
       journalEntryId,
       accountingPeriodId,
       description,
-      postingDate: datetime.today(await getCompanyTimeZone(client, companyId)).toString(),
+      postingDate: today,
       companyId,
       sourceType: "Job Consumption",
       status: "Posted",

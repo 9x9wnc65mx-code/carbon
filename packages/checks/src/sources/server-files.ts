@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import type { SqlFile } from "./migrations";
 
@@ -43,6 +43,9 @@ const CLIENT_REGION_START = [
 ];
 
 function walk(dir: string, out: string[], extensions: string[]): void {
+  // A missing root (e.g. a partial checkout) yields no findings for it rather
+  // than aborting the whole scan.
+  if (!existsSync(dir)) return;
   for (const entry of readdirSync(dir)) {
     if (entry === "node_modules" || entry.startsWith(".")) continue;
     const path = join(dir, entry);
@@ -58,12 +61,27 @@ function walk(dir: string, out: string[], extensions: string[]): void {
   }
 }
 
+const netCount = (line: string, open: string, close: string): number =>
+  line.split(open).length - line.split(close).length;
+
+/**
+ * A declaration that begins AND ends on one line (`const Toolbar = () => null;`)
+ * opens no block, so it must not open a region — otherwise everything after it
+ * (including a later `loader`) would be masked until a column-0 closer that
+ * never comes.
+ */
+const isSingleLineDeclaration = (line: string): boolean =>
+  line.trimEnd().endsWith(";") &&
+  netCount(line, "{", "}") <= 0 &&
+  netCount(line, "(", ")") <= 0;
+
 /**
  * Blanks every component/hook/clientLoader/clientAction body, leaving the
  * server half of a route module. Line numbering is preserved so violations
  * still point at the real line. A region runs from its declaration to the next
- * column-0 `}` — reliable because the repo is Biome-formatted, so a top-level
- * closing brace is never indented.
+ * column-0 `}` or `)` (`}` for block bodies, `)` for paren-wrapped
+ * expression-bodied arrows) — reliable because the repo is Biome-formatted, so
+ * a top-level closer is never indented.
  */
 export function maskClientCode(contents: string): string {
   const lines = contents.split("\n");
@@ -72,11 +90,20 @@ export function maskClientCode(contents: string): string {
 
   lines.forEach((line, i) => {
     if (!inClientRegion && CLIENT_REGION_START.some((re) => re.test(line))) {
+      if (isSingleLineDeclaration(line)) {
+        kept[i] = "";
+        return;
+      }
       inClientRegion = true;
     }
     if (inClientRegion) {
       kept[i] = "";
-      if (line.startsWith("}")) inClientRegion = false;
+      // `}`/`};` closes a block body; a bare `)`/`);` closes a paren-wrapped
+      // expression body. A `) {`-style line is a multi-line SIGNATURE closer —
+      // the body is still ahead, so it must not end the region.
+      if (line.startsWith("}") || /^\)\s*;?\s*$/.test(line)) {
+        inClientRegion = false;
+      }
     }
   });
 

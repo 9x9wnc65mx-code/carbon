@@ -10,13 +10,23 @@ ALTER DATABASE postgres SET timezone TO 'UTC';
 ALTER TABLE "company"
   ADD COLUMN "timezone" TEXT NOT NULL DEFAULT 'UTC';
 
--- Backfill from each company's first location ("first location = HQ" assumption).
+-- Backfill from each company's first location ("first location = HQ"
+-- assumption). location.timezone was free text before the picker existed, so
+-- only copy values Postgres can actually resolve — an unresolvable name would
+-- make every later `now() AT TIME ZONE "timezone"` (company_today) raise at
+-- posting time, and the validity CHECK added later is NOT VALID so it would
+-- never reject the backfilled row. Companies with no resolvable location
+-- timezone keep the 'UTC' default.
 UPDATE "company" c
 SET "timezone" = l."timezone"
 FROM (
   SELECT DISTINCT ON ("companyId") "companyId", "timezone"
   FROM "location"
-  WHERE "timezone" IS NOT NULL AND "timezone" <> ''
+  WHERE "timezone" IS NOT NULL
+    AND "timezone" <> ''
+    AND EXISTS (
+      SELECT 1 FROM pg_timezone_names tz WHERE tz.name = "location"."timezone"
+    )
   ORDER BY "companyId", "createdAt" ASC
 ) l
 WHERE c."id" = l."companyId";

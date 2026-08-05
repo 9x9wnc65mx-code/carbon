@@ -26,16 +26,23 @@ function offsetLabel(zone: string): string {
 }
 
 let cachedTimezones: TimezoneGroup[] | null = null;
+let cachedAt = 0;
+// Offset labels show the CURRENT UTC offset, which changes at DST transitions —
+// an immortal memo on a long-lived server would keep showing the old offset.
+// One hour bounds the staleness while still amortizing the ~420 Intl lookups.
+const CACHE_TTL_MS = 60 * 60 * 1000;
 
 /**
  * IANA timezones from the runtime's own tzdata (`Intl.supportedValuesOf`) —
  * no hardcoded list to drift. Grouped by region, labeled with the current UTC
  * offset. Canonical IANA names, so every value is also valid for Postgres
  * `AT TIME ZONE` (used by `company_today()`). Memoized: the ~420 offset
- * lookups run once, on first use, not at module load.
+ * lookups run at most once per hour, not per render.
  */
 export function getTimezones(): TimezoneGroup[] {
-  if (cachedTimezones) return cachedTimezones;
+  if (cachedTimezones && Date.now() - cachedAt < CACHE_TTL_MS) {
+    return cachedTimezones;
+  }
 
   const zones: string[] =
     typeof Intl.supportedValuesOf === "function"
@@ -82,6 +89,7 @@ export function getTimezones(): TimezoneGroup[] {
       label,
       options: options.sort((a, b) => a.label.localeCompare(b.label))
     }));
+  cachedAt = Date.now();
 
   return cachedTimezones;
 }

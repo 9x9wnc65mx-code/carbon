@@ -3420,13 +3420,17 @@ export async function postJournalEntry(
   // 2b. Enforce the period lifecycle. A manual JE posts as an "accounting"
   // source, so a Locked period still accepts it (adjustments are allowed);
   // only a Closed period rejects. Stamp the resolved period on the entry.
+  // The fallback date is persisted with the flip below so the posted journal
+  // can never carry a period from one day and a postingDate from another.
+  const postingDate =
+    entry.data.postingDate ??
+    datetime
+      .today(await getCompanyTimeZone(client, entry.data.companyId))
+      .toString();
   const period = await getOrCreateAccountingPeriod(
     client,
     entry.data.companyId,
-    entry.data.postingDate ??
-      datetime
-        .today(await getCompanyTimeZone(client, entry.data.companyId))
-        .toString(),
+    postingDate,
     "accounting"
   );
   if (period.error) {
@@ -3441,6 +3445,7 @@ export async function postJournalEntry(
       postedAt: new Date().toISOString(),
       postedBy: userId,
       accountingPeriodId: period.data,
+      postingDate,
       updatedBy: userId
     })
     .eq("id", id)

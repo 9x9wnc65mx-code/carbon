@@ -124,6 +124,7 @@ DECLARE
   v_journal_id INTEGER;
   v_period_id TEXT;
   v_journals_created INTEGER := 0;
+  v_posting_date DATE;
   v_journals_by_elim RECORD;
 BEGIN
   -- Check that user belongs to at least one company in this group
@@ -172,12 +173,27 @@ BEGIN
       RAISE EXCEPTION 'No elimination entity found for company group %', p_company_group_id;
     END IF;
 
-    -- Get active accounting period for elimination entity
+    -- The journal posts on company_today(v_elim_id), so resolve the period
+    -- CONTAINING that date — an Active flag alone can point at a different
+    -- month and split the journal from its posting date. Fall back to the
+    -- Active period only when no period covers the date (calendar not yet
+    -- generated), preserving the pre-timezone behavior.
+    v_posting_date := company_today(v_elim_id);
+
     SELECT "id" INTO v_period_id
     FROM "accountingPeriod"
     WHERE "companyId" = v_elim_id
-      AND "status" = 'Active'
+      AND "startDate" <= v_posting_date
+      AND "endDate" >= v_posting_date
     LIMIT 1;
+
+    IF v_period_id IS NULL THEN
+      SELECT "id" INTO v_period_id
+      FROM "accountingPeriod"
+      WHERE "companyId" = v_elim_id
+        AND "status" = 'Active'
+      LIMIT 1;
+    END IF;
 
     -- Create elimination journal on this elimination entity
     INSERT INTO "journal" ("description", "accountingPeriodId", "companyId", "postingDate")
@@ -186,7 +202,7 @@ BEGIN
       v_period_id,
       v_elim_id,
       -- Ledger date: the elimination entity's calendar, not the database's.
-      company_today(v_elim_id)
+      v_posting_date
     )
     RETURNING "id" INTO v_journal_id;
 

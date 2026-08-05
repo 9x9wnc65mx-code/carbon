@@ -107,10 +107,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const weekOffset = parseInt(url.searchParams.get("week") ?? "0", 10);
   // Week runs Monday → Sunday on the company calendar (one payroll boundary
   // per books, not the server's zone).
-  const { from, to } = datetime.weekBounds(
-    await getCompanyTimeZone(client, companyId),
-    weekOffset
-  );
+  const tz = await getCompanyTimeZone(client, companyId);
+  const { from, to } = datetime.weekBounds(tz, weekOffset);
+  // Calendar days of the window on the COMPANY calendar — the client renders
+  // these directly so the header never shifts a day in a different browser tz.
+  const weekStart = datetime.businessDay(from, tz).toString();
+  const weekEnd = datetime.businessDay(to, tz).toString();
 
   const [entries, openEntry] = await Promise.all([
     client
@@ -129,7 +131,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     openEntry: openEntry.data,
     weekOffset,
     from,
-    to
+    to,
+    weekStart,
+    weekEnd
   };
 }
 
@@ -183,7 +187,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function MESTimecardPage() {
-  const { entries, openEntry, weekOffset, from, to } =
+  const { entries, openEntry, weekOffset, weekStart, weekEnd } =
     useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof action>();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -198,8 +202,6 @@ export default function MESTimecardPage() {
     clockIn: string;
   } | null>(null);
 
-  const monday = new Date(from);
-  const sunday = new Date(to);
   const isCurrentWeek = weekOffset === 0;
 
   useEffect(() => {
@@ -274,8 +276,8 @@ export default function MESTimecardPage() {
                 </Link>
               </Button>
               <span className="text-sm text-muted-foreground">
-                {formatDate(monday.toISOString(), { dateStyle: "medium" })} —{" "}
-                {formatDate(sunday.toISOString(), { dateStyle: "medium" })}
+                {formatDate(weekStart, { dateStyle: "medium" })} —{" "}
+                {formatDate(weekEnd, { dateStyle: "medium" })}
               </span>
               <Button
                 variant="outline"

@@ -30,6 +30,7 @@ import {
   Tr
 } from "@carbon/react";
 import { datetime } from "@carbon/utils";
+import { parseDate } from "@internationalized/date";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useLocale } from "@react-aria/i18n";
 import { useEffect, useState } from "react";
@@ -130,10 +131,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const weekOffset = parseInt(url.searchParams.get("week") ?? "0", 10);
   // Week runs Monday → Sunday on the company calendar (one payroll boundary
   // per books, not the server's zone).
-  const { from, to } = datetime.weekBounds(
-    await getCompanyTimeZone(client, companyId),
-    weekOffset
-  );
+  const tz = await getCompanyTimeZone(client, companyId);
+  const { from, to } = datetime.weekBounds(tz, weekOffset);
+  // Calendar days of the window on the COMPANY calendar — the client renders
+  // these directly so the header and day picker never shift a day in a
+  // different browser tz.
+  const weekStart = datetime.businessDay(from, tz).toString();
+  const weekEnd = datetime.businessDay(to, tz).toString();
 
   const [entries, openEntry, companySettings, employeeShift] =
     await Promise.all([
@@ -177,6 +181,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     weekOffset,
     from,
     to,
+    weekStart,
+    weekEnd,
     shift
   };
 }
@@ -348,7 +354,7 @@ export default function PersonTimecardRoute() {
   const { t } = useLingui();
   const { locale } = useLocale();
   const { formatDate } = useDateFormatter();
-  const { entries, openEntry, weekOffset, from, to, shift } =
+  const { entries, openEntry, weekOffset, weekStart, weekEnd, shift } =
     useLoaderData<typeof loader>();
   const { personId } = useParams();
   const fetcher = useFetcher<typeof action>();
@@ -372,8 +378,6 @@ export default function PersonTimecardRoute() {
     return () => clearInterval(interval);
   }, []);
 
-  const monday = new Date(from);
-  const sunday = new Date(to);
   const isCurrentWeek = weekOffset === 0;
 
   useEffect(() => {
@@ -476,8 +480,8 @@ export default function PersonTimecardRoute() {
             </Link>
           </Button>
           <span className="text-sm text-muted-foreground">
-            {formatDate(monday.toISOString(), { dateStyle: "medium" })} —{" "}
-            {formatDate(sunday.toISOString(), { dateStyle: "medium" })}
+            {formatDate(weekStart, { dateStyle: "medium" })} —{" "}
+            {formatDate(weekEnd, { dateStyle: "medium" })}
           </span>
           <Button
             variant="outline"
@@ -537,12 +541,12 @@ export default function PersonTimecardRoute() {
                     </SelectTrigger>
                     <SelectContent>
                       {Array.from({ length: 7 }, (_, i) => {
-                        const d = new Date(monday);
-                        d.setDate(monday.getDate() + i);
-                        const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                        const val = parseDate(weekStart)
+                          .add({ days: i })
+                          .toString();
                         return (
                           <SelectItem key={val} value={val}>
-                            {d.toLocaleDateString(locale, {
+                            {formatDate(val, {
                               weekday: "short",
                               month: "short",
                               day: "numeric"

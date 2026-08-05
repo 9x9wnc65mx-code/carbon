@@ -137,9 +137,12 @@ function SourcePostingDateSync({
   const timezone =
     companies.find((c) => c.id === sourceCompanyId)?.timezone ?? null;
 
+  // Keyed on sourceCompanyId (not just timezone) so switching between two
+  // companies in the SAME zone still re-defaults a manually edited date.
   useEffect(() => {
     if (timezone) setPostingDate(today(timezone).toString());
-  }, [timezone, setPostingDate]);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: sourceCompanyId intentionally re-triggers the default
+  }, [sourceCompanyId, timezone, setPostingDate]);
 
   return null;
 }
