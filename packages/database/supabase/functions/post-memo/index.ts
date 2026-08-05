@@ -70,7 +70,7 @@ serve(async (req: Request) => {
       }
 
       const accountingPeriodId = accountingEnabled
-        ? await getCurrentAccountingPeriod(client, companyId, db)
+        ? await getCurrentAccountingPeriod(client, companyId, db, today)
         : null;
 
       await db.transaction().execute(async (trx) => {
@@ -209,7 +209,7 @@ serve(async (req: Request) => {
     }
 
     const accountingPeriodId = accountingEnabled
-      ? await getCurrentAccountingPeriod(client, companyId, db)
+      ? await getCurrentAccountingPeriod(client, companyId, db, today)
       : null;
 
     // Build the (balanced, two-line) journal in base currency. Account-id

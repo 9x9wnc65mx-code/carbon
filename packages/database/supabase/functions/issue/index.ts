@@ -17,7 +17,7 @@ import { Database } from "../lib/types.ts";
 import { TrackedEntityAttributes, credit, debit, journalReference } from "../lib/utils.ts";
 
 import { buildBatchSplitRecords } from "../shared/batch-split.ts";
-import { getAccountingPeriodForDate } from "../shared/get-accounting-period.ts";
+import { getCurrentAccountingPeriod } from "../shared/get-accounting-period.ts";
 import { getNextSequence } from "../shared/get-next-sequence.ts";
 import { getNextSerialNumbers } from "../shared/get-next-serial-number.ts";
 import {
@@ -451,7 +451,7 @@ async function issueJobOperationMaterials(
     if (journalLineInserts.length > 0) {
       // Resolve the period from the SAME hoisted `today` the ledger rows used —
       // a midnight rollover mid-transaction must not split journal and ledger.
-      const accountingPeriodId = await getAccountingPeriodForDate(client, companyId, trx, today);
+      const accountingPeriodId = await getCurrentAccountingPeriod(client, companyId, trx, today);
       const journalEntryId = await getNextSequence(trx, "journalEntry", companyId);
 
       const journalResult = await trx
@@ -718,7 +718,7 @@ async function createMaterialWipEntries(
   if (journalLineInserts.length === 0) return;
 
   // Same hoisted `today` as this function's ledger rows (see above).
-  const accountingPeriodId = await getAccountingPeriodForDate(client, companyId, trx, today);
+  const accountingPeriodId = await getCurrentAccountingPeriod(client, companyId, trx, today);
   const journalEntryId = await getNextSequence(trx, "journalEntry", companyId);
 
   const journalResult = await trx

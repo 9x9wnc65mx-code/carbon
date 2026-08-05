@@ -191,7 +191,7 @@ serve(async (req: Request) => {
       throw new Error("Error getting account defaults");
     }
     const accountingPeriodId = accountingEnabled
-      ? await getCurrentAccountingPeriod(client, companyId, db)
+      ? await getCurrentAccountingPeriod(client, companyId, db, today)
       : null;
 
     // Active dimensions for the company group (post-shipment precedent) —

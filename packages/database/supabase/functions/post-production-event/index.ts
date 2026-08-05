@@ -296,7 +296,8 @@ serve(async (req: Request) => {
     const accountingPeriodId = await getCurrentAccountingPeriod(
       client,
       companyId,
-      db
+      db,
+      today
     );
 
     await db.transaction().execute(async (trx) => {

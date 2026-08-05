@@ -783,7 +783,8 @@ serve(async (req: Request) => {
             const accountingPeriodId = await getCurrentAccountingPeriod(
               client,
               companyId,
-              db
+              db,
+              today
             );
 
             await db.transaction().execute(async (trx) => {
@@ -2143,7 +2144,7 @@ serve(async (req: Request) => {
 
             const accountingPeriodId =
               accountingEnabled && reversingJournalLines.length > 0
-                ? await getCurrentAccountingPeriod(client, companyId, db)
+                ? await getCurrentAccountingPeriod(client, companyId, db, today)
                 : null;
 
             await db.transaction().execute(async (trx) => {

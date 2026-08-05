@@ -85,7 +85,7 @@ serve(async (req: Request) => {
       }
 
       const accountingPeriodId = accountingEnabled
-        ? await getCurrentAccountingPeriod(client, companyId, db)
+        ? await getCurrentAccountingPeriod(client, companyId, db, today)
         : null;
 
       await db.transaction().execute(async (trx) => {
@@ -289,7 +289,7 @@ serve(async (req: Request) => {
     // Build journal lines (in base currency)
     // --------------------------------------------------------------
     const accountingPeriodId = accountingEnabled
-      ? await getCurrentAccountingPeriod(client, companyId, db)
+      ? await getCurrentAccountingPeriod(client, companyId, db, today)
       : null;
 
     const journalLineInserts: PaymentJournalLine[] = [];

@@ -174,7 +174,7 @@ serve(async (req: Request) => {
     // getCurrentAccountingPeriod uses the REST client and calling it
     // mid-transaction parks the (size 1) pool in idle-in-transaction.
     const accountingPeriodId = accountingEnabled
-      ? await getCurrentAccountingPeriod(client, companyId, db)
+      ? await getCurrentAccountingPeriod(client, companyId, db, postingDate)
       : null;
 
     const journalDescription =

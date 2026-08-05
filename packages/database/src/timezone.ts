@@ -98,3 +98,37 @@ export async function getLocationTimeZone(
   }
   return location.data?.timezone || getCompanyTimeZone(db, companyId);
 }
+
+/**
+ * The timezone a location DEFINES ITSELF, or null when it inherits the
+ * company's (missing row, null, or legacy empty-string value). For callers
+ * that must distinguish own-vs-inherited — e.g. the ERP Redis cache, which
+ * must never store an inherited company timezone under a location key.
+ */
+export async function getLocationOwnTimeZone(
+  db: AnyPostgresClient,
+  locationId: string,
+  companyId: string
+): Promise<string | null> {
+  if (isKysely(db)) {
+    const row = await db
+      .selectFrom("location")
+      .select("timezone")
+      .where("id", "=", locationId)
+      .where("companyId", "=", companyId)
+      .executeTakeFirst();
+    return row?.timezone || null;
+  }
+  const location = await db
+    .from("location")
+    .select("timezone")
+    .eq("id", locationId)
+    .eq("companyId", companyId)
+    .maybeSingle();
+  if (location.error) {
+    throw new Error(
+      `Failed to resolve location timezone: ${location.error.message}`
+    );
+  }
+  return location.data?.timezone || null;
+}

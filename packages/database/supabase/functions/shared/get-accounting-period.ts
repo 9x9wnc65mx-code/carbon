@@ -1,3 +1,4 @@
+import { parseDate } from "@internationalized/date";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Kysely } from "kysely";
 import { DB } from "../lib/database.ts";
@@ -185,11 +186,18 @@ export async function getAccountingPeriodForDate(
 export async function getCurrentAccountingPeriod<T>(
   client: SupabaseClient<Database>,
   companyId: string,
-  db: Kysely<DB>
+  db: Kysely<DB>,
+  // Pass the SAME hoisted business day the caller stamps on its ledger and
+  // journal rows — two independent "today" resolutions inside one transaction
+  // can straddle midnight and split the journal's period from its ledger
+  // dates. Omitted = resolved fresh in the company timezone.
+  forDate?: string // yyyy-MM-dd
 ) {
   // "Today" in the company's business timezone — one set of books needs one
   // calendar, so ledger-scoped derivation never uses the process clock.
-  const companyToday = datetime.today(await getCompanyTimeZone(client, companyId));
+  const companyToday = forDate
+    ? parseDate(forDate)
+    : datetime.today(await getCompanyTimeZone(client, companyId));
   const d = companyToday.toString();
 
   // get the current accounting period

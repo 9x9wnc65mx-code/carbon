@@ -139,7 +139,8 @@ serve(async (req: Request) => {
       const accountingPeriodId = await getCurrentAccountingPeriod(
         client,
         companyId,
-        trx
+        trx,
+        today
       );
 
       const journalEntryId = await getNextSequence(

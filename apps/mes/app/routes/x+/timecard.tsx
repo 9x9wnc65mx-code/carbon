@@ -130,8 +130,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     entries: entries.data ?? [],
     openEntry: openEntry.data,
     weekOffset,
-    from,
-    to,
     weekStart,
     weekEnd
   };
