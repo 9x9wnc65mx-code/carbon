@@ -58,7 +58,7 @@ export async function action({ request }: ActionFunctionArgs) {
     ...locationData,
     name: "Headquarters",
     companyId,
-    timezone: getLocalTimeZone(),
+    timezone: validation.data.timezone || getLocalTimeZone(),
     createdBy: userId
   });
 

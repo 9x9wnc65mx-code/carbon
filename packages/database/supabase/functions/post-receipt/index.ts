@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
-import { format } from "https://deno.land/std@0.205.0/datetime/mod.ts";
 import { nanoid } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
+import { datetime, getCompanyTimeZone } from "../lib/datetime.ts";
 import { corsPreflight, errorResponse, jsonResponse } from "../lib/response.ts";
 import { requirePermissions } from "../lib/supabase.ts";
 import type { Database } from "../lib/types.ts";
@@ -40,7 +40,6 @@ serve(async (req: Request) => {
   if (preflight) return preflight;
 
   const payload = await req.json();
-  const today = format(new Date(), "yyyy-MM-dd");
 
   try {
     const { type, receiptId, userId, companyId } =
@@ -55,6 +54,7 @@ serve(async (req: Request) => {
     });
 
     const client = await requirePermissions(req, companyId, userId, { update: "inventory" });
+    const today = datetime.today(await getCompanyTimeZone(client, companyId)).toString();
 
     const [companyRecord, accountingSettings] = await Promise.all([
       client
@@ -1241,6 +1241,7 @@ serve(async (req: Request) => {
                 remainingQuantity: invoiceFirstQty,
                 supplierId: purchaseOrder.data?.supplierId ?? undefined,
                 companyId,
+                postingDate: today,
                 isInvoiceFirst: true,
                 poLineId: poLineId ?? undefined,
               });
@@ -1261,6 +1262,7 @@ serve(async (req: Request) => {
                 remainingQuantity: normalQty,
                 supplierId: purchaseOrder.data?.supplierId ?? undefined,
                 companyId,
+                postingDate: today,
               });
             }
           }
@@ -1545,6 +1547,7 @@ serve(async (req: Request) => {
               remainingQuantity: 0,
               supplierId: purchaseOrder.data?.supplierId ?? undefined,
               companyId,
+              postingDate: today,
             });
           }
 

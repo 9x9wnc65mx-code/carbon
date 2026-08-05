@@ -1,5 +1,5 @@
 import type { Database, Json } from "@carbon/database";
-import { fetchAllFromTable } from "@carbon/database";
+import { fetchAllFromTable, getCompanyTimeZone } from "@carbon/database";
 import type {
   ExpressionBuilder,
   Kysely,
@@ -7,7 +7,7 @@ import type {
   KyselyTx
 } from "@carbon/database/client";
 import { getLogger } from "@carbon/logger";
-import { getLocalTimeZone, now, today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { nanoid } from "nanoid";
 import type { z } from "zod";
@@ -585,7 +585,8 @@ export async function getItemCostHistory(
   itemId: string,
   companyId: string
 ) {
-  const dateOneYearAgo = today(getLocalTimeZone())
+  const dateOneYearAgo = datetime
+    .today(await getCompanyTimeZone(client, companyId))
     .subtract({ years: 1 })
     .toString();
 
@@ -2252,7 +2253,7 @@ export async function updateItemCost(
     .update({
       ...cost,
       costIsAdjusted: true,
-      updatedAt: today(getLocalTimeZone()).toString()
+      updatedAt: datetime.timestamp()
     })
     .eq("itemId", itemId)
     .single();
@@ -2298,7 +2299,7 @@ export async function updateRevision(
     .from("item")
     .update({
       ...revision,
-      updatedAt: today(getLocalTimeZone()).toString()
+      updatedAt: datetime.timestamp()
     })
     .eq("id", revision.id);
 }
@@ -2318,7 +2319,7 @@ export async function upsertConfigurationParameter(
         sanitize({
           ...data,
           updatedBy: userId,
-          updatedAt: now(getLocalTimeZone()).toAbsoluteString()
+          updatedAt: datetime.timestamp()
         })
       )
       .eq("id", configurationParameter.id);
@@ -2483,7 +2484,7 @@ export async function upsertItemDefaultPickMethod(
       companyId: storageUnit.data.companyId,
       createdBy: args.userId,
       updatedBy: args.userId,
-      updatedAt: today(getLocalTimeZone()).toString()
+      updatedAt: datetime.timestamp()
     },
     { onConflict: "itemId,locationId" }
   );
@@ -2714,7 +2715,7 @@ export async function upsertPickMethodWithShelfLife(
     };
   }
 ) {
-  const updatedAt = now(getLocalTimeZone()).toAbsoluteString();
+  const updatedAt = datetime.timestamp();
 
   return db.transaction().execute(async (trx) => {
     await trx
@@ -2850,7 +2851,7 @@ export async function cascadeItemTrackingType(
 
   const requiresSerialTracking = args.newType === ItemTrackingType.Serial;
   const requiresBatchTracking = args.newType === ItemTrackingType.Batch;
-  const updatedAt = now(getLocalTimeZone()).toAbsoluteString();
+  const updatedAt = datetime.timestamp();
 
   return db.transaction().execute(async (trx) => {
     await trx
@@ -2998,7 +2999,7 @@ export async function updateItemMethodAndSourcing(
 ) {
   if (args.itemIds.length === 0) return;
 
-  const updatedAt = now(getLocalTimeZone()).toAbsoluteString();
+  const updatedAt = datetime.timestamp();
 
   return db.transaction().execute(async (trx) => {
     await trx
@@ -3037,7 +3038,7 @@ async function cascadeSourcingAndMethodTypeToMethodMaterials(
   if (args.itemIds.length === 0) return;
   if (!args.newSourcingType && !args.newMethodType) return;
 
-  const updatedAt = now(getLocalTimeZone()).toAbsoluteString();
+  const updatedAt = datetime.timestamp();
 
   // Restrict to method materials whose make method is still Draft.
   const onDraftMakeMethod = (
@@ -3201,14 +3202,14 @@ export async function upsertConsumable(
       .from("item")
       .update({
         ...sanitize(itemUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", consumable.id),
     client
       .from("consumable")
       .update({
         ...sanitize(consumableUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", consumable.id)
   ]);
@@ -3501,14 +3502,14 @@ export async function upsertPart(
       .from("item")
       .update({
         ...sanitize(itemUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", part.id),
     client
       .from("part")
       .update({
         ...sanitize(partUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", part.id)
   ]);
@@ -4519,14 +4520,14 @@ export async function upsertMaterial(
       .from("item")
       .update({
         ...sanitize(itemUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", material.id),
     client
       .from("material")
       .update({
         ...sanitize(materialUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", material.id)
   ]);
@@ -4876,7 +4877,7 @@ export async function upsertService(
       .from("item")
       .update({
         ...sanitize(itemUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", service.id),
     // service.id is the item uuid; the service row is keyed by readableId
@@ -4884,7 +4885,7 @@ export async function upsertService(
       .from("service")
       .update({
         ...sanitize(serviceUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", item.data.readableId ?? "")
       .eq("companyId", item.data.companyId ?? "")
@@ -5032,14 +5033,14 @@ export async function upsertTool(
       .from("item")
       .update({
         ...sanitize(itemUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", tool.id),
     client
       .from("tool")
       .update({
         ...sanitize(toolUpdate),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", tool.id)
   ]);

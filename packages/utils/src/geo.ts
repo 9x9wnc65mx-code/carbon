@@ -1,169 +1,87 @@
-export const timezones: {
-  label: string;
-  options: {
-    label: string;
-    value: string;
-  }[];
-}[] = [
-  {
-    label: "North America",
-    options: [
-      {
-        label: "Eastern Time",
-        value: "America/New_York"
-      },
-      {
-        label: "Central Time",
-        value: "America/Chicago"
-      },
-      {
-        label: "Mountain Time",
-        value: "America/Denver"
-      },
-      {
-        label: "Pacific Time",
-        value: "America/Los_Angeles"
-      },
-      {
-        label: "Alaska Time",
-        value: "America/Anchorage"
-      },
-      {
-        label: "Hawaii Time",
-        value: "Pacific/Honolulu"
-      }
-    ]
-  },
-  {
-    label: "Europe & Africa",
-    options: [
-      {
-        label: "Greenwich Mean Time",
-        value: "Europe/London"
-      },
-      {
-        label: "Central European Time",
-        value: "Europe/Berlin"
-      },
-      {
-        label: "Eastern European Time",
-        value: "Europe/Moscow"
-      },
-      {
-        label: "Western European Summer Time",
-        value: "Europe/Lisbon"
-      },
-      {
-        label: "Central Africa Time",
-        value: "Africa/Nairobi"
-      },
-      {
-        label: "East Africa Time",
-        value: "Africa/Addis_Ababa"
-      },
-      {
-        label: "South Africa Standard Time",
-        value: "Africa/Johannesburg"
-      }
-    ]
-  },
-  {
-    label: "Asia",
-    options: [
-      {
-        label: "Moscow Standard Time",
-        value: "Europe/Moscow"
-      },
-      {
-        label: "India Standard Time",
-        value: "Asia/Kolkata"
-      },
-      {
-        label: "China Standard Time",
-        value: "Asia/Shanghai"
-      },
-      {
-        label: "Japan Standard Time",
-        value: "Asia/Tokyo"
-      },
-      {
-        label: "Korea Standard Time",
-        value: "Asia/Seoul"
-      },
-      {
-        label: "Singapore Standard Time",
-        value: "Asia/Singapore"
-      },
-      {
-        label: "Australia Eastern Time",
-        value: "Australia/Sydney"
-      },
-      {
-        label: "Australia Central Time",
-        value: "Australia/Darwin"
-      },
-      {
-        label: "Australia Western Time",
-        value: "Australia/Perth"
-      },
-      {
-        label: "Indonesia Standard Time",
-        value: "Asia/Jakarta"
-      }
-    ]
-  },
-  {
-    label: "Australia & Pacific",
-    options: [
-      {
-        label: "Australia Eastern Time",
-        value: "Australia/Sydney"
-      },
-      {
-        label: "Australia Central Time",
-        value: "Australia/Darwin"
-      },
-      {
-        label: "Australia Western Time",
-        value: "Australia/Perth"
-      },
-      {
-        label: "New Zealand Standard Time",
-        value: "Pacific/Auckland"
-      },
-      {
-        label: "Fiji Time",
-        value: "Pacific/Fiji"
-      }
-    ]
-  },
-  {
-    label: "South America",
-    options: [
-      {
-        label: "Brasilia Time",
-        value: "America/Sao_Paulo"
-      },
-      {
-        label: "Argentina Time",
-        value: "America/Argentina/Buenos_Aires"
-      },
-      {
-        label: "Chile Time",
-        value: "America/Santiago"
-      },
-      {
-        label: "Peru Time",
-        value: "America/Lima"
-      },
-      {
-        label: "Colombia Time",
-        value: "America/Bogota"
-      },
-      {
-        label: "Venezuela Time",
-        value: "America/Caracas"
-      }
-    ]
+export type TimezoneOption = { label: string; value: string };
+export type TimezoneGroup = { label: string; options: TimezoneOption[] };
+
+/** True when `tz` is an IANA timezone the runtime (and Postgres) can resolve. */
+export function isValidTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
   }
-];
+}
+
+function offsetLabel(zone: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: zone,
+      timeZoneName: "longOffset"
+    }).formatToParts(new Date());
+    const name = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+    // "GMT" (UTC itself) and "GMT-06:00" → "UTC±HH:MM"
+    return name === "GMT" ? "UTC+00:00" : name.replace("GMT", "UTC");
+  } catch {
+    return "";
+  }
+}
+
+let cachedTimezones: TimezoneGroup[] | null = null;
+
+/**
+ * IANA timezones from the runtime's own tzdata (`Intl.supportedValuesOf`) —
+ * no hardcoded list to drift. Grouped by region, labeled with the current UTC
+ * offset. Canonical IANA names, so every value is also valid for Postgres
+ * `AT TIME ZONE` (used by `company_today()`). Memoized: the ~420 offset
+ * lookups run once, on first use, not at module load.
+ */
+export function getTimezones(): TimezoneGroup[] {
+  if (cachedTimezones) return cachedTimezones;
+
+  const zones: string[] =
+    typeof Intl.supportedValuesOf === "function"
+      ? Intl.supportedValuesOf("timeZone")
+      : [];
+  // Bare "UTC" is the DB default and backfill value but is absent from some
+  // runtimes' supported list — the picker must always be able to render it.
+  if (!zones.includes("UTC")) zones.unshift("UTC");
+
+  const groups = new Map<string, TimezoneOption[]>();
+  for (const zone of zones) {
+    const [region = "Other", ...rest] = zone.split("/");
+    const city = rest.join("/").replace(/_/g, " ");
+    const group = rest.length === 0 ? "Other" : region;
+    const offset = offsetLabel(zone);
+    const label = city
+      ? `${city}${offset ? ` (${offset})` : ""}`
+      : `${zone}${offset ? ` (${offset})` : ""}`;
+    const options = groups.get(group) ?? [];
+    options.push({ label, value: zone });
+    groups.set(group, options);
+  }
+
+  const regionOrder = [
+    "America",
+    "Europe",
+    "Asia",
+    "Africa",
+    "Australia",
+    "Pacific",
+    "Atlantic",
+    "Indian",
+    "Antarctica",
+    "Arctic",
+    "Other"
+  ];
+
+  cachedTimezones = [...groups.entries()]
+    .sort(
+      ([a], [b]) =>
+        (regionOrder.indexOf(a) + 1 || 99) - (regionOrder.indexOf(b) + 1 || 99)
+    )
+    .map(([label, options]) => ({
+      label,
+      options: options.sort((a, b) => a.label.localeCompare(b.label))
+    }));
+
+  return cachedTimezones;
+}

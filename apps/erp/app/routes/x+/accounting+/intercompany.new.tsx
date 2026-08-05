@@ -2,6 +2,7 @@ import { assertIsPost, error, success } from "@carbon/auth";
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { flash } from "@carbon/auth/session.server";
 import { validationError, validator } from "@carbon/form";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { data, redirect, useLoaderData, useNavigate } from "react-router";
 import {
@@ -73,7 +74,9 @@ export default function NewIntercompanyTransactionRoute() {
     description: "",
     debitAccountId: "",
     creditAccountId: "",
-    postingDate: new Date().toISOString().split("T")[0]
+    // Client component: default to the user's calendar day; the action
+    // re-defaults an empty postingDate in the source company's timezone.
+    postingDate: today(getLocalTimeZone()).toString()
   };
 
   return (

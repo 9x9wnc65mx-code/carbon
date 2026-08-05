@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-04T18:59:18.405Z",
-  "totalTools": 1413,
+  "generated": "2026-08-05T19:39:38.408Z",
+  "totalTools": 1414,
   "modules": 15,
   "tools": [
     {
@@ -41971,6 +41971,23 @@
       "module": "shared",
       "classification": "READ",
       "description": "get countries",
+      "paramCount": 0,
+      "serviceParams": [
+        "client"
+      ],
+      "injectAuth": [
+        "companyId"
+      ],
+      "schema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "shared_getTimezoneNames",
+      "module": "shared",
+      "classification": "READ",
+      "description": "get timezone names",
       "paramCount": 0,
       "serviceParams": [
         "client"

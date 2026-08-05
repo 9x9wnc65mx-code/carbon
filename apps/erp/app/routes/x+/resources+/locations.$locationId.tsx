@@ -15,6 +15,7 @@ import {
   locationValidator,
   upsertLocation
 } from "~/modules/resources";
+import { invalidateLocationTimeZone } from "~/modules/shared/timezone.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { path } from "~/utils/path";
 import { getCompanyId, locationsQuery } from "~/utils/react-query";
@@ -73,6 +74,9 @@ export async function action({ request }: ActionFunctionArgs) {
       )
     );
   }
+
+  // location.timezone may have changed — drop the cached resolution.
+  await invalidateLocationTimeZone(id);
 
   throw redirect(
     path.to.locations,

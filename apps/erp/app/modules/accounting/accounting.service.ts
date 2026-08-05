@@ -1,7 +1,9 @@
 import type { Database, Json } from "@carbon/database";
+import { getCompanyTimeZone } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
 import type { PeriodPostingSource } from "@carbon/utils";
 import {
+  datetime,
   fiscalYearAndPeriodFor,
   getDateNYearsAgo,
   MONTH_NUMBER,
@@ -9,6 +11,7 @@ import {
   toDisplayDebit,
   toStoredAmount
 } from "@carbon/utils";
+import { endOfMonth, parseDate, startOfMonth } from "@internationalized/date";
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import { sql } from "kysely";
 import type { z } from "zod";
@@ -656,18 +659,22 @@ export async function getOrCreateAccountingPeriod(
     return { data: existing.data.id, error: null };
   }
 
-  // Create a new period for the month of the given date
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = d.getMonth(); // 0-indexed
-  const startDate = new Date(year, month, 1).toISOString().split("T")[0];
-  const endDate = new Date(year, month + 1, 0).toISOString().split("T")[0];
+  // Create a new period for the month of the given date. Pure calendar math on
+  // the date string — a JS Date round-trip shifts the month near midnight on
+  // non-UTC processes.
+  const d = parseDate(date.slice(0, 10));
+  const startDate = startOfMonth(d).toString();
+  const endDate = endOfMonth(d).toString();
 
   const settings = await getFiscalYearSettings(client, companyId);
   const startMonth = settings.data?.startMonth
     ? (MONTH_NUMBER[settings.data.startMonth] ?? 1)
     : 1;
-  const { fiscalYear, periodNumber } = fiscalYearAndPeriodFor(d, startMonth);
+  const { fiscalYear, periodNumber } = fiscalYearAndPeriodFor(
+    d.year,
+    d.month,
+    startMonth
+  );
 
   await client
     .from("accountingPeriod")
@@ -1256,7 +1263,9 @@ async function computePeriodReadiness(
   // document with no postingDate can only land in this period if the period is
   // still running (or in the future) when it posts — closing an already-ended
   // period is not blocked by new drafts, which would post into a later period.
-  const todayDate = new Date().toISOString().slice(0, 10);
+  const todayDate = datetime
+    .today(await getCompanyTimeZone(client, companyId))
+    .toString();
   const unpostedDateFilter =
     endDate >= todayDate
       ? `postingDate.is.null,and(postingDate.gte.${startDate},postingDate.lte.${endDate})`
@@ -2971,7 +2980,9 @@ export async function createIntercompanyTransaction(
     userId: string;
   }
 ) {
-  const today = new Date().toISOString().split("T")[0];
+  const today = datetime
+    .today(await getCompanyTimeZone(client, input.sourceCompanyId))
+    .toString();
   const postingDate = input.postingDate || today;
 
   const nextSequence = await getNextSequence(
@@ -3410,7 +3421,10 @@ export async function postJournalEntry(
   const period = await getOrCreateAccountingPeriod(
     client,
     entry.data.companyId,
-    entry.data.postingDate ?? new Date().toISOString().split("T")[0],
+    entry.data.postingDate ??
+      datetime
+        .today(await getCompanyTimeZone(client, entry.data.companyId))
+        .toString(),
     "accounting"
   );
   if (period.error) {
@@ -3474,7 +3488,9 @@ export async function reverseJournalEntry(
   // 2b. The reversing entry is dated today and posts as an "accounting" source,
   // so it lands in the current period (never the original's, which may be
   // Closed). A Closed current period rejects; a Locked one still accepts.
-  const postingDate = new Date().toISOString().split("T")[0];
+  const postingDate = datetime
+    .today(await getCompanyTimeZone(client, data.companyId))
+    .toString();
   const period = await getOrCreateAccountingPeriod(
     client,
     data.companyId,

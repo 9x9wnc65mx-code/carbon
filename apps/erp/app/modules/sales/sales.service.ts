@@ -1,9 +1,9 @@
 import type { Database, Json } from "@carbon/database";
-import { fetchAllFromTable } from "@carbon/database";
+import { fetchAllFromTable, getCompanyTimeZone } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
 import { getLogger } from "@carbon/logger";
 import type { PickPartial } from "@carbon/utils";
-import { getLocalTimeZone, now, today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import type {
   PostgrestError,
   PostgrestSingleResponse,
@@ -152,11 +152,20 @@ export async function closeSalesOrder(
   salesOrderId: string,
   userId: string
 ) {
+  const salesOrder = await client
+    .from("salesOrder")
+    .select("companyId")
+    .eq("id", salesOrderId)
+    .single();
+  const companyTz = await getCompanyTimeZone(
+    client,
+    salesOrder.data?.companyId ?? ""
+  );
   return client
     .from("salesOrder")
     .update({
       closed: true,
-      closedAt: today(getLocalTimeZone()).toString(),
+      closedAt: datetime.today(companyTz).toString(),
       closedBy: userId
     })
     .eq("id", salesOrderId)
@@ -1980,7 +1989,7 @@ export async function finalizeQuote(
     .from("quote")
     .update({
       status: "Sent",
-      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedAt: datetime.timestamp(),
       updatedBy: userId
     })
     .eq("id", quoteId);
@@ -1993,7 +2002,7 @@ export async function finalizeQuote(
     .from("quoteLine")
     .update({
       status: "Complete",
-      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedAt: datetime.timestamp(),
       updatedBy: userId
     })
     .neq("status", "No Quote")
@@ -2009,7 +2018,7 @@ export async function releaseSalesOrder(
     .from("salesOrder")
     .update({
       status: "To Ship and Invoice",
-      updatedAt: today(getLocalTimeZone()).toString(),
+      updatedAt: datetime.timestamp(),
       updatedBy: userId
     })
     .eq("id", salesOrderId);
@@ -2020,7 +2029,9 @@ export async function resolvePrice(
   companyId: string,
   input: PriceResolutionInput
 ): Promise<PriceResolutionResult> {
-  const date = input.date ?? new Date().toISOString().split("T")[0]!;
+  const date =
+    input.date ??
+    datetime.today(await getCompanyTimeZone(client, companyId)).toString();
   const trace: PriceTraceStep[] = [];
 
   let resolvedCustomerTypeId = input.customerTypeId ?? null;
@@ -2251,7 +2262,9 @@ export async function resolvePriceList(
     quantity?: number;
   }
 ): Promise<PriceListResult> {
-  const date = new Date().toISOString().split("T")[0]!;
+  const date = datetime
+    .today(await getCompanyTimeZone(client, companyId))
+    .toString();
   const previewQuantity = Math.max(args.quantity ?? 1, 0);
 
   let scopeQuery = client
@@ -2646,7 +2659,7 @@ export async function upsertCustomer(
     .from("customer")
     .update({
       ...sanitize(customer),
-      updatedAt: today(getLocalTimeZone()).toString()
+      updatedAt: datetime.timestamp()
     })
     .eq("id", customer.id)
     .select("id")
@@ -3237,7 +3250,7 @@ export async function updateSalesRFQStatus(
     ...rest,
     ...(noQuoteReasonId ? { noQuoteReasonId } : {}),
     ...(status === "Ready for Quote"
-      ? { completedDate: now(getLocalTimeZone()).toAbsoluteString() }
+      ? { completedDate: datetime.timestamp() }
       : {})
   };
 
@@ -3287,9 +3300,7 @@ export async function updateQuoteStatus(
   const updateData = {
     status,
     ...rest,
-    ...(status === "Sent"
-      ? { completedDate: now(getLocalTimeZone()).toAbsoluteString() }
-      : {})
+    ...(status === "Sent" ? { completedDate: datetime.timestamp() } : {})
   };
   return client.from("quote").update(updateData).eq("id", update.id);
 }
@@ -3604,7 +3615,7 @@ export async function updateQuote(
       ...(exchangeRateUpdatedAt && { exchangeRateUpdatedAt }),
       ...(notes !== undefined && { internalNotes: notes }),
       updatedBy,
-      updatedAt: today(getLocalTimeZone()).toString()
+      updatedAt: datetime.timestamp()
     })
     .eq("id", id)
     .select("id")
@@ -3779,7 +3790,7 @@ export async function upsertQuote(
       .from("quote")
       .update({
         ...sanitize(quoteUpdateData),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", quote.id);
   }
@@ -4979,7 +4990,7 @@ export async function updateSalesOrderStatus(
     status,
     ...rest,
     ...(["To Ship", "To Ship and Invoice"].includes(status)
-      ? { completedDate: now(getLocalTimeZone()).toAbsoluteString() }
+      ? { completedDate: datetime.timestamp() }
       : {})
   };
 
@@ -5108,7 +5119,11 @@ export async function insertSalesOrder(
       salesPersonId: input.salesPersonId ?? null,
       opportunityId,
       status: input.status ?? "Draft",
-      orderDate: input.orderDate ?? new Date().toISOString().split("T")[0],
+      orderDate:
+        input.orderDate ??
+        datetime
+          .today(await getCompanyTimeZone(client, input.companyId))
+          .toString(),
       currencyCode,
       exchangeRate,
       exchangeRateUpdatedAt,
@@ -5689,7 +5704,11 @@ export async function insertSalesRFQ(
       customerId: input.customerId,
       customerContactId: input.customerContactId,
       customerReference: input.customerReference,
-      rfqDate: input.rfqDate ?? today(getLocalTimeZone()).toString(),
+      rfqDate:
+        input.rfqDate ??
+        datetime
+          .today(await getCompanyTimeZone(client, input.companyId))
+          .toString(),
       expirationDate: input.expirationDate,
       locationId: input.locationId,
       salesPersonId: input.salesPersonId,
@@ -5824,7 +5843,7 @@ export async function upsertSalesRFQ(
       .from("salesRfq")
       .update({
         ...sanitize(rfq),
-        updatedAt: today(getLocalTimeZone()).toString()
+        updatedAt: datetime.timestamp()
       })
       .eq("id", rfq.id);
   }

@@ -4,6 +4,7 @@ import { format } from "https://deno.land/std@0.160.0/datetime/mod.ts";
 import { sql } from "kysely";
 import z from "npm:zod@^3.24.1";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
+import { datetime, getCompanyTimeZone } from "../lib/datetime.ts";
 import { corsPreflight, errorResponse, jsonResponse } from "../lib/response.ts";
 import { requirePermissions } from "../lib/supabase.ts";
 import { Database } from "../lib/types.ts";
@@ -120,6 +121,10 @@ serve(async (req: Request) => {
           .filter((line) => line.quantity > 0);
 
         if (shouldUpdatePrices) {
+          const today = datetime
+            .today(await getCompanyTimeZone(db, companyId))
+            .toString();
+
           // Delete any existing cost ledger entries for this PO (handles re-finalization)
           await db
             .deleteFrom("costLedger")
@@ -145,6 +150,7 @@ serve(async (req: Request) => {
               cost:
                 (line.quantity / (line.conversionFactor ?? 1)) * line.unitPrice,
               remainingQuantity: 0,
+              postingDate: today,
               supplierId,
               companyId,
             }));

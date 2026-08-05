@@ -1,10 +1,9 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { format } from "https://deno.land/std@0.160.0/datetime/mod.ts";
 import { Kysely } from "kysely";
 import { DB } from "../lib/database.ts";
+import { datetime, getCompanyTimeZone } from "../lib/datetime.ts";
 import { Database } from "../lib/types.ts";
 
-// TODO: refactor to use @internationalized/date when npm:<package>@<version> is supported
 const isLeapYear = (year: number) => {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 };
@@ -188,15 +187,15 @@ export async function getCurrentAccountingPeriod<T>(
   companyId: string,
   db: Kysely<DB>
 ) {
-  // const d = today(getLocalTimeZone());
-  const d = format(new Date(), "yyyy-MM-dd");
+  // "Today" in the company's business timezone — one set of books needs one
+  // calendar, so ledger-scoped derivation never uses the process clock.
+  const companyToday = datetime.today(await getCompanyTimeZone(client, companyId));
+  const d = companyToday.toString();
 
   // get the current accounting period
   const currentAccountingPeriod = await client
     .from("accountingPeriod")
     .select("*")
-    // .gte("endDate", d.toString())
-    // .lte("startDate", d.toString())
     .eq("companyId", companyId)
     .gte("endDate", d)
     .lte("startDate", d)
@@ -256,8 +255,8 @@ export async function getCurrentAccountingPeriod<T>(
     return periodId;
   }
 
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
+  const year = companyToday.year;
+  const month = companyToday.month;
   const startDate = `${year}-${month.toString().padStart(2, "0")}-01`;
   let endDate = `${year}-${month.toString().padStart(2, "0")}-${
     daysInMonths[month]

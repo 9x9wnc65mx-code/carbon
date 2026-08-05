@@ -1,3 +1,26 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Kysely } from "kysely";
+// Type-only import from postgres/index.ts (not lib/database.ts) keeps the
+// Deno-only driver out of the graph — this file is reached from the node-side
+// @carbon/database build via shared/get-next-sequence.ts.
+import type { KyselyDatabase as DB } from "./postgres/index.ts";
+import type { Database } from "./types.ts";
+
+/**
+ * Either data-access handle an edge function might hold: a Supabase client
+ * (request handlers) or a Kysely handle — the module `db` or an active `trx`.
+ * Use it to overload a helper that some callers reach with a client and others
+ * with Kysely, instead of maintaining two near-identical `*Db` twins.
+ */
+export type AnyPostgresClient = SupabaseClient<Database> | Kysely<DB>;
+
+/**
+ * Runtime guard narrowing {@link AnyPostgresClient} to the Kysely handle. Kysely
+ * exposes `.selectFrom`; the Supabase client does not.
+ */
+export const isKysely = (db: AnyPostgresClient): db is Kysely<DB> =>
+  typeof (db as Kysely<DB>).selectFrom === "function";
+
 export interface TrackedEntityAttributes {
   "Batch Number"?: string;
   Customer?: string;
@@ -18,30 +41,54 @@ export interface TrackedEntityAttributes {
 }
 
 // ISO 8601 week number (1-53). Week 1 is the week containing the year's first Thursday.
-export const getISOWeek = (date: Date): number => {
-  const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-  );
+const isoWeekFromYmd = (year: number, month: number, day: number): number => {
+  const d = new Date(Date.UTC(year, month - 1, day));
   const dayNum = d.getUTCDay() || 7; // Sunday → 7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 };
 
-// used to generate sequences
-export const interpolateSequenceDate = (value?: string | null) => {
+export const getISOWeek = (date: Date): number =>
+  isoWeekFromYmd(date.getFullYear(), date.getMonth() + 1, date.getDate());
+
+// Current wall-clock parts in an explicit timezone. Intl-based so this module
+// stays importable from both Deno and Node (no npm:/workspace deps).
+const datePartsInTimeZone = (timezone: string) => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date());
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((p) => p.type === type)?.value ?? 0);
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hours: get("hour"),
+    seconds: get("second"),
+  };
+};
+
+// used to generate sequences — date tokens derive in the company's business
+// timezone so document prefixes roll over at the company's midnight, not the
+// process's
+export const interpolateSequenceDate = (
+  value?: string | null,
+  timezone = "UTC"
+) => {
   // replace all instances of %{year} with the current year
   if (!value) return "";
   let result = value;
 
   if (result.includes("%{")) {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = date.getHours();
-    const seconds = date.getSeconds();
-    const week = getISOWeek(date);
+    const { year, month, day, hours, seconds } = datePartsInTimeZone(timezone);
+    const week = isoWeekFromYmd(year, month, day);
 
     result = result.replace(/%{yyyy}/g, year.toString());
     result = result.replace(/%{yy}/g, year.toString().slice(-2));
@@ -59,9 +106,13 @@ export const interpolateSequenceDate = (value?: string | null) => {
 // job-context %{location} token (location.code, falling back to location.name).
 export const interpolateSerialNumber = (
   value: string | null | undefined,
-  context: { locationCode?: string | null; locationName?: string | null }
+  context: {
+    locationCode?: string | null;
+    locationName?: string | null;
+    timezone?: string;
+  }
 ) => {
-  const withDates = interpolateSequenceDate(value);
+  const withDates = interpolateSequenceDate(value, context.timezone);
   if (!withDates.includes("%{location}")) return withDates;
   const location = (context.locationCode ?? context.locationName ?? "").trim();
   return withDates.replace(/%{location}/g, location);

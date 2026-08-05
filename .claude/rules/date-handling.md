@@ -34,8 +34,25 @@ must not do.
 | `d.setHours(0,0,0,0)` for start-of-day | `fromDate(d, tz).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })` |
 | `d1 <= d2` on `Date`s | `a.compare(b) <= 0` on `ZonedDateTime`/`CalendarDate` |
 | `d.getDay()` | `getDayOfWeek(date, "en-US")` (0 = Sun … 6 = Sat) |
-| `d.toISOString()` for a column write | `zdt.toAbsoluteString()` |
-| `"now"` as `new Date()` in server code | `now(getLocalTimeZone())` → `ZonedDateTime` |
+| `d.toISOString()` for a column write | `zdt.toAbsoluteString()`, or `datetime.timestamp()` for "now" |
+| `"now"` / "today" in SERVER code | `datetime.*` (`@carbon/utils`) — see below; `getLocalTimeZone()` is BANNED server-side |
+
+## Server code: the `datetime` API (mandatory)
+
+`getLocalTimeZone()` on a server is the SERVER's zone, not the user's, and
+`new Date().toISOString().split("T")[0]` is the UTC day — both are banned in
+server paths (`*.service.ts`, `*.server.ts`, `packages/jobs`,
+`supabase/functions`) and enforced by the `no-local-timezone` conformance check
+in `@carbon/checks`. Instead:
+
+- `datetime.timestamp()` — UTC instant string for `createdAt`/`updatedAt`/instant columns (the only tz-free method).
+- `datetime.today(tz)` / `datetime.now(tz)` — calendar day / zoned now in an explicit IANA timezone.
+- `datetime.businessDay(instantStr, tz)` — which day a stored instant falls on in tz.
+- Resolve `tz` with `getCompanyTimeZone(client, companyId)` (ledger-scoped: posting dates, accounting periods, sequences, aging) or `getLocationTimeZone(client, locationId, companyId)` (operational: scheduling, shifts, MES, expiry) from `@carbon/database`. Deno edge functions use the mirror in `functions/lib/datetime.ts` (`getCompanyTimeZoneDb`/`getLocationTimeZoneDb` for Kysely).
+- SQL functions use `company_today(p_company_id)` (migration `20260805023439`) instead of `CURRENT_DATE` for business dates.
+
+Client components keep `today(getLocalTimeZone())` etc. — in the browser the
+local timezone IS the user's and is correct for pickers and display.
 
 ## Repo patterns to copy
 

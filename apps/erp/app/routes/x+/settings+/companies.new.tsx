@@ -140,7 +140,8 @@ export default function NewSubsidiaryRoute() {
     stateProvince: "",
     postalCode: "",
     countryCode: "",
-    baseCurrencyCode: company?.baseCurrencyCode ?? "USD"
+    baseCurrencyCode: company?.baseCurrencyCode ?? "USD",
+    timezone: getLocalTimeZone()
   };
 
   return (

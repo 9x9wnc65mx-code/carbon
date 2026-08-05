@@ -63,20 +63,53 @@ export const getISOWeek = (date: Date): number => {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 };
 
-// used to generate sequences
-export const interpolateSequenceDate = (value: string | null) => {
+// Current wall-clock parts in an explicit timezone (for server callers that
+// derive sequence tokens in the company's business timezone).
+const datePartsInTimeZone = (timezone: string) => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date());
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((p) => p.type === type)?.value ?? 0);
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hours: get("hour"),
+    seconds: get("second")
+  };
+};
+
+// used to generate sequences. Server callers pass the company timezone so
+// tokens roll over at the company's midnight; the client-side sequence-preview
+// forms omit it and preview in the browser's timezone.
+export const interpolateSequenceDate = (
+  value: string | null,
+  timezone?: string
+) => {
   // replace all instances of %{year} with the current year
   if (!value) return "";
   let result = value;
 
   if (result.includes("%{")) {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hours = date.getHours();
-    const seconds = date.getSeconds();
-    const week = getISOWeek(date);
+    const parts = timezone
+      ? datePartsInTimeZone(timezone)
+      : {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
+          hours: date.getHours(),
+          seconds: date.getSeconds()
+        };
+    const { year, month, day, hours, seconds } = parts;
+    const week = getISOWeek(new Date(year, month - 1, day));
 
     result = result.replace(/%{yyyy}/g, year.toString());
     result = result.replace(/%{yy}/g, year.toString().slice(-2));
