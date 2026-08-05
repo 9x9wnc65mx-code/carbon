@@ -221,16 +221,26 @@ function VirtualizedCommand({
   const parentRef = useRef<HTMLDivElement>(null);
 
   const filteredOptions = useMemo(() => {
-    return search
-      ? options.filter((option) => {
-          const value =
-            typeof option.label === "string"
-              ? `${option.label} ${option.helper}`
-              : reactNodeToString(option.label);
-
-          return value.toLowerCase().includes(search.toLowerCase());
-        })
-      : options;
+    if (!search) return options;
+    const query = search.toLowerCase();
+    // Rank word-boundary hits above mid-word substrings, then earlier hits
+    // first — searching "EST" should surface "(EST/EDT, …)" timezones before
+    // cities that merely contain "est" (Creston, Bucharest…). Stable sort, so
+    // equally-ranked options keep their original order.
+    const scored: { option: (typeof options)[number]; score: number }[] = [];
+    for (const option of options) {
+      const text = (
+        typeof option.label === "string"
+          ? `${option.label} ${option.helper}`
+          : reactNodeToString(option.label)
+      ).toLowerCase();
+      const index = text.indexOf(query);
+      if (index === -1) continue;
+      const atWordStart =
+        index === 0 || !/[a-z0-9]/.test(text.charAt(index - 1));
+      scored.push({ option, score: (atWordStart ? 0 : 100000) + index });
+    }
+    return scored.sort((a, b) => a.score - b.score).map((s) => s.option);
   }, [options, search]);
 
   const virtualizer = useVirtualizer({

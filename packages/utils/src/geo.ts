@@ -18,11 +18,73 @@ function offsetLabel(zone: string): string {
       timeZoneName: "longOffset"
     }).formatToParts(new Date());
     const name = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
-    // "GMT" (UTC itself) and "GMT-06:00" → "UTC±HH:MM"
-    return name === "GMT" ? "UTC+00:00" : name.replace("GMT", "UTC");
+    // "GMT" (UTC itself) and "GMT-06:00" → "±HH:MM" (relative-to-UTC implied)
+    return name === "GMT" ? "+00:00" : name.replace("GMT", "");
   } catch {
     return "";
   }
+}
+
+const timeZoneNameOf = (
+  zone: string,
+  style: "short" | "long",
+  month: number
+): string => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone,
+    timeZoneName: style
+  }).formatToParts(new Date(Date.UTC(new Date().getUTCFullYear(), month, 15)));
+  return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+};
+
+const ABBREVIATION = /^[A-Za-z]{2,6}$/;
+const abbreviationCache = new Map<string, string[]>();
+
+/**
+ * Colloquial abbreviations for a zone — what people actually type into the
+ * picker: CST/CDT, EST, PST, IST, JST, AEST… Sampled in January AND July so
+ * both the standard and daylight names appear. US-style zones get them from
+ * Intl's `short` name directly; zones where en-US `short` is a "GMT+5:30"
+ * offset (India, Japan, Australia…) derive them from the `long` name's
+ * initials ("India Standard Time" → IST). Memoized — abbreviations don't
+ * change within a session.
+ */
+export function getTimezoneAbbreviations(zone: string): string[] {
+  const cached = abbreviationCache.get(zone);
+  if (cached) return cached;
+
+  const abbreviations: string[] = [];
+  const add = (abbreviation: string) => {
+    if (
+      ABBREVIATION.test(abbreviation) &&
+      !abbreviations.includes(abbreviation)
+    ) {
+      abbreviations.push(abbreviation);
+    }
+  };
+  try {
+    for (const month of [0, 6]) {
+      const short = timeZoneNameOf(zone, "short", month);
+      if (ABBREVIATION.test(short)) {
+        add(short);
+        continue;
+      }
+      const words = timeZoneNameOf(zone, "long", month).split(/\s+/);
+      add(words.map((word) => word[0]).join(""));
+      // The generic form too — "Central European Standard Time" gives CEST,
+      // but people search CET. Skip when it collapses below 3 letters (CT,
+      // IT…) — too short to be a useful search token.
+      const generic = words
+        .filter((word) => !/^(Standard|Summer|Daylight)$/i.test(word))
+        .map((word) => word[0])
+        .join("");
+      if (generic.length >= 3) add(generic);
+    }
+  } catch {
+    // Unresolvable zone — no abbreviations.
+  }
+  abbreviationCache.set(zone, abbreviations);
+  return abbreviations;
 }
 
 let cachedTimezones: TimezoneGroup[] | null = null;
@@ -58,9 +120,15 @@ export function getTimezones(): TimezoneGroup[] {
     const city = rest.join("/").replace(/_/g, " ");
     const group = rest.length === 0 ? "Other" : region;
     const offset = offsetLabel(zone);
-    const label = city
-      ? `${city}${offset ? ` (${offset})` : ""}`
-      : `${zone}${offset ? ` (${offset})` : ""}`;
+    // "CST/CDT, -06:00" — abbreviations first so typing "CST" finds the zone
+    // instead of matching stray letters in other city names; the offset is
+    // relative to UTC by definition, so no prefix. An abbreviation identical
+    // to the zone name (UTC, GMT) adds nothing and is dropped.
+    const abbreviations = getTimezoneAbbreviations(zone)
+      .filter((a) => a !== zone)
+      .join("/");
+    const detail = [abbreviations, offset].filter(Boolean).join(", ");
+    const label = `${city || zone}${detail ? ` (${detail})` : ""}`;
     const options = groups.get(group) ?? [];
     options.push({ label, value: zone });
     groups.set(group, options);

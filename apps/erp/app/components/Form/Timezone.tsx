@@ -29,10 +29,11 @@ const Timezone = (props: ComponentProps<typeof TimezoneBase>) => {
       const [region = "Other", ...rest] = name.split("/");
       const city = rest.join("/").replace(/_/g, " ");
       const group = rest.length === 0 ? "Other" : region;
-      // pg interval text: "05:30:00" / "-06:00:00" / "00:00:00"
+      // pg interval text: "05:30:00" / "-06:00:00" / "00:00:00" → "±HH:MM"
+      // (relative-to-UTC is implied; no "UTC" prefix noise in the label)
       const offset = utcOffset.startsWith("-")
-        ? `UTC-${utcOffset.slice(1, 6)}`
-        : `UTC+${utcOffset.slice(0, 5)}`;
+        ? `-${utcOffset.slice(1, 6)}`
+        : `+${utcOffset.slice(0, 5)}`;
       const label = `${city || name} (${offset})`;
       const list = groups.get(group) ?? [];
       list.push({ label, value: name });
