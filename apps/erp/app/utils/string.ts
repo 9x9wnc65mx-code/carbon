@@ -1,4 +1,6 @@
 import { getLogger } from "@carbon/logger";
+import { datetime } from "@carbon/utils";
+import { CalendarDate } from "@internationalized/date";
 
 export { stripSpecialCharacters } from "@carbon/utils";
 
@@ -52,17 +54,6 @@ export const copyToClipboard = async (
   }
 };
 
-// ISO 8601 week number (1-53). Week 1 is the week containing the year's first Thursday.
-export const getISOWeek = (date: Date): number => {
-  const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-  );
-  const dayNum = d.getUTCDay() || 7; // Sunday → 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-};
-
 // Current wall-clock parts in an explicit timezone (for server callers that
 // derive sequence tokens in the company's business timezone).
 const datePartsInTimeZone = (timezone: string) => {
@@ -86,30 +77,20 @@ const datePartsInTimeZone = (timezone: string) => {
   };
 };
 
-// used to generate sequences. Server callers pass the company timezone so
-// tokens roll over at the company's midnight; the client-side sequence-preview
-// forms omit it and preview in the browser's timezone.
+// used to generate sequences — date tokens derive in the company's business
+// timezone so document prefixes roll over at the company's midnight, not the
+// process's. Mirrors functions/lib/utils.ts; keep the two in sync.
 export const interpolateSequenceDate = (
   value: string | null,
-  timezone?: string
+  timezone = "UTC"
 ) => {
   // replace all instances of %{year} with the current year
   if (!value) return "";
   let result = value;
 
   if (result.includes("%{")) {
-    const date = new Date();
-    const parts = timezone
-      ? datePartsInTimeZone(timezone)
-      : {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate(),
-          hours: date.getHours(),
-          seconds: date.getSeconds()
-        };
-    const { year, month, day, hours, seconds } = parts;
-    const week = getISOWeek(new Date(year, month - 1, day));
+    const { year, month, day, hours, seconds } = datePartsInTimeZone(timezone);
+    const week = datetime.weekNumber(new CalendarDate(year, month, day));
 
     result = result.replace(/%{yyyy}/g, year.toString());
     result = result.replace(/%{yy}/g, year.toString().slice(-2));

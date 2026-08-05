@@ -25,7 +25,10 @@ import {
   insertPurchaseOrder,
   upsertPurchaseOrderLine
 } from "~/modules/purchasing";
-import { getLocationTimeZone } from "~/modules/shared/timezone.server";
+import {
+  getCompanyTimeZone,
+  getLocationTimeZone
+} from "~/modules/shared/timezone.server";
 import { path } from "~/utils/path";
 
 const logger = getLogger("erp", "kanban");
@@ -87,8 +90,11 @@ async function handleKanban({
     ]);
 
     const leadTime = manufacturing.data?.leadTime ?? 7;
+    // No location on the kanban → the company calendar.
     const startDate = datetime.today(
-      await getLocationTimeZone(client, kanban.data.locationId!, companyId)
+      kanban.data.locationId
+        ? await getLocationTimeZone(client, kanban.data.locationId, companyId)
+        : await getCompanyTimeZone(client, companyId)
     );
     const dueDate = startDate.add({ days: leadTime }).toString();
 

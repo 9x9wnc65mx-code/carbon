@@ -1,5 +1,5 @@
 import { useRouteData } from "@carbon/react";
-import { today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import type { Company } from "~/modules/settings";
 import { path } from "~/utils/path";
 
@@ -14,7 +14,11 @@ export function useCompanyTimeZone(): string {
   return data?.company?.timezone ?? "UTC";
 }
 
-/** Today's `YYYY-MM-DD` on the company's calendar — a form-ready default. */
+/**
+ * Today's `YYYY-MM-DD` on the company's calendar — a form-ready default.
+ * Computed at render: a form left open across the company's midnight keeps the
+ * stale day (accepted — create forms are short-lived).
+ */
 export function useCompanyToday(): string {
-  return today(useCompanyTimeZone()).toString();
+  return datetime.today(useCompanyTimeZone()).toString();
 }

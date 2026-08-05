@@ -11,19 +11,15 @@ import {
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Kysely } from "kysely";
 import type { DB } from "./database.ts";
-import { type AnyPostgresClient, isKysely } from "./utils.ts";
+import { type AnyPostgresClient, isKysely, isoWeekFromYmd } from "./utils.ts";
 import type { Database } from "./types.ts";
 
 /**
  * ISO 8601 week number (1-53). Week 1 is the week containing the year's first
- * Thursday. Pure UTC arithmetic on the date parts — no timezone dependency.
+ * Thursday. Delegates to the single algorithm in ./utils.ts.
  */
 function weekNumber(date: CalendarDate): number {
-  const d = new Date(Date.UTC(date.year, date.month - 1, date.day));
-  const dayNum = d.getUTCDay() || 7; // Sunday → 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return isoWeekFromYmd(date.year, date.month, date.day);
 }
 
 /**

@@ -5,10 +5,14 @@ import type { ConformanceCheck, Violation } from "../check";
  * banned idioms silently disagree with each other whenever TZ ≠ UTC:
  * - getLocalTimeZone() on a server = the server's zone, not the user's
  * - new Date().toISOString().split("T")[0] / .slice(0, 10) = the UTC day
+ * - new Date().getDay()/getDate()/... = date parts of "now" in the process zone
+ * - d.setHours(0, 0, 0, 0) = midnight in the process zone
  * Use datetime.today(tz) / datetime.businessDay(instant, tz) with a timezone
  * resolved from company.timezone (ledger-scoped) or location.timezone
  * (operational). Full-instant new Date().toISOString() stays allowed —
- * timestamps are timezone-free.
+ * timestamps are timezone-free. UTC getters (getUTCDay etc.) and local getters
+ * on a locally-constructed date (new Date(y, m, d).getFullYear() roundtrips)
+ * are also fine and deliberately not matched.
  */
 const BANNED = [
   {
@@ -21,6 +25,16 @@ const BANNED = [
       /new Date\(\)\s*\.toISOString\(\)\s*\.(?:split\(\s*["']T["']\s*\)\s*\[0\]|slice\(\s*0,\s*10\s*\))/g,
     message:
       "Server code: this is the UTC calendar day — use datetime.today(tz) with the company/location timezone."
+  },
+  {
+    pattern: /new Date\(\)\s*\.get(?:Day|Date|Month|FullYear|Hours|Minutes)\(/g,
+    message:
+      'Server code: this is a date part of "now" in the process zone — use datetime.today(tz) / getDayOfWeek with the company/location timezone.'
+  },
+  {
+    pattern: /\.setHours\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0\s*\)/g,
+    message:
+      "Server code: this is midnight in the process zone — derive the day boundary via today(tz)/startOfWeek(...).toDate(tz) instead."
   }
 ];
 

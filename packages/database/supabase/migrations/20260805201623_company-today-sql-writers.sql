@@ -11,6 +11,14 @@
 -- Operational sibling of company_today(): a physical site's calendar day, for
 -- expiry and scheduling. Falls back to the company timezone, then UTC — the
 -- same precedence as getLocationTimeZone() in the app.
+--
+-- SECURITY INVOKER (like company_today), deliberately: every caller today is
+-- either SECURITY DEFINER (get_next_sequence, set_shelf_life_for_operation) or
+-- runs service-role (edge functions), so the timezone rows are always readable.
+-- Under an RLS denial these would silently fall back to UTC — keep new callers
+-- privileged. Do NOT flip these to SECURITY DEFINER: public definer functions
+-- are auto-exposed as PostgREST RPCs, and that would hand any authenticated
+-- user a cross-tenant "what is company X's local date" probe.
 CREATE OR REPLACE FUNCTION public.location_today(
   p_location_id TEXT,
   p_company_id TEXT

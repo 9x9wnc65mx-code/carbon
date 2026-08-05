@@ -21,9 +21,39 @@ describe("noLocalTimezone", () => {
     expect(v).toHaveLength(1);
   });
 
+  it("flags local date-parts of now", () => {
+    const cases = [
+      "const today = dayNames[new Date().getDay()];",
+      "const year = new Date().getFullYear();",
+      "const dom = new Date().getDate();"
+    ];
+    for (const ts of cases) {
+      expect(noLocalTimezone.scan("f.ts", ts)).toHaveLength(1);
+    }
+  });
+
+  it("flags local-midnight boundaries via setHours(0,0,0,0)", () => {
+    const ts = "monday.setHours(0, 0, 0, 0);";
+    expect(noLocalTimezone.scan("f.ts", ts)).toHaveLength(1);
+  });
+
   it("allows full-instant timestamps", () => {
     const ts = "const at = new Date().toISOString();";
     expect(noLocalTimezone.scan("f.ts", ts)).toHaveLength(0);
+  });
+
+  it("allows UTC getters and local-roundtrip getters", () => {
+    const cases = [
+      "const dow = d.getUTCDay() || 7;",
+      "const y = new Date(Date.UTC(2026, 0, 1)).getUTCFullYear();",
+      // pg DATE parsed to local midnight → local getters roundtrip the parts
+      "const y = value.getFullYear();",
+      // non-midnight setHours (shift wall-times, client prefill) stays legal
+      "clockIn.setHours(startH, startM, 0, 0);"
+    ];
+    for (const ts of cases) {
+      expect(noLocalTimezone.scan("f.ts", ts)).toHaveLength(0);
+    }
   });
 
   it("allows the datetime API", () => {

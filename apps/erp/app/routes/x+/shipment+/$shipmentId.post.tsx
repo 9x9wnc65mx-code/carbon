@@ -15,7 +15,10 @@ import { parseDate } from "@internationalized/date";
 import type { ActionFunctionArgs } from "react-router";
 import { redirect } from "react-router";
 import { upsertDocument } from "~/modules/documents";
-import { getLocationTimeZone } from "~/modules/shared/timezone.server";
+import {
+  getCompanyTimeZone,
+  getLocationTimeZone
+} from "~/modules/shared/timezone.server";
 import { loader as pdfLoader } from "~/routes/file+/shipment+/$id[.]pdf";
 import { path } from "~/utils/path";
 import { stripSpecialCharacters } from "~/utils/string";
@@ -135,12 +138,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   // Expiry is judged on the shipping site's calendar, not the server's — a lot
   // that expires today must not read as expired at a plant still on yesterday.
+  // No location on the shipment → the company calendar.
+  const shipmentLocationId = shipmentForSurface?.locationId as string | null;
   const todayLocal = datetime.today(
-    await getLocationTimeZone(
-      serviceRole,
-      shipmentForSurface?.locationId as string,
-      companyId
-    )
+    shipmentLocationId
+      ? await getLocationTimeZone(serviceRole, shipmentLocationId, companyId)
+      : await getCompanyTimeZone(serviceRole, companyId)
   );
   const expiredEntities = (shipmentTrackedEntities ?? []).filter((e) => {
     if (!e.expirationDate) return false;

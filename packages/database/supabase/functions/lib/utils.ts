@@ -40,17 +40,20 @@ export interface TrackedEntityAttributes {
   Shelf?: string;
 }
 
-// ISO 8601 week number (1-53). Week 1 is the week containing the year's first Thursday.
-const isoWeekFromYmd = (year: number, month: number, day: number): number => {
+// ISO 8601 week number (1-53). Week 1 is the week containing the year's first
+// Thursday. The one copy of the algorithm in the functions lib — datetime.ts
+// delegates here.
+export const isoWeekFromYmd = (
+  year: number,
+  month: number,
+  day: number
+): number => {
   const d = new Date(Date.UTC(year, month - 1, day));
   const dayNum = d.getUTCDay() || 7; // Sunday → 7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 };
-
-export const getISOWeek = (date: Date): number =>
-  isoWeekFromYmd(date.getFullYear(), date.getMonth() + 1, date.getDate());
 
 // Current wall-clock parts in an explicit timezone. Intl-based so this module
 // stays importable from both Deno and Node (no npm:/workspace deps).

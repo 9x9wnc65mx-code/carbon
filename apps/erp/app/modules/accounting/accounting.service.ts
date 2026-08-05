@@ -348,7 +348,9 @@ export async function getCompaniesInGroup(
 ) {
   return client
     .from("company")
-    .select("id, name, baseCurrencyCode, parentCompanyId, isEliminationEntity")
+    .select(
+      "id, name, baseCurrencyCode, timezone, parentCompanyId, isEliminationEntity"
+    )
     .eq("companyGroupId", companyGroupId)
     .eq("active", true)
     .eq("isEliminationEntity", false)

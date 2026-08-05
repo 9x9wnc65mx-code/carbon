@@ -47,11 +47,12 @@ async function archiveCompanyLogs(
   const jsonl = records.map((r) => JSON.stringify(r)).join("\n");
   const gzipped = gzipSync(Buffer.from(jsonl));
 
-  // Generate archive path
+  // Generate archive path — a storage key, so the UTC calendar is fine; UTC
+  // parts keep the path deterministic under any process timezone.
   const nowDate = new Date();
-  const year = nowDate.getFullYear();
-  const month = String(nowDate.getMonth() + 1).padStart(2, "0");
-  const day = String(nowDate.getDate()).padStart(2, "0");
+  const year = nowDate.getUTCFullYear();
+  const month = String(nowDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(nowDate.getUTCDate()).padStart(2, "0");
   const timestamp = `${year}-${month}-${day}`;
   const archivePath = `audit-logs/${companyId}/${year}/${month}/${timestamp}.jsonl.gz`;
 
