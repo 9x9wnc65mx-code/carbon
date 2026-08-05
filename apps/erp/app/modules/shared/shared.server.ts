@@ -15,6 +15,7 @@ import {
   getSalesOrderLines
 } from "~/modules/sales";
 import { getCompany } from "~/modules/settings";
+import { getTimezoneNames } from "~/modules/shared/shared.service";
 import { getUser } from "~/modules/users/users.server";
 import { getDatabaseClient } from "~/services/database.server";
 import { stripSpecialCharacters } from "~/utils/string";
@@ -92,6 +93,44 @@ export async function getCustomFieldsSchemas(
   const result = await query;
   if (result.data) {
     await redis.set(key, JSON.stringify(result.data));
+  }
+
+  return result;
+}
+
+const TIMEZONES_CACHE_KEY = "timezones:v1";
+// tzdata only changes when the Postgres image is upgraded — a day-long TTL
+// keeps the pg_timezone_names scan (~1ms but per-request) off the hot path
+// while still picking up a DB upgrade within 24h.
+const TIMEZONES_CACHE_TTL_SECONDS = 60 * 60 * 24;
+
+/**
+ * Redis-cached wrapper around the get_timezone_names RPC (pg_timezone_names).
+ * The list is global (not company-scoped). Follows the getCustomFieldsSchemas
+ * pattern: a miss, unreachable Redis (the @carbon/kv resilience wrapper fails
+ * soft), or a corrupt entry all fall through to the database.
+ */
+export async function getCachedTimezoneNames(client: SupabaseClient<Database>) {
+  const cached = await redis.get(TIMEZONES_CACHE_KEY);
+  if (cached) {
+    try {
+      return {
+        data: JSON.parse(cached) as { name: string; utcOffset: string }[],
+        error: null
+      };
+    } catch {
+      // Corrupt cache entry — fall through to the source of truth.
+    }
+  }
+
+  const result = await getTimezoneNames(client);
+  if (result.data?.length) {
+    await redis.set(
+      TIMEZONES_CACHE_KEY,
+      JSON.stringify(result.data),
+      "EX",
+      TIMEZONES_CACHE_TTL_SECONDS
+    );
   }
 
   return result;
