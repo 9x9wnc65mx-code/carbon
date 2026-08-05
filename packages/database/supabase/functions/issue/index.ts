@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
-import { type CalendarDate, parseDate } from "npm:@internationalized/date";
+import { type CalendarDate, parseDate } from "@internationalized/date";
 import { Transaction } from "kysely";
 import { z } from "npm:zod@^3.24.1";
 

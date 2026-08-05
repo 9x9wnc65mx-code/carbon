@@ -164,6 +164,31 @@ describe("DST and exotic-zone stress", () => {
 });
 
 describe("datetime.weekNumber", () => {
+  it("matches the reference UTC-arithmetic implementation for every day 2019-2031", () => {
+    // Oracle: the previous native-Date implementation (covers week-53 years,
+    // leap years, and both year-boundary spill directions).
+    const oracle = (y: number, m: number, day: number): number => {
+      const d = new Date(Date.UTC(y, m - 1, day));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil(
+        ((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+      );
+    };
+    for (let y = 2019; y <= 2031; y++) {
+      for (let m = 1; m <= 12; m++) {
+        const first = new CalendarDate(y, m, 1);
+        const days = first.calendar.getDaysInMonth(first);
+        for (let d = 1; d <= days; d++) {
+          expect(datetime.weekNumber(new CalendarDate(y, m, d))).toBe(
+            oracle(y, m, d)
+          );
+        }
+      }
+    }
+  });
+
   it("matches known ISO 8601 week numbers", () => {
     expect(
       datetime.weekNumber(datetime.businessDay("2026-01-01T12:00:00Z", "UTC"))

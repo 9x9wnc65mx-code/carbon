@@ -1,3 +1,7 @@
+// Bare specifier on purpose: Deno resolves it through the deno.json import map
+// (like kysely), and the node-side @carbon/database build — which reaches this
+// file via shared/get-next-sequence.ts — resolves it from node_modules.
+import { CalendarDate, getDayOfWeek, now } from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Kysely } from "kysely";
 // Type-only import from postgres/index.ts (not lib/database.ts) keeps the
@@ -42,40 +46,21 @@ export interface TrackedEntityAttributes {
 
 // ISO 8601 week number (1-53). Week 1 is the week containing the year's first
 // Thursday. The one copy of the algorithm in the functions lib — datetime.ts
-// delegates here.
+// delegates here. Pure calendar arithmetic: en-GB is Monday-first, so
+// getDayOfWeek gives Mon=0…Sun=6 and `3 - dow` lands on the week's Thursday;
+// CalendarDate.compare returns whole days.
 export const isoWeekFromYmd = (
   year: number,
   month: number,
   day: number
 ): number => {
-  const d = new Date(Date.UTC(year, month - 1, day));
-  const dayNum = d.getUTCDay() || 7; // Sunday → 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-};
-
-// Current wall-clock parts in an explicit timezone. Intl-based so this module
-// stays importable from both Deno and Node (no npm:/workspace deps).
-const datePartsInTimeZone = (timezone: string) => {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date());
-  const get = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((p) => p.type === type)?.value ?? 0);
-  return {
-    year: get("year"),
-    month: get("month"),
-    day: get("day"),
-    hours: get("hour"),
-    seconds: get("second"),
-  };
+  const date = new CalendarDate(year, month, day);
+  const thursday = date.add({ days: 3 - getDayOfWeek(date, "en-GB") });
+  return (
+    Math.floor(
+      thursday.compare(new CalendarDate(thursday.year, 1, 1)) / 7
+    ) + 1
+  );
 };
 
 // used to generate sequences — date tokens derive in the company's business
@@ -90,7 +75,13 @@ export const interpolateSequenceDate = (
   let result = value;
 
   if (result.includes("%{")) {
-    const { year, month, day, hours, seconds } = datePartsInTimeZone(timezone);
+    const {
+      year,
+      month,
+      day,
+      hour: hours,
+      second: seconds
+    } = now(timezone);
     const week = isoWeekFromYmd(year, month, day);
 
     result = result.replace(/%{yyyy}/g, year.toString());

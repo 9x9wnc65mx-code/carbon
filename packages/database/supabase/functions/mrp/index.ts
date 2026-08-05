@@ -3,7 +3,7 @@ import {
   parseDate,
   startOfWeek,
   type CalendarDate,
-} from "npm:@internationalized/date";
+} from "@internationalized/date";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
 import { datetime, getCompanyTimeZone } from "../lib/datetime.ts";
 import {

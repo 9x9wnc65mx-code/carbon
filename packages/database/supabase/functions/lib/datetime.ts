@@ -8,7 +8,7 @@ import {
   startOfWeek,
   toCalendarDate,
   today
-} from "npm:@internationalized/date";
+} from "@internationalized/date";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Kysely } from "kysely";
 import type { DB } from "./database.ts";

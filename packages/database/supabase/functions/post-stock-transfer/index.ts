@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
-import { type CalendarDate, parseDate } from "npm:@internationalized/date";
+import { type CalendarDate, parseDate } from "@internationalized/date";
 import { nanoid } from "https://deno.land/x/nanoid@v3.0.0/nanoid.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
 import { sql } from "kysely";

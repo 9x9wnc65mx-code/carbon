@@ -1,6 +1,6 @@
 import { getLogger } from "@carbon/logger";
 import { datetime } from "@carbon/utils";
-import { CalendarDate } from "@internationalized/date";
+import { CalendarDate, now } from "@internationalized/date";
 
 export { stripSpecialCharacters } from "@carbon/utils";
 
@@ -54,29 +54,6 @@ export const copyToClipboard = async (
   }
 };
 
-// Current wall-clock parts in an explicit timezone (for server callers that
-// derive sequence tokens in the company's business timezone).
-const datePartsInTimeZone = (timezone: string) => {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23"
-  }).formatToParts(new Date());
-  const get = (type: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((p) => p.type === type)?.value ?? 0);
-  return {
-    year: get("year"),
-    month: get("month"),
-    day: get("day"),
-    hours: get("hour"),
-    seconds: get("second")
-  };
-};
-
 // used to generate sequences — date tokens derive in the company's business
 // timezone so document prefixes roll over at the company's midnight, not the
 // process's. Mirrors functions/lib/utils.ts; keep the two in sync.
@@ -89,7 +66,7 @@ export const interpolateSequenceDate = (
   let result = value;
 
   if (result.includes("%{")) {
-    const { year, month, day, hours, seconds } = datePartsInTimeZone(timezone);
+    const { year, month, day, hour: hours, second: seconds } = now(timezone);
     const week = datetime.weekNumber(new CalendarDate(year, month, day));
 
     result = result.replace(/%{yyyy}/g, year.toString());

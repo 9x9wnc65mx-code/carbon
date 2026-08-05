@@ -1,5 +1,6 @@
 import {
-  type CalendarDate,
+  CalendarDate,
+  getDayOfWeek,
   now,
   parseAbsolute,
   startOfWeek,
@@ -9,14 +10,15 @@ import {
 
 /**
  * ISO 8601 week number (1-53). Week 1 is the week containing the year's first
- * Thursday. Pure UTC arithmetic on the date parts — no timezone dependency.
+ * Thursday. Pure calendar arithmetic: en-GB is Monday-first, so getDayOfWeek
+ * gives Mon=0…Sun=6 and `3 - dow` lands on the week's Thursday;
+ * CalendarDate.compare returns whole days.
  */
 function weekNumber(date: CalendarDate): number {
-  const d = new Date(Date.UTC(date.year, date.month - 1, date.day));
-  const dayNum = d.getUTCDay() || 7; // Sunday → 7
-  d.setUTCDate(d.getUTCDate() + 4 - dayNum); // shift to the week's Thursday
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  const thursday = date.add({ days: 3 - getDayOfWeek(date, "en-GB") });
+  return (
+    Math.floor(thursday.compare(new CalendarDate(thursday.year, 1, 1)) / 7) + 1
+  );
 }
 
 /**
