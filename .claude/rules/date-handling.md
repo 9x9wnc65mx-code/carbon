@@ -75,8 +75,39 @@ calendar, not to whichever zone the person filling the form happens to be in.
   `@internationalized/date`.
 - **Day boundaries in a timezone:** `fromDate(jsDate, timeZone).set({ hour: 0, … })`
   (`apps/mes/app/utils/display.ts` `startOfDay`/`endOfDay`).
+- **Week windows (payroll/timecards):** `datetime.weekBounds(tz, offset?)` —
+  Monday→Sunday UTC-instant bounds on the business calendar (used by
+  `getWeeklyHoursForEmployees` and both timecard routes). Don't hand-roll
+  `startOfWeek(...).toDate(tz)`; the helper is the tested copy.
 - **Recurring-date arithmetic:** carry a `ZonedDateTime` and `.add({ … })`
   (`packages/jobs/.../scheduled/dispatch.ts` `advanceByFrequency`).
+
+## DST: wall-clock times are not instants
+
+Deriving a *day* in a tz is always safe; constructing an *instant from a local
+wall time* (a shift start, a job's scheduled start, a day/week boundary) is
+where DST bites. The stress suite pinning all of this lives in
+`packages/utils/src/datetime.test.ts` ("DST and exotic-zone stress").
+
+- **Spring-forward gap** (02:30 doesn't exist): `toZoned` with the default
+  `disambiguation: "compatible"` shifts forward into the post-gap hour — a
+  02:30 job start fires at 03:30 local, never crashes. **Fall-back overlap**
+  (01:30 happens twice): `"compatible"` picks the first occurrence — the job
+  fires once, not twice. Pass an explicit disambiguation only when the domain
+  demands the other choice.
+- **Some zones transition AT midnight** (America/Santiago): on spring-forward
+  day 00:00 doesn't exist and `CalendarDate.toDate(tz)` resolves to the day's
+  true first instant (01:00). Never construct "midnight" by string-building
+  `T00:00:00` + an offset.
+- **Transition weeks are 167h/169h** (Lord Howe: ±30min, and offsets like
+  Kathmandu's +05:45 exist) — never assume 24h days or 168h weeks; duration
+  arithmetic on instants and calendar arithmetic on `CalendarDate` are both
+  fine, mixing them is not.
+- **Cron schedules cannot express a local wall time.** "02:30 local" is a
+  different UTC instant before vs after a transition, so Inngest crons stay on
+  UTC schedules and compute per-company/location *days* inside the run. If a
+  job must ever fire at an exact local wall time, compute the next-run instant
+  via `toZoned(...)` per zone — don't fake it with a fixed UTC cron.
 
 ## Narrow exception
 

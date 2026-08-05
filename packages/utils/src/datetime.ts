@@ -2,6 +2,7 @@ import {
   type CalendarDate,
   now,
   parseAbsolute,
+  startOfWeek,
   toCalendarDate,
   today
 } from "@internationalized/date";
@@ -41,6 +42,35 @@ export const datetime = {
   /** The business day a stored UTC instant falls on in the given timezone. */
   businessDay: (instant: string, tz: string) =>
     toCalendarDate(parseAbsolute(instant, tz)),
+
+  /**
+   * The ISO week (Monday 00:00 → Sunday 23:59:59.999) containing `anchor`
+   * (default: today on the given business calendar) as UTC instant strings.
+   * `offset` shifts whole weeks (-1 = last week).
+   *
+   * DST-safe by construction: boundaries are derived per-day via
+   * `CalendarDate.toDate(tz)`, so a transition week is genuinely 167h/169h
+   * (Lord Howe: ±30min) rather than a fixed 168, consecutive weeks tile with
+   * no gap or double-count, and in zones that spring forward AT midnight
+   * (America/Santiago) a boundary that lands on the skipped midnight resolves
+   * to that day's true first instant (01:00) instead of crashing or drifting
+   * a day.
+   */
+  weekBounds: (
+    tz: string,
+    offset = 0,
+    anchor?: CalendarDate
+  ): { from: string; to: string } => {
+    const monday = startOfWeek(
+      (anchor ?? today(tz)).add({ weeks: offset }),
+      "en-GB"
+    );
+    const nextMonday = monday.add({ weeks: 1 }).toDate(tz);
+    return {
+      from: monday.toDate(tz).toISOString(),
+      to: new Date(nextMonday.getTime() - 1).toISOString()
+    };
+  },
 
   weekNumber
 };

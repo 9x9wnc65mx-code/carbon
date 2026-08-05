@@ -29,7 +29,7 @@ import {
   Thead,
   Tr
 } from "@carbon/react";
-import { startOfWeek, today } from "@internationalized/date";
+import { datetime } from "@carbon/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useLocale } from "@react-aria/i18n";
 import { useEffect, useState } from "react";
@@ -68,18 +68,6 @@ import {
 import { getCompanySettings } from "~/modules/settings";
 import { getCompanyTimeZone } from "~/modules/shared/timezone.server";
 import { path } from "~/utils/path";
-
-// Week runs Monday 00:00 → Sunday 23:59:59.999 on the company calendar (one
-// payroll boundary per books, not the server's zone). en-GB: Monday-first.
-function getWeekBounds(tz: string, offset: number = 0) {
-  const monday = startOfWeek(today(tz).add({ weeks: offset }), "en-GB");
-  const nextMonday = monday.add({ weeks: 1 }).toDate(tz);
-
-  return {
-    from: monday.toDate(tz).toISOString(),
-    to: new Date(nextMonday.getTime() - 1).toISOString()
-  };
-}
 
 function formatDuration(clockIn: string, clockOut: string | null) {
   const end = clockOut ? new Date(clockOut).getTime() : Date.now();
@@ -140,7 +128,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const url = new URL(request.url);
   const weekOffset = parseInt(url.searchParams.get("week") ?? "0", 10);
-  const { from, to } = getWeekBounds(
+  // Week runs Monday → Sunday on the company calendar (one payroll boundary
+  // per books, not the server's zone).
+  const { from, to } = datetime.weekBounds(
     await getCompanyTimeZone(client, companyId),
     weekOffset
   );
