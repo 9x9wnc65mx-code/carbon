@@ -87,8 +87,7 @@ const ShiftsTable = memo(({ data, count, locations }: ShiftsTableProps) => {
         <DateTime
           value={instant}
           variant="time"
-          timeZone={tz}
-          timeZoneLabel={<Trans>Location</Trans>}
+          locationTimeZone={tz}
           className="cursor-pointer underline decoration-muted-foreground/50 decoration-dotted underline-offset-[3px]"
         >
           {inline}

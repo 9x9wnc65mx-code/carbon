@@ -68,10 +68,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     locationId = locations.data?.[0].id as string;
   }
 
-  const periods = await getOrCreatePeriods(
-    datetime.today(await getLocationTimeZone(client, locationId, companyId)),
-    WEEKS_TO_PLAN
+  const locationToday = datetime.today(
+    await getLocationTimeZone(client, locationId, companyId)
   );
+  const periods = await getOrCreatePeriods(locationToday, WEEKS_TO_PLAN);
 
   const items = await getProductionPlanning(
     client,
@@ -98,7 +98,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     items: (items.data ?? []) as ProductionPlanningItem[],
     count: items.count ?? 0,
     periods,
-    locationId
+    locationId,
+    // Planned-order date defaults are business dates on the plant's calendar —
+    // the drawer must not seed them from the planner's browser zone.
+    locationToday: locationToday.toString()
   };
 }
 

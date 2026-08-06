@@ -154,6 +154,19 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
   const [customers] = useCustomers();
   const locations = useLocations();
 
+  // Scheduling dates belong to the job's location calendar. Empty timezone
+  // means the location inherits the company's — omit it and the popover
+  // collapses to the company row.
+  const locationZoneProps = useCallback(
+    (locationId: string | null | undefined) => {
+      const timezone = locationId
+        ? locations.find((l) => l.value === locationId)?.timezone
+        : undefined;
+      return timezone ? { locationTimeZone: timezone } : {};
+    },
+    [locations]
+  );
+
   const permissions = usePermissions();
   const deleteModal = useDisclosure();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -367,8 +380,14 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "startDate",
         header: t`Start Date`,
-        cell: (item) => (
-          <DateTime value={item.getValue<string>()} variant="date" />
+        // Scheduling dates are operational — resolve on the job's location
+        // calendar, not the company's.
+        cell: ({ row }) => (
+          <DateTime
+            value={row.original.startDate}
+            variant="date"
+            {...locationZoneProps(row.original.locationId)}
+          />
         ),
         meta: {
           icon: <LuCalendar />
@@ -377,8 +396,12 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "dueDate",
         header: t`Due Date`,
-        cell: (item) => (
-          <DateTime value={item.getValue<string>()} variant="date" />
+        cell: ({ row }) => (
+          <DateTime
+            value={row.original.dueDate}
+            variant="date"
+            {...locationZoneProps(row.original.locationId)}
+          />
         ),
         meta: {
           icon: <LuCalendar />

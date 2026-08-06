@@ -59,6 +59,7 @@ import { JobOperationStatus } from "~/modules/production/ui/Jobs/JobOperationSta
 import { getPrivateUrl, path } from "~/utils/path";
 import { useKanban } from "../context/KanbanContext";
 import type { Item } from "../types";
+import { useScheduleToday } from "../useScheduleToday";
 
 interface Progress {
   totalDuration: number;
@@ -126,6 +127,7 @@ export function ItemCard({ item, isOverlay, progressByItemId }: ItemCardProps) {
   });
 
   const isHighlighted = selectedGroup === item.jobReadableId;
+  const scheduleToday = useScheduleToday();
 
   const style = {
     transition,
@@ -134,7 +136,7 @@ export function ItemCard({ item, isOverlay, progressByItemId }: ItemCardProps) {
 
   const isOverdue =
     item.deadlineType !== "No Deadline" && item.dueDate
-      ? new Date(item.dueDate) < new Date()
+      ? item.dueDate < scheduleToday
       : false;
 
   const progress = progressByItemId[item.id]?.progress ?? 0;

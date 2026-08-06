@@ -45,6 +45,7 @@ import { getPrivateUrl, path } from "~/utils/path";
 import JobStatus from "../../../Jobs/JobStatus";
 import { useKanban } from "../context/KanbanContext";
 import type { JobItem } from "../types";
+import { useScheduleToday } from "../useScheduleToday";
 
 interface Progress {
   totalDuration: number;
@@ -185,6 +186,7 @@ export function JobCard({ item, isOverlay, progressByItemId }: JobCardProps) {
   const [customers] = useCustomers();
 
   const customer = customers.find((s) => s.id === item.customerId);
+  const scheduleToday = useScheduleToday();
   const dueDate = getDateOnly(item.dueDate);
   const isDueDateValid = Boolean(dueDate && DATE_COLUMN_PATTERN.test(dueDate));
   const dueDateValue = isDueDateValid && dueDate ? dueDate : null;
@@ -215,9 +217,7 @@ export function JobCard({ item, isOverlay, progressByItemId }: JobCardProps) {
   }
 
   const isOverdue =
-    (item.dueDate &&
-      status !== "Completed" &&
-      new Date(item.dueDate) < new Date()) ||
+    (item.dueDate && status !== "Completed" && item.dueDate < scheduleToday) ||
     (item.dueDate &&
       item.completedDate &&
       status === "Completed" &&

@@ -31,19 +31,13 @@ export type DateTimeProps = {
    * - `relative` — "3 hours ago"
    * - `absolute` — short date + short time
    * - `time` — time of day only
-   * - `date` — date only (no time-of-day); tooltip drops the clock rows
+   * - `date` — date only (no time-of-day)
    */
   variant?: "relative" | "absolute" | "time" | "date";
-  /**
-   * Business timezone for the extra tooltip row — company or location
-   * depending on context. Hidden when it matches the viewer's zone or UTC.
-   */
-  timeZone?: string;
-  /**
-   * Semantic label for the business-timezone row ("Company", "Location", …) so
-   * the viewer can tell which offset is which. Falls back to the IANA name.
-   */
-  timeZoneLabel?: ReactNode;
+  /** The company's IANA timezone (ledger calendar) — the Company row. */
+  companyTimeZone?: string;
+  /** The relevant location's IANA timezone (operational) — the Location row. */
+  locationTimeZone?: string;
   /** Custom trigger element (e.g. an info icon) instead of the formatted text. */
   children?: ReactNode;
   /**
@@ -69,7 +63,7 @@ function TooltipRow({
 }: {
   label: string;
   labelTitle?: string;
-  suffix?: ReactNode;
+  suffix: ReactNode;
   value: string;
   timeZone: string;
   locale: string;
@@ -85,7 +79,7 @@ function TooltipRow({
       <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {suffix}
       </span>
-      <span className="text-xs font-medium tabular-nums">
+      <span className="justify-self-end text-xs font-medium tabular-nums">
         {formatDateTimeInZone(value, timeZone, locale, {
           dateStyle: undefined,
           timeStyle: undefined,
@@ -110,8 +104,8 @@ function TooltipRow({
 const DateTime = ({
   value,
   variant = "absolute",
-  timeZone,
-  timeZoneLabel,
+  companyTimeZone,
+  locationTimeZone,
   children,
   dateOptions,
   fallback = null,
@@ -125,17 +119,15 @@ const DateTime = ({
 
   const viewerTimeZone = getLocalTimeZone();
   const isDate = variant === "date";
-  // A bare `YYYY-MM-DD` is a business date — its day starts at midnight in the
-  // business timezone (company/location), NOT midnight UTC. Anchoring there
-  // keeps the business row on the stated date; `toDate` resolves DST-skipped
-  // midnights to the day's true first instant.
+  // A bare `YYYY-MM-DD` is a business date — its day starts at midnight on the
+  // operational calendar: the location's when known, else the company's.
+  // `toDate` resolves DST-skipped midnights to the day's true first instant.
+  const anchorTimeZone = locationTimeZone ?? companyTimeZone ?? "UTC";
   const hasTime = value.includes("T");
   let instant = value;
   if (!hasTime) {
     try {
-      instant = parseDate(value)
-        .toDate(timeZone ?? "UTC")
-        .toISOString();
+      instant = parseDate(value).toDate(anchorTimeZone).toISOString();
     } catch {
       instant = `${value}T00:00:00Z`;
     }
@@ -153,8 +145,12 @@ const DateTime = ({
           ? formatDate(value, dateOptions, locale)
           : formatDateTime(value, locale);
 
-  const showBusinessRow =
-    !!timeZone && timeZone !== viewerTimeZone && timeZone !== "UTC";
+  // Rows in fixed order: Company, Location, Local — dedupe identical zones so
+  // a single-site viewer in the company zone sees one meaningful row.
+  const showLocationRow =
+    !!locationTimeZone && locationTimeZone !== companyTimeZone;
+  const showLocalRow =
+    viewerTimeZone !== companyTimeZone && viewerTimeZone !== locationTimeZone;
 
   // Computed once when the popover opens (the render `open` triggers) — no
   // ticking interval; the diff is a snapshot of the moment you opened it.
@@ -167,11 +163,17 @@ const DateTime = ({
 
   // Only resolve offset labels while the tooltip is open — a table can mount
   // hundreds of these and the parse/format is not free.
+  const companyOffsetLabel =
+    open && companyTimeZone
+      ? getTimeZoneOffsetLabel(instant, companyTimeZone)
+      : "";
+  const locationOffsetLabel =
+    open && locationTimeZone
+      ? getTimeZoneOffsetLabel(instant, locationTimeZone)
+      : "";
   const viewerOffsetLabel = open
     ? getTimeZoneOffsetLabel(instant, viewerTimeZone)
     : "";
-  const businessOffsetLabel =
-    open && timeZone ? getTimeZoneOffsetLabel(instant, timeZone) : "";
 
   return (
     <Tooltip open={open} onOpenChange={setOpen} delayDuration={200}>
@@ -196,43 +198,69 @@ const DateTime = ({
       {open && (
         <TooltipContent side={side} className="max-w-none p-0">
           <TooltipArrow />
-          <div className="border-b border-border px-3 py-2 text-xs text-muted-foreground tabular-nums">
-            {precise?.direction === "future" ? (
-              <Trans>in {precise?.text}</Trans>
-            ) : precise ? (
-              <Trans>{precise?.text} ago</Trans>
-            ) : (
-              // Bare date: exact day distance on the business calendar —
-              // "in 8 days", not a vague "next week".
-              formatRelativeCalendarDays(
-                value,
-                today(timeZone ?? viewerTimeZone).toString(),
-                locale
-              )
-            )}
+          <div className="flex items-center justify-between gap-8 border-b border-border px-3 py-2 text-xs tabular-nums">
+            <span className="text-muted-foreground">
+              {precise?.direction === "future" ? (
+                <Trans>in {precise?.text}</Trans>
+              ) : precise ? (
+                <Trans>{precise?.text} ago</Trans>
+              ) : (
+                // Bare date: exact day distance on the operational calendar —
+                // "in 8 days", not a vague "next week".
+                formatRelativeCalendarDays(
+                  value,
+                  today(anchorTimeZone).toString(),
+                  locale
+                )
+              )}
+            </span>
+            <span className="font-mono text-muted-foreground">
+              {formatDateTimeInZone(instant, "UTC", locale, {
+                dateStyle: undefined,
+                timeStyle: undefined,
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+              })}
+              {" – "}
+              {formatDateTimeInZone(instant, "UTC", locale, {
+                dateStyle: undefined,
+                timeStyle: undefined,
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
+              })}{" "}
+              UTC
+            </span>
           </div>
           <div className="grid grid-cols-[auto_auto_1fr_auto] items-center gap-x-2.5 gap-y-1.5 px-3 py-2.5 text-[0.8125rem]">
-            <TooltipRow
-              label="UTC"
-              value={instant}
-              timeZone="UTC"
-              locale={locale}
-            />
-            <TooltipRow
-              label={viewerOffsetLabel}
-              labelTitle={viewerTimeZone}
-              suffix={<Trans>Local</Trans>}
-              value={instant}
-              timeZone={viewerTimeZone}
-              locale={locale}
-            />
-            {showBusinessRow && (
+            {companyTimeZone && (
               <TooltipRow
-                label={businessOffsetLabel}
-                labelTitle={timeZone}
-                suffix={timeZoneLabel ?? timeZone}
+                label={companyOffsetLabel}
+                labelTitle={companyTimeZone}
+                suffix={<Trans>Company</Trans>}
                 value={instant}
-                timeZone={timeZone}
+                timeZone={companyTimeZone}
+                locale={locale}
+              />
+            )}
+            {showLocationRow && (
+              <TooltipRow
+                label={locationOffsetLabel}
+                labelTitle={locationTimeZone}
+                suffix={<Trans>Location</Trans>}
+                value={instant}
+                timeZone={locationTimeZone}
+                locale={locale}
+              />
+            )}
+            {showLocalRow && (
+              <TooltipRow
+                label={viewerOffsetLabel}
+                labelTitle={viewerTimeZone}
+                suffix={<Trans>Local</Trans>}
+                value={instant}
+                timeZone={viewerTimeZone}
                 locale={locale}
               />
             )}
