@@ -45,7 +45,12 @@ import {
 import { RiProgress8Line } from "react-icons/ri";
 import { Link } from "react-router";
 import { z } from "zod";
-import { Assignee, CustomerAvatar, EmployeeAvatarGroup } from "~/components";
+import {
+  Assignee,
+  CustomerAvatar,
+  DateTime,
+  EmployeeAvatarGroup
+} from "~/components";
 import { Tags } from "~/components/Form";
 import { useDateFormatter } from "~/hooks";
 import { useTags } from "~/hooks/useTags";
@@ -99,7 +104,7 @@ type ItemCardProps = {
 
 export function ItemCard({ item, isOverlay, progressByItemId }: ItemCardProps) {
   const { t } = useLingui();
-  const { formatDate, formatRelativeTime } = useDateFormatter();
+  const { formatRelativeTime } = useDateFormatter();
   const { displaySettings, selectedGroup, setSelectedGroup, tags } =
     useKanban();
   const {
@@ -344,7 +349,9 @@ export function ItemCard({ item, isOverlay, progressByItemId }: ItemCardProps) {
         {displaySettings.showDueDate && item.dueDate && (
           <HStack className="justify-start space-x-2">
             <LuCalendarDays />
-            <span className="text-sm">{formatDate(item.dueDate)}</span>
+            <span className="text-sm">
+              <DateTime value={item.dueDate} variant="date" />
+            </span>
           </HStack>
         )}
 

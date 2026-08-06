@@ -41,6 +41,7 @@ import {
 import { useFetcher, useNavigate } from "react-router";
 import {
   CustomerAvatar,
+  DateTime,
   EmployeeAvatar,
   exportOnlyColumn,
   Hyperlink,
@@ -51,12 +52,7 @@ import {
 import { Enumerable } from "~/components/Enumerable";
 import { useLocations } from "~/components/Form/Location";
 import { ConfirmDelete } from "~/components/Modals";
-import {
-  useDateFormatter,
-  usePermissions,
-  useUrlParams,
-  useUser
-} from "~/hooks";
+import { usePermissions, useUrlParams, useUser } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import type { action } from "~/routes/x+/job+/update";
 import { useCustomers, useParts, usePeople, useTools } from "~/stores";
@@ -145,7 +141,6 @@ function useReadableTrackedEntities(data: Job[], companyId: string) {
 const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
   const navigate = useNavigate();
   const { t } = useLingui();
-  const { formatDate } = useDateFormatter();
   const [params] = useUrlParams();
   const parts = useParts();
   const tools = useTools();
@@ -372,7 +367,9 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "startDate",
         header: t`Start Date`,
-        cell: (item) => formatDate(item.getValue<string>()),
+        cell: (item) => (
+          <DateTime value={item.getValue<string>()} variant="date" />
+        ),
         meta: {
           icon: <LuCalendar />
         }
@@ -380,7 +377,9 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "dueDate",
         header: t`Due Date`,
-        cell: (item) => formatDate(item.getValue<string>()),
+        cell: (item) => (
+          <DateTime value={item.getValue<string>()} variant="date" />
+        ),
         meta: {
           icon: <LuCalendar />
         }
@@ -552,7 +551,9 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "createdAt",
         header: t`Created At`,
-        cell: (item) => formatDate(item.getValue<string>()),
+        cell: (item) => (
+          <DateTime value={item.getValue<string>()} variant="date" />
+        ),
         meta: {
           icon: <LuCalendar />
         }
@@ -577,7 +578,9 @@ const JobsTable = memo(({ data, count, tags }: JobsTableProps) => {
       {
         accessorKey: "updatedAt",
         header: t`Updated At`,
-        cell: (item) => formatDate(item.getValue<string>()),
+        cell: (item) => (
+          <DateTime value={item.getValue<string>()} variant="date" />
+        ),
         meta: {
           icon: <LuCalendar />
         }

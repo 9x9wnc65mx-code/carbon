@@ -38,8 +38,7 @@ import {
 } from "react-icons/lu";
 import { RiProgress8Line } from "react-icons/ri";
 import { Link, useSubmit } from "react-router";
-import { Assignee, EmployeeAvatarGroup } from "~/components";
-import { useDateFormatter } from "~/hooks";
+import { Assignee, DateTime, EmployeeAvatarGroup } from "~/components";
 import { getDeadlineIcon } from "~/modules/production/ui/Jobs/Deadline";
 import { useCustomers } from "~/stores";
 import { getPrivateUrl, path } from "~/utils/path";
@@ -147,7 +146,6 @@ type JobCardProps = {
 
 export function JobCard({ item, isOverlay, progressByItemId }: JobCardProps) {
   const { t } = useLingui();
-  const { formatDate } = useDateFormatter();
   const submit = useSubmit();
   // biome-ignore lint/correctness/noUnusedVariables: suppressed due to migration
   const { displaySettings, selectedGroup, setSelectedGroup, tags, columnIds } =
@@ -377,7 +375,9 @@ export function JobCard({ item, isOverlay, progressByItemId }: JobCardProps) {
               isPreviewInline
               inline={
                 dueDateValue ? (
-                  <span className="text-sm">{formatDate(dueDateValue)}</span>
+                  <span className="text-sm">
+                    <DateTime value={dueDateValue} variant="date" />
+                  </span>
                 ) : (
                   <span className="text-sm text-muted-foreground">
                     {t`Set due date`}
@@ -394,7 +394,7 @@ export function JobCard({ item, isOverlay, progressByItemId }: JobCardProps) {
           <HStack className="justify-start space-x-2">
             <LuCircleCheck className="text-emerald-500" />
             <span className="text-sm">
-              Completed {formatDate(item.completedDate)}
+              Completed <DateTime value={item.completedDate} variant="date" />
             </span>
           </HStack>
         )}
