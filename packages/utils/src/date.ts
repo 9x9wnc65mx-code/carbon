@@ -169,10 +169,12 @@ export function getTimeZoneOffsetLabel(isoString: string, timeZone: string) {
   }
 }
 
-// Exact day-level relative distance between two `YYYY-MM-DD` calendar days —
-// "in 8 days" / "3 days ago", with "today"/"tomorrow"/"yesterday" for the near
-// cases. The caller supplies `todayString` on whichever calendar the date
-// belongs to (company/location), so the flip happens at business midnight.
+// Relative distance between two `YYYY-MM-DD` calendar days, in the most
+// humane unit: exact days near the present ("in 8 days", with "today"/
+// "tomorrow"/"yesterday"), months beyond ~a month, years beyond ~a year —
+// never "589 days ago". The caller supplies `todayString` on whichever
+// calendar the date belongs to (company/location), so the flip happens at
+// business midnight.
 export function formatRelativeCalendarDays(
   dateString: string,
   todayString: string,
@@ -184,7 +186,11 @@ export function formatRelativeCalendarDays(
         parseDate(todayString).toDate("UTC").getTime()) /
         86400000
     );
-    return getRelativeFormatter(locale || DEFAULT_LOCALE).format(days, "days");
+    const formatter = getRelativeFormatter(locale || DEFAULT_LOCALE);
+    if (Math.abs(days) < 30) return formatter.format(days, "days");
+    if (Math.abs(days) < 365)
+      return formatter.format(Math.round(days / 30.44), "months");
+    return formatter.format(Math.round(days / 365.25), "years");
   } catch {
     return dateString;
   }

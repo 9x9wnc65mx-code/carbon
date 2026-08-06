@@ -29,6 +29,19 @@ describe("formatRelativeCalendarDays", () => {
     ).toBe("yesterday");
   });
 
+  it("switches to months and years for distant dates", () => {
+    expect(
+      formatRelativeCalendarDays("2026-11-10", "2026-08-06", "en-US")
+    ).toBe("in 3 months");
+    // 589 days back — never "589 days ago"
+    expect(
+      formatRelativeCalendarDays("2024-12-25", "2026-08-06", "en-US")
+    ).toBe("2 years ago");
+    expect(
+      formatRelativeCalendarDays("2025-09-06", "2026-08-06", "en-US")
+    ).toBe("11 months ago");
+  });
+
   it("echoes garbage input", () => {
     expect(formatRelativeCalendarDays("nope", "2026-08-06", "en-US")).toBe(
       "nope"
