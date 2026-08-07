@@ -14,7 +14,7 @@ import type { z } from "zod";
 import { getSupplierPriceBreaksForItems } from "~/modules/items/items.service";
 import { getEmployeeJob } from "~/modules/people";
 import type { GenericQueryFilters } from "~/utils/query";
-import { setGenericQueryFilters } from "~/utils/query";
+import { LIST_COUNT, setGenericQueryFilters } from "~/utils/query";
 import { sanitize } from "~/utils/supabase";
 import { getCurrencyByCode } from "../accounting";
 import type {
@@ -73,6 +73,12 @@ import type {
   SalesOrder,
   SalesRFQ
 } from "./types";
+
+const QUOTES_LIST_COLUMNS =
+  "id,quoteId,revisionId,dueDate,expirationDate,status,salesPersonId,estimatorId,customerId,customerReference,assignee,customFields,companyId,createdAt,createdBy,updatedAt,updatedBy,thumbnailPath,itemType,locationName,lines,completedLines" as const;
+
+const SALES_ORDERS_LIST_COLUMNS =
+  "id,salesOrderId,status,orderDate,customerId,customerReference,assignee,companyId,customFields,createdAt,createdBy,updatedAt,updatedBy,locationId,displayStatus,thumbnailPath,itemType,orderTotal,jobs,lines,paymentTermId,shippingMethodId,receiptPromisedDate,dropShipment" as const;
 
 const logger = getLogger("erp", "sales");
 
@@ -1159,7 +1165,7 @@ export async function getQuotes(
 ) {
   let query = client
     .from("quotes")
-    .select("*", { count: "exact" })
+    .select(QUOTES_LIST_COLUMNS, { count: LIST_COUNT })
     .eq("companyId", companyId);
 
   if (args.search) {
@@ -1633,7 +1639,7 @@ export async function getSalesOrders(
 ) {
   let query = client
     .from("salesOrders")
-    .select("*", { count: "exact" })
+    .select(SALES_ORDERS_LIST_COLUMNS, { count: LIST_COUNT })
     .eq("companyId", companyId);
 
   if (args.search) {
