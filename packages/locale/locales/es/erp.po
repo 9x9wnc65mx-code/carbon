@@ -10776,6 +10776,9 @@ msgstr "Recursos"
 msgid "Restore from Trash"
 msgstr "Restaurar desde la papelera"
 
+msgid "Restore this entity to available stock at the bin and cost it was scrapped from."
+msgstr "Restaurar esta entidad al inventario disponible en la ubicación y el costo desde el que fue descartada."
+
 msgid "Restore tracked entities to available"
 msgstr "Restaurar entidades rastreadas a disponibles"
 
@@ -11245,6 +11248,9 @@ msgstr "Motivos de desecho"
 
 msgid "Scrap Reasons"
 msgstr "Razones de Rechazo"
+
+msgid "Scrapped"
+msgstr "Descartada"
 
 msgid "Search"
 msgstr "Buscar"
@@ -13975,6 +13981,12 @@ msgstr "POs no recibidas"
 
 msgid "Unsaved changes"
 msgstr "Cambios no guardados"
+
+msgid "Unscrap"
+msgstr "Restaurar"
+
+msgid "Unscrap {label}"
+msgstr "Restaurar {label}"
 
 msgid "Unshipped orders"
 msgstr "Pedidos no enviados"

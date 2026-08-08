@@ -10776,6 +10776,9 @@ msgstr "Zasoby"
 msgid "Restore from Trash"
 msgstr "Przywróć z Kosza"
 
+msgid "Restore this entity to available stock at the bin and cost it was scrapped from."
+msgstr "Przywróć tę jednostkę do dostępnych zapasów w pojemniku i po koszcie, z których została złomowana."
+
 msgid "Restore tracked entities to available"
 msgstr "Przywróć śledzone jednostki do dostępnych"
 
@@ -11245,6 +11248,9 @@ msgstr "Przyczyny złomu"
 
 msgid "Scrap Reasons"
 msgstr "Przyczyny złomu"
+
+msgid "Scrapped"
+msgstr "Złomowany"
 
 msgid "Search"
 msgstr "Szukaj"
@@ -13975,6 +13981,12 @@ msgstr "Nieprzyjęte zamówienia"
 
 msgid "Unsaved changes"
 msgstr "Niezapisane zmiany"
+
+msgid "Unscrap"
+msgstr "Przywrócić"
+
+msgid "Unscrap {label}"
+msgstr "Przywrócić {label}"
 
 msgid "Unshipped orders"
 msgstr "Niewysłane zamówienia"

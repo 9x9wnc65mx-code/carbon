@@ -10776,6 +10776,9 @@ msgstr "Risorse"
 msgid "Restore from Trash"
 msgstr "Ripristina dal Cestino"
 
+msgid "Restore this entity to available stock at the bin and cost it was scrapped from."
+msgstr "Ripristina questa entità al magazzino disponibile nel bin e al costo da cui è stata scartata."
+
 msgid "Restore tracked entities to available"
 msgstr "Ripristina le entità tracciate come disponibili"
 
@@ -11245,6 +11248,9 @@ msgstr "Motivi dello scarto"
 
 msgid "Scrap Reasons"
 msgstr "Motivi di Scarto"
+
+msgid "Scrapped"
+msgstr "Scartato"
 
 msgid "Search"
 msgstr "Cerca"
@@ -13975,6 +13981,12 @@ msgstr "PO non ricevuti"
 
 msgid "Unsaved changes"
 msgstr "Modifiche non salvate"
+
+msgid "Unscrap"
+msgstr "Annulla scarto"
+
+msgid "Unscrap {label}"
+msgstr "Annulla scarto {label}"
 
 msgid "Unshipped orders"
 msgstr "Ordini non spediti"

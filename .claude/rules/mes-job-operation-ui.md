@@ -34,6 +34,28 @@ redirects kinds it does not serve (no loops).
   `path.to.endOperation(id)` (`/x/end/:operationId`); rework targets at
   `path.to.reworkTargets(id)`. Start/end routes write `productionEvent` /
   `productionQuantity` (end calls `finishJobOperation`).
+- **Scrap** (`.ai/specs/2026-08-06-scrap-unscrap-flow.md`): `x+/scrap.tsx` makes
+  ONE `issue` `jobOperationScrap` invoke (replacing the old
+  `insertScrapQuantity` + backflush pair) — it records the Scrap
+  `productionQuantity`, backflushes the unit's BOM, flips the selected serial to
+  `Scrapped`, **spawns the replacement serial** (returned as `newTrackedEntityId`
+  for client advancement), reopens the make method's Done ops, and posts
+  Dr `scrapAccount` / Cr WIP for the consumed-material cost. Scrapping a
+  **subcomponent** (serial/batch BOM part) goes through
+  `x+/entity+/$materialId.$trackedEntityId.scrap.tsx` → `issue`
+  `scrapTrackedEntity`, reached from a dedicated **Scrap tab** in the
+  `IssueMaterialModal` (`ScrapTab` lists the material's Available + Consumed
+  entities; each opens `ScrapEntityModal`). That case branches on entity
+  **state**, not `methodType`: an `Available` (picked/in-stock) part scraps from
+  stock (`Negative Adjmt`, Dr scrap / Cr inventory, `quantityIssued` untouched);
+  a `Consumed` part relieves WIP (Dr scrap / Cr WIP at the item's unit cost) and
+  **decrements `jobMaterial.quantityIssued`** so the requirement reopens for a
+  replacement. MTO make-replacement (reopen routing + spawn serial + rework row)
+  runs for either state. **The auto-Done predicate no longer counts
+  `quantityScrapped`** (`sync_update_job_operation_quantities`, `20260807090629`) —
+  scrap doesn't consume the good `targetQuantity`, so app-side remaining/Done
+  mirrors (`complete.tsx` `willBeFinished`, `InspectionView`/`quality.server`
+  `opRemaining`) also dropped the scrap term.
 - **`finishJobOperation`** (`operations.service.ts`) flips the op to `Done` (firing
   the `sync_finish_job_operation` trigger that completes the job to inventory when
   it's the last op). It then runs `returnPickedRemainders`: one `post-picking`
