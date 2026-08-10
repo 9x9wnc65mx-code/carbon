@@ -4040,6 +4040,10 @@ async function rewriteQuoteLinePrices(
 
         return {
           ...p,
+          // The delete, the existing-price lookup and the quoteLine check are
+          // all keyed on lineId. Honouring a payload's own quoteLineId would
+          // write rows onto a line none of that covered.
+          quoteLineId: lineId,
           companyId,
           quoteId,
           unitPrice: Number(p.unitPrice.toFixed(quoteLine.unitPricePrecision)),

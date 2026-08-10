@@ -8,6 +8,8 @@ import { getDatabaseClient } from "~/services/database.server";
 
 const logger = getLogger("erp", "quoteid-lineid-update-precision");
 
+const SUPPORTED_PRECISIONS = [2, 3, 4];
+
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
 
@@ -22,6 +24,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   const precision = Number(formData.get("precision") ?? 2);
+
+  // `quoteLine.unitPricePrecision` is CHECK-constrained to these three, so an
+  // out-of-range value would abort the transaction anyway — reject it here to
+  // return the reason instead of a generic failure.
+  if (!SUPPORTED_PRECISIONS.includes(precision)) {
+    return data(
+      { data: null, error: `Precision must be one of ${SUPPORTED_PRECISIONS}` },
+      { status: 400 }
+    );
+  }
 
   // Rounds the line's existing prices to the new precision in the same
   // transaction that sets it.

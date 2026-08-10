@@ -70,8 +70,9 @@ Standalone rules, `id` default `id('pr')`, scoped to a company. Columns: `name`,
 `upsertQuoteLinePrices(db, companyId, quoteId, lineId, prices)` deletes and
 re-inserts rows **inside one Kysely transaction** (so a failed insert rolls the
 delete back instead of leaving the line with no pricing), **preserving** the
-existing `discountPercent`, `leadTime`, `shippingCost`, and `categoryMarkups` per
-quantity when present. It takes a `Kysely<KyselyDatabase>`, not a supabase client,
+existing `discountPercent`, `leadTime`, `shippingCost`, `categoryMarkups`, and
+`priceSource` per quantity when present (an explicit caller `categoryMarkups` or
+`priceSource` wins over the stored value; the rest always keep the stored one). It takes a `Kysely<KyselyDatabase>`, not a supabase client,
 so it bypasses RLS — every statement is scoped by `companyId` explicitly and the
 route must authorize with `requirePermissions` first. Any user-entered column added to `quoteLinePrice` has to be added
 to that carry-over list or the delete+reinsert silently resets it to its default.
