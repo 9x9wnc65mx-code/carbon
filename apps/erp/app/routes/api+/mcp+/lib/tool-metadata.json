@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-10T02:45:42.644Z",
+  "generated": "2026-08-10T09:56:05.129Z",
   "totalTools": 1431,
   "modules": 15,
   "tools": [
@@ -29895,8 +29895,7 @@
           "priority",
           "source",
           "locationId",
-          "nonConformanceTypeId",
-          "openDate"
+          "nonConformanceTypeId"
         ]
       }
     },
@@ -36687,7 +36686,8 @@
       "serviceParams": [
         "client",
         "quoteId",
-        "userId"
+        "userId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId",

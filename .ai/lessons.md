@@ -568,6 +568,207 @@ Format: `Context → Problem → Rule → Applies to`
 
 **Applies to:** all `apps/erp/app/modules/**/*.models.ts` (and `apps/mes/app/services/models.ts`) zod schemas using `.refine`.
 
+## `ON DELETE SET NULL` on a composite FK nulls every referencing column, not just the pointer
+
+**Context:** A nullable pointer column that references a sibling table on Carbon's composite key, e.g. `workflow.activeVersionId` → `workflowVersion("id", "companyId")` (`20260730142317_workflows-foundation.sql`). Because every Carbon table is keyed `("id", "companyId")`, any such pointer FK is necessarily multi-column and includes `companyId`.
+
+**Problem:** A bare `FOREIGN KEY ("activeVersionId", "companyId") REFERENCES ... ON DELETE SET NULL` sets **all** referencing columns to NULL when the parent row is deleted — including `companyId`, which is `NOT NULL`. The delete then fails with `null value in column "companyId" of relation "workflow" violates not-null constraint`, and the referenced row can never be deleted. It looks correct in review, applies cleanly, and only surfaces the first time something deletes the parent.
+
+**Rule:** On a composite FK whose referencing columns include `companyId` (or any NOT NULL column), name the column in the action: `ON DELETE SET NULL ("activeVersionId")`. The column-list form needs Postgres 15+ (the local stack is 15.14). Same trap applies to `ON UPDATE SET NULL` and to `SET DEFAULT`. Always prove it with a real delete against the live schema — a migration that applies successfully tells you nothing about its referential actions.
+
+**Applies to:** any migration adding a nullable pointer column that references another table's composite `("id", "companyId")` key.
+
+## A read-time format-migration seam must run before the current-schema parse
+
+**Context:** Versioned JSON documents stored in a JSONB column with a
+`formatVersion` sibling column, upgraded on read so stored rows never need a
+backfill (`packages/documents/src/template/`, `packages/workflows/`).
+
+**Problem:** `packages/workflows` originally parsed the row against the *current*
+zod schema and only then called `migrateDefinition`. A document old enough to need
+migrating cannot satisfy the current schema by definition, so it failed the parse
+and never reached the migration — the seam was dead on arrival. Worse, the parse
+failure fell back to an empty canvas, so opening the version in the builder showed
+nothing and the next save silently destroyed the stored nodes.
+
+**Rule:** Run the migration on the **raw** JSON, before the current-schema parse.
+Default a missing `formatVersion` to `1`, never to `CURRENT_*_FORMAT_VERSION` —
+"current" skips the very migration a legacy row needs. Treat a `formatVersion`
+greater than current as an explicit failure, and return a discriminated
+`{ok: false, failure, message}` rather than an empty document, so a caller can
+refuse to save over a row it could not read.
+
+**Applies to:** any read-time `migrate*(payload, _from)` seam —
+`packages/workflows/src/definition/normalize.ts`,
+`packages/documents/src/template/defaults.ts`.
+
+## A `default:` arm silently defeats discriminated-union exhaustiveness
+
+**Context:** Several functions switching on the same discriminated union
+(`WorkflowNode["type"]` across handles, refs, outputs, type checks, config checks).
+
+**Problem:** Five switches each had a `default:` or simply returned `undefined`
+for unhandled members, so adding a seventh node type produced **zero** compile
+errors — verified with `tsgo --noEmit`. The new node type got default handles and
+no validation at all, and would activate.
+
+**Rule:** For behaviour that must exist for every member of a union, prefer one
+record keyed by a mapped type (`{ [K in Kind]: ... }`) over N switches: a missing
+key is a `TS2741` error. Where a switch is genuinely right, omit `default:` and end
+with a `never` assertion. A `Record<Union, T>` gives the same guarantee — that is
+what caught the missing `OPERATOR_LABELS` entries when `Operator` was extended.
+
+**Applies to:** `packages/workflows/src/definition/nodes.ts`, and any
+`switch (x.type)` over a zod discriminated union.
+
+## A generated catalog must key entity refs off the schema, not off a hand-written hint
+
+**Context:** The workflow event catalog's entity registry lets a watched column
+declare `ref: "supplier"`, which becomes `entity("supplier")` in the generated
+property map so a customer can dot-chain `record.supplierId.name`.
+
+**Problem:** `ref` was needed for real — composite foreign keys like
+`(supplierId, companyId)` carry no `<fk table=…>` note in
+`packages/database/src/swagger-docs-schema.ts`, so `purchaseOrder.supplierId`
+has no detectable target. But a hand-written hint is a hand-written lie waiting
+to happen: `customer.salesContactId` was declared `ref: "user"` when its foreign
+key actually targets `customerContact`. Nothing would have caught it, and every
+dot-path through that property would have resolved against the wrong entity.
+
+**Rule:** Where a generator accepts a hand-written type hint alongside a
+machine-readable source, make disagreement a hard error rather than letting the
+hint win silently. `buildCatalog` throws when a declared `ref` conflicts with a
+foreign key present in the schema, and only uses `ref` where the schema is
+genuinely silent. Audit every existing hint against the real source before
+trusting a slate that came from a design document.
+
+**Applies to:** `packages/workflows/src/catalog/build.ts`, and any hand-curated
+overlay on generated schema data (`packages/database/src/audit.config.ts`'s
+`snapshotFields` / `fkDisplayRegistry`).
+
+## Lingui's `msg` macro forces generated translatable strings into their own file
+
+**Context:** The generated workflow catalog needs a human label per event, and
+Carbon's convention outside React is `msg` from `@lingui/core/macro`.
+
+**Problem:** `msg` is a **build-time babel macro**. A generated file containing
+one can only ever be imported by Vite-built app code — importing it from plain
+Node throws, which would break the phase-3 matcher in `packages/jobs`, every
+`tsx` script, and any vitest run that touches the catalog.
+
+**Rule:** Split the artifact: `events.generated.ts` carries the runtime data and
+imports nothing from `@lingui/*`; `labels.generated.ts` carries only `msg``
+descriptors keyed by id and is excluded from the package barrel. Tooling that
+must read the labels reads the file as **text** (regex the keys) rather than
+importing it — `scripts/check-workflow-catalog.ts` does exactly that. Never put a
+`label` field on the runtime type; it would always be undefined.
+
+**Applies to:** `packages/workflows/src/catalog/`, and any future generated file
+that needs both translatable strings and a Node-side consumer.
+
+## `apps/erp` targets ES2019, so `packages/workflows` cannot use BigInt literals
+
+**Context:** The workflow engine needed a stable 64-bit hash for batch item keys,
+and the plan specified FNV-1a via `BigInt`.
+
+**Problem:** `apps/erp/tsconfig.json` sets `"target": "ES2019"` and compiles
+workspace package **source**, not built output. A `0xcbf29ce484222325n` literal
+in `packages/workflows` fails the erp typecheck with TS2737 even though the
+package's own `tsgo --noEmit` passes — the package config targets `esnext`.
+
+**Rule:** Anything in a package `apps/erp` imports must be ES2019-safe. Reach for
+`Math.imul` and two 32-bit passes rather than one 64-bit BigInt pass. Always run
+`pnpm exec turbo run typecheck --filter=erp` after touching a shared package —
+the package's own typecheck is not the binding constraint.
+
+**Applies to:** every `packages/*` that `apps/erp` imports; `packages/workflows`
+doubly so, since the phase-7 builder also compiles it for the browser
+(no `node:crypto` either).
+
+## A change trigger's `before` and `after` share a record id, so an id-keyed cache collapses them
+
+**Context:** The workflow engine caches loaded records per run, keyed
+`${entity}:${id}`, and a record trigger hands out `record`, `before` and `after`.
+
+**Problem:** All three are the same row id. Seeding one cache from all three
+means whichever is written last wins, so `before.orderTotal <= 10000` silently
+reads the **new** total — quietly defeating the PRD's whole "went up" case. Both
+the spec and the plan missed this.
+
+**Rule:** An entity `RuntimeValue` carries an optional inline `row`.
+`triggerOutputs` attaches each trigger row to its own value, and seeds the shared
+cache with the **current** state only (`record`/`after`). Never put a historical
+snapshot into a cache keyed by identity alone.
+
+**Applies to:** `packages/jobs/src/workflows/engine/loader.ts`,
+`packages/workflows/src/runtime/`, and any future cache of "the record as it is"
+that also has to represent "the record as it was".
+
+## The `user` table has no `companyId`, so the usual tenancy check cannot be applied to it
+
+**Context:** The workflow update executor must prove that every entity-typed
+value it writes belongs to the acting company, or a workflow could point a row at
+another tenant's record. The plan specified one generic
+`select id where id = ? and companyId = ?` for that check.
+
+**Problem:** Every entity-typed writable column in the workflow catalogue is an
+assignee, and they all point at `user` — which is one of the few Carbon tables
+with **no** `companyId` column. The literal check would have 400'd on every
+assignee write, i.e. on every workflow that assigns anybody.
+
+**Rule:** Membership for `user` is `userToCompany(userId, companyId)`, not a
+column on the row. Route those entities through that join instead of skipping the
+check — dropping it is the tenancy hole the check exists to close. Before writing
+a "every table has `companyId`" helper, confirm it for the specific tables it
+will actually receive.
+
+**Applies to:** `packages/jobs/src/workflows/actions/update.ts`, and any generic
+company-scoping helper that takes a table name at run time.
+
+## Biome drops quotes from valid identifier keys, so a drift check that greps for `"key":` misses them
+
+**Context:** `scripts/check-workflow-catalog.ts` verifies the committed generated
+catalogue matches what the generator would produce, partly by grepping the label
+file for its keys.
+
+**Problem:** The generator emits `"notify":` but Biome formats the committed file
+to `notify:`. A regex anchored on `^ {2}"([^"]+)":` therefore skipped exactly the
+keys that happen to be valid JS identifiers — the check passed while genuinely
+missing entries.
+
+**Rule:** A check that reads a **formatted** generated file must tolerate the
+formatter's output, not the generator's. Make the quotes optional
+(`^ {2}"?([^":\s]+)"?:`), or compare parsed data rather than text.
+
+**Applies to:** `scripts/check-workflow-catalog.ts` and any future drift check
+that greps a Biome-formatted generated file.
+
+## Never hand-measure React Flow handle positions; and never `stopPropagation` inside a node
+
+**Context:** `apps/erp/app/modules/workflows/ui/Builder/NodeCard.tsx` needed one
+source handle per condition path, and needed nodes draggable from their body.
+
+**Problem:** Two separate self-inflicted bugs. (1) Handle rows were measured with
+`getBoundingClientRect()` and the offset written to `style.top`. `getBoundingClientRect()`
+returns **zoom-scaled** pixels but `style.top` is applied *inside* the zoom transform,
+so every handle sat at the wrong height at any zoom except 1.0 — and the effect
+depended on the freshly-built `ports` array, so it re-ran and re-set state every
+render. (2) The body used `onPointerDown={e => e.stopPropagation()}` on interactive
+targets to stop React Flow dragging. React's `stopPropagation` also stops the native
+event reaching `document`, and Radix `DismissableLayer` dismisses on a document-level
+`pointerdown` — so every dropdown inside a node became impossible to close.
+
+**Rule:** React Flow measures handle bounds from the DOM itself (zoom-aware) — put
+the `<Handle>` inside a `position: relative` row and let its default
+`.react-flow__handle-right` CSS anchor it; call `useUpdateNodeInternals(nodeId)`
+when the handle set or node size changes, and never compute `top`/`right` yourself.
+To exempt something from dragging, toggle React Flow's own `nodrag` class (a
+capture-phase `pointerdown` listener runs before its bubble-phase drag listener) —
+never `stopPropagation`, which silently breaks every portalled overlay's dismissal.
+
+**Applies to:** `apps/erp/app/modules/workflows/ui/Builder/**`, and any `@xyflow/react`
+canvas hosting Radix popovers/selects.
+
 ## The design-system `Card` is a gray tray + shadow edge — the white surface is `CardContent`, and a tint on the shell needs a `dark:` variant
 
 **Context:** Building card surfaces with `@carbon/react`'s `Card` family (`packages/react/src/Card.tsx`), e.g. the onboarding Implementation Hub (`packages/onboarding/src/ui/**`). Three separate traps hit in sequence while converting hand-rolled `rounded-lg border bg-card` blocks to the design system.
@@ -584,6 +785,15 @@ Format: `Context → Problem → Rule → Applies to`
 
 **Applies to:** any UI composing `@carbon/react` `Card`/`CardContent`/`CardHeader`; the `Section`/`Panel` primitives in `packages/onboarding/src/ui/primitives/Section.tsx` centralize this composition for the hub.
 
+## A dropdown that lives inside an editor popup must own its keys on the document, not take them from its host
+
+**Context:** The workflow builder's variable menu (`apps/erp/app/modules/workflows/ui/Builder/fields/VariableTreeMenu.tsx`), hosted both inside a tiptap suggestion popup and inside a Radix popover. Arrow-key navigation stayed dead across two rounds of fixes.
+
+**Problem:** The menu exposed a `ref` handle and relied on each host to call it — the tiptap suggestion plugin's `onKeyDown` delegation in one case, the popover search input's `onKeyDown` in the other. That chain is long (ProseMirror direct props → plugin order → `ReactRenderer` ref → imperative handle) and every link is invisible when it breaks: the menu still renders, so the failure looks like "keys do nothing" with no error anywhere. Debugging it by reading the chain repeatedly produced plausible-but-wrong root causes.
+
+**Rule:** Bind the navigation keys in a `document` `keydown` listener in the **capture** phase, inside the menu component itself, and `preventDefault()` + `stopPropagation()` only for keys it claims. The host then cannot swallow or fail to forward anything, and both hosts get identical behaviour for free. Guard the listener on the menu's own root being connected and visible — a popup that is *hidden* rather than unmounted (tippy's `hide()`) leaves the component mounted and would keep eating keys. Never claim `Escape`; dismissal belongs to the wrapping popup. Keep DOM focus in the field being typed into (search-as-you-type depends on it) and mark the highlighted row `aria-selected` instead of focusing it.
+
+**Applies to:** any menu rendered by tiptap's `ReactRenderer` or otherwise mounted outside the React tree that owns the focused input.
 ## react-aria compares `formatOptions` by reference — an inline literal wipes half-typed numbers
 
 **Context:** Any `NumberField` / `Number` / `NumberControlled` field that passes `formatOptions={{ ... }}` at the call site (real case: the MES Log Completed quantity in `apps/mes/app/components/JobOperation/components/QuantityModal.tsx`, where operators could not enter `1.5`).

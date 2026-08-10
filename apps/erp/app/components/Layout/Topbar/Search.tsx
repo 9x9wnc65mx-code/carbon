@@ -55,6 +55,7 @@ import useResourcesSubmodules from "~/modules/resources/ui/useResourcesSubmodule
 import useSalesSubmodules from "~/modules/sales/ui/useSalesSubmodules";
 import useSettingsSubmodules from "~/modules/settings/ui/useSettingsSubmodules";
 import useUsersSubmodules from "~/modules/users/ui/useUsersSubmodules";
+import useWorkflowsSubmodules from "~/modules/workflows/ui/useWorkflowsSubmodules";
 import type { SearchResponse } from "~/routes/api+/search";
 import { useUIStore } from "~/stores/ui";
 import type { Authenticated, Route } from "~/types";
@@ -523,6 +524,7 @@ function useGroupedSubmodules() {
   const quality = useQualitySubmodules();
   const resources = useResourcesSubmodules();
   const account = useAccountSubmodules();
+  const workflows = useWorkflowsSubmodules();
   const groupedSubmodules: Record<
     string,
     {
@@ -545,6 +547,7 @@ function useGroupedSubmodules() {
     resources,
     settings,
     users,
+    workflows,
     "my account": account
   };
 
