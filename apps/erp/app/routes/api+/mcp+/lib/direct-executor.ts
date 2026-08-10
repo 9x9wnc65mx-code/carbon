@@ -151,9 +151,6 @@ export async function executeFunction(
       if (paramName === "client") {
         functionArgs.push(context.client);
       } else if (paramName === "db") {
-        // Services that run in a transaction take a Kysely client instead of
-        // the supabase one. Without this they fall through to the positional
-        // arg branches and are handed a business argument as their client.
         functionArgs.push(getDatabaseClient());
       } else if (paramName === "userId") {
         functionArgs.push(context.userId);

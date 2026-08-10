@@ -3225,9 +3225,6 @@ export async function updateQuoteLinePrecision(
   lineId: string,
   precision: number
 ) {
-  // The stored prices are rounded to the line's precision, so changing the
-  // precision and rewriting the rows have to commit together — otherwise the
-  // line advertises a precision its prices were never rounded to.
   return db.transaction().execute(async (trx) => {
     const line = await trx
       .updateTable("quoteLine")
@@ -3243,8 +3240,6 @@ export async function updateQuoteLinePrecision(
       );
     }
 
-    // No replacement prices: rewrite the rows already on the line so they are
-    // re-rounded to the precision just set.
     await rewriteQuoteLinePrices(trx, companyId, quoteId, lineId);
   });
 }
@@ -3927,10 +3922,6 @@ type QuoteLinePriceInput = {
   priceSource?: "system" | "manual";
 };
 
-// `quoteLinePrices` is spelled out rather than typed as QuoteLinePriceInput
-// because scripts/generate-mcp.ts only inlines literal object types — a named
-// alias collapses this tool's published schema to an untyped array. Comments
-// inside the parameter list leak into that schema, so keep them out here.
 export async function upsertQuoteLinePrices(
   db: Kysely<KyselyDatabase>,
   companyId: string,
@@ -3947,9 +3938,6 @@ export async function upsertQuoteLinePrices(
     priceSource?: "system" | "manual";
   }[]
 ) {
-  // Rewriting a line's prices is a delete + reinsert, so it has to be atomic:
-  // if the insert failed after the delete had already committed, the line would
-  // be left with no pricing at all and the previous values unrecoverable.
   return db
     .transaction()
     .execute((trx) =>
@@ -3957,9 +3945,6 @@ export async function upsertQuoteLinePrices(
     );
 }
 
-// Must run inside a caller-owned transaction so the delete below rolls back with
-// everything else. Kysely bypasses RLS, so every statement is scoped by
-// companyId explicitly.
 async function rewriteQuoteLinePrices(
   trx: KyselyTx,
   companyId: string,
@@ -3974,9 +3959,6 @@ async function rewriteQuoteLinePrices(
     .where("companyId", "=", companyId)
     .execute();
 
-  // Omitted replacements means "rewrite what is already there" (a precision
-  // change). node-postgres hands back NUMERIC as a string, so coerce the values
-  // this function does arithmetic on.
   const replacements: QuoteLinePriceInput[] =
     quoteLinePrices ??
     existingPrices.map((price) => ({
@@ -3988,9 +3970,6 @@ async function rewriteQuoteLinePrices(
       createdBy: price.createdBy
     }));
 
-  // Nothing to write. Leave the existing rows alone rather than clearing the
-  // line's pricing — removing a quantity break is reconcileQuantityBreaks' job,
-  // not a side effect of an empty rewrite.
   if (replacements.length === 0) return;
 
   const quote = await trx
@@ -4007,12 +3986,6 @@ async function rewriteQuoteLinePrices(
     .where("companyId", "=", companyId)
     .executeTakeFirst();
 
-  // Neither lookup is scoped by anything the insert repeats: quoteLinePrice
-  // derives its companyId from the parent quote via trigger, so inserting
-  // against a quote in another company would silently write there. Missing
-  // rows also mean the exchange rate and precision below would fall back to
-  // 1 and 2 and mis-price the line. Checked before the delete so a bad id
-  // never reaches it.
   if (!quote || !quoteLine) {
     throw new Error(
       `Quote ${quoteId} / line ${lineId} was not found for company ${companyId}`
@@ -4025,9 +3998,6 @@ async function rewriteQuoteLinePrices(
     .where("companyId", "=", companyId)
     .execute();
 
-  // node-postgres returns NUMERIC as a string ("10.00000"), where PostgREST
-  // returned it as a number — so the quantity has to be normalized on both
-  // sides or every lookup misses and nothing gets preserved.
   const existingByQuantity = new Map(
     existingPrices.map((price) => [Number(price.quantity), price])
   );
@@ -4040,23 +4010,14 @@ async function rewriteQuoteLinePrices(
 
         return {
           ...p,
-          // The delete, the existing-price lookup and the quoteLine check are
-          // all keyed on lineId. Honouring a payload's own quoteLineId would
-          // write rows onto a line none of that covered.
           quoteLineId: lineId,
           companyId,
           quoteId,
           unitPrice: Number(p.unitPrice.toFixed(quoteLine.unitPricePrecision)),
           discountPercent: existing?.discountPercent ?? p.discountPercent,
           leadTime: existing?.leadTime ?? p.leadTime,
-          // Shipping is entered per quantity break and is independent of the
-          // price being rewritten — without this the delete+reinsert resets
-          // it to the column default of 0.
           shippingCost: existing?.shippingCost ?? 0,
           categoryMarkups: p.categoryMarkups ?? existing?.categoryMarkups ?? {},
-          // Explicit caller intent wins; otherwise keep the row's provenance
-          // so a delete+reinsert can never turn a manual price back into a
-          // system one.
           priceSource: p.priceSource ?? existing?.priceSource ?? "system",
           exchangeRate: quote.exchangeRate ?? 1
         };

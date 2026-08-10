@@ -25,9 +25,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const precision = Number(formData.get("precision") ?? 2);
 
-  // `quoteLine.unitPricePrecision` is CHECK-constrained to these three, so an
-  // out-of-range value would abort the transaction anyway — reject it here to
-  // return the reason instead of a generic failure.
   if (!SUPPORTED_PRECISIONS.includes(precision)) {
     return data(
       { data: null, error: `Precision must be one of ${SUPPORTED_PRECISIONS}` },
@@ -35,8 +32,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  // Rounds the line's existing prices to the new precision in the same
-  // transaction that sets it.
   try {
     await updateQuoteLinePrecision(
       getDatabaseClient(),
