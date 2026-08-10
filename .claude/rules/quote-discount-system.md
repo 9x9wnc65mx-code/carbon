@@ -67,9 +67,13 @@ Standalone rules, `id` default `id('pr')`, scoped to a company. Columns: `name`,
    Each step is recorded as a `PriceTraceStep` (`{ step, source, amount, adjustment?, ruleId? }`)
    into `priceTrace`. The winning rule's id lands on `quoteLine.pricingRuleId`.
 
-`upsertQuoteLinePrices` deletes and re-inserts rows, **preserving** the existing
-`discountPercent`, `leadTime`, `shippingCost`, and `categoryMarkups` per quantity
-when present. Any user-entered column added to `quoteLinePrice` has to be added
+`upsertQuoteLinePrices(db, companyId, quoteId, lineId, prices)` deletes and
+re-inserts rows **inside one Kysely transaction** (so a failed insert rolls the
+delete back instead of leaving the line with no pricing), **preserving** the
+existing `discountPercent`, `leadTime`, `shippingCost`, and `categoryMarkups` per
+quantity when present. It takes a `Kysely<KyselyDatabase>`, not a supabase client,
+so it bypasses RLS — every statement is scoped by `companyId` explicitly and the
+route must authorize with `requirePermissions` first. Any user-entered column added to `quoteLinePrice` has to be added
 to that carry-over list or the delete+reinsert silently resets it to its default.
 
 ## Types & UI

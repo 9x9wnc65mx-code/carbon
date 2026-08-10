@@ -6,11 +6,12 @@ import {
   updateQuoteLinePrecision,
   upsertQuoteLinePrices
 } from "~/modules/sales";
+import { getDatabaseClient } from "~/services/database.server";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
 
-  const { client } = await requirePermissions(request, {
+  const { client, companyId } = await requirePermissions(request, {
     update: "sales"
   });
 
@@ -50,15 +51,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
       createdBy: price.createdBy
     }));
 
-    const updatePrices = await upsertQuoteLinePrices(
-      client,
-      quoteId,
-      lineId,
-      roundedPrices
-    );
-    if (updatePrices.error) {
+    try {
+      await upsertQuoteLinePrices(
+        getDatabaseClient(),
+        companyId,
+        quoteId,
+        lineId,
+        roundedPrices
+      );
+    } catch {
       return data(
-        { data: null, error: updatePrices.error.message },
+        { data: null, error: "Failed to update quote line prices" },
         { status: 400 }
       );
     }

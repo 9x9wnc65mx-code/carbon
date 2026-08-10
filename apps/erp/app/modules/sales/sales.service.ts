@@ -3869,7 +3869,8 @@ export async function upsertQuoteLineAdditionalCharges(
 }
 
 export async function upsertQuoteLinePrices(
-  client: SupabaseClient<Database>,
+  db: Kysely<KyselyDatabase>,
+  companyId: string,
   quoteId: string,
   lineId: string,
   quoteLinePrices: {
@@ -3883,82 +3884,75 @@ export async function upsertQuoteLinePrices(
     priceSource?: "system" | "manual";
   }[]
 ) {
-  const existingPrices = await client
-    .from("quoteLinePrice")
-    .select("*")
-    .eq("quoteLineId", lineId);
-  if (existingPrices.error) {
-    return existingPrices;
-  }
+  // Rewriting a line's prices is a delete + reinsert, so it has to be atomic:
+  // if the insert failed after the delete had already committed, the line would
+  // be left with no pricing at all and the previous values unrecoverable.
+  // Kysely bypasses RLS, so every statement is scoped by companyId explicitly.
+  return db.transaction().execute(async (trx) => {
+    const existingPrices = await trx
+      .selectFrom("quoteLinePrice")
+      .selectAll()
+      .where("quoteLineId", "=", lineId)
+      .where("companyId", "=", companyId)
+      .execute();
 
-  const deletePrices = await client
-    .from("quoteLinePrice")
-    .delete()
-    .eq("quoteLineId", lineId);
-  if (deletePrices.error) {
-    return deletePrices;
-  }
+    await trx
+      .deleteFrom("quoteLinePrice")
+      .where("quoteLineId", "=", lineId)
+      .where("companyId", "=", companyId)
+      .execute();
 
-  const quoteExchangeRate = await client
-    .from("quote")
-    .select("id, exchangeRate")
-    .eq("id", quoteId)
-    .single();
+    if (quoteLinePrices.length === 0) return;
 
-  const quoteLineUnitPricePrecision = await client
-    .from("quoteLine")
-    .select("unitPricePrecision")
-    .eq("id", lineId)
-    .single();
+    const quote = await trx
+      .selectFrom("quote")
+      .select("exchangeRate")
+      .where("id", "=", quoteId)
+      .where("companyId", "=", companyId)
+      .executeTakeFirst();
 
-  const pricesByQuantity = existingPrices.data.reduce<
-    Record<
-      number,
-      {
-        discountPercent: number;
-        leadTime: number;
-        shippingCost: number;
-        categoryMarkups: unknown;
-        priceSource: string;
-      }
-    >
-  >((acc, price) => {
-    acc[price.quantity] = price;
-    return acc;
-  }, {});
+    const quoteLine = await trx
+      .selectFrom("quoteLine")
+      .select("unitPricePrecision")
+      .where("id", "=", lineId)
+      .where("companyId", "=", companyId)
+      .executeTakeFirst();
 
-  const pricesWithExistingDiscountsAndLeadTimes = quoteLinePrices.map((p) => {
-    const existing = pricesByQuantity[p.quantity];
-    const roundedUnitPrice = Number(
-      p.unitPrice.toFixed(
-        quoteLineUnitPricePrecision.data?.unitPricePrecision ?? 2
-      )
+    const existingByQuantity = new Map(
+      existingPrices.map((price) => [price.quantity, price])
     );
 
-    return {
-      ...p,
-      unitPrice: roundedUnitPrice,
-      discountPercent: existing?.discountPercent ?? p.discountPercent,
-      leadTime: existing?.leadTime ?? p.leadTime,
-      // Shipping is entered per quantity break and is independent of the price
-      // being rewritten — without this the delete+reinsert resets it to the
-      // column default of 0.
-      shippingCost: existing?.shippingCost ?? 0,
-      categoryMarkups: p.categoryMarkups ?? existing?.categoryMarkups ?? {},
-      // Explicit caller intent wins; otherwise keep the row's provenance so a
-      // delete+reinsert can never turn a manual price back into a system one.
-      priceSource: p.priceSource ?? existing?.priceSource ?? "system",
-      quoteId: quoteId,
-      exchangeRate: quoteExchangeRate.data?.exchangeRate ?? 1
-    };
-  });
+    await trx
+      .insertInto("quoteLinePrice")
+      .values(
+        quoteLinePrices.map((p) => {
+          const existing = existingByQuantity.get(p.quantity);
 
-  return (
-    client
-      .from("quoteLinePrice")
-      // @ts-expect-error - categoryMarkups is a Json object
-      .insert(pricesWithExistingDiscountsAndLeadTimes)
-  );
+          return {
+            ...p,
+            companyId,
+            quoteId,
+            unitPrice: Number(
+              p.unitPrice.toFixed(quoteLine?.unitPricePrecision ?? 2)
+            ),
+            discountPercent: existing?.discountPercent ?? p.discountPercent,
+            leadTime: existing?.leadTime ?? p.leadTime,
+            // Shipping is entered per quantity break and is independent of the
+            // price being rewritten — without this the delete+reinsert resets
+            // it to the column default of 0.
+            shippingCost: existing?.shippingCost ?? 0,
+            categoryMarkups:
+              p.categoryMarkups ?? existing?.categoryMarkups ?? {},
+            // Explicit caller intent wins; otherwise keep the row's provenance
+            // so a delete+reinsert can never turn a manual price back into a
+            // system one.
+            priceSource: p.priceSource ?? existing?.priceSource ?? "system",
+            exchangeRate: quote?.exchangeRate ?? 1
+          };
+        })
+      )
+      .execute();
+  });
 }
 
 async function buildCostEffects(
