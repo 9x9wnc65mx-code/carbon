@@ -3918,15 +3918,18 @@ export async function upsertQuoteLinePrices(
       .where("companyId", "=", companyId)
       .executeTakeFirst();
 
+    // node-postgres returns NUMERIC as a string ("10.00000"), where PostgREST
+    // returned it as a number — so the quantity has to be normalized on both
+    // sides or every lookup misses and nothing gets preserved.
     const existingByQuantity = new Map(
-      existingPrices.map((price) => [price.quantity, price])
+      existingPrices.map((price) => [Number(price.quantity), price])
     );
 
     await trx
       .insertInto("quoteLinePrice")
       .values(
         quoteLinePrices.map((p) => {
-          const existing = existingByQuantity.get(p.quantity);
+          const existing = existingByQuantity.get(Number(p.quantity));
 
           return {
             ...p,
