@@ -34,7 +34,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
       precision
     );
   } catch (err) {
-    logger.error("Failed to update quote line precision", { error: err });
+    logger.error("Failed to update quote line precision", {
+      error: err,
+      quoteId,
+      lineId
+    });
     return data(
       { data: null, error: "Failed to update quote line precision" },
       { status: 400 }

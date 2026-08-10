@@ -3243,31 +3243,9 @@ export async function updateQuoteLinePrecision(
       );
     }
 
-    const existingPrices = await trx
-      .selectFrom("quoteLinePrice")
-      .selectAll()
-      .where("quoteLineId", "=", lineId)
-      .where("companyId", "=", companyId)
-      .execute();
-
-    if (existingPrices.length === 0) return;
-
-    // node-postgres hands back NUMERIC as a string; rewriteQuoteLinePrices does
-    // arithmetic on these, so coerce before passing them back in.
-    await rewriteQuoteLinePrices(
-      trx,
-      companyId,
-      quoteId,
-      lineId,
-      existingPrices.map((price) => ({
-        quoteLineId: lineId,
-        quantity: Number(price.quantity),
-        unitPrice: Number(price.unitPrice),
-        leadTime: Number(price.leadTime),
-        discountPercent: Number(price.discountPercent),
-        createdBy: price.createdBy
-      }))
-    );
+    // No replacement prices: rewrite the rows already on the line so they are
+    // re-rounded to the precision just set.
+    await rewriteQuoteLinePrices(trx, companyId, quoteId, lineId);
   });
 }
 
@@ -3938,6 +3916,21 @@ export async function upsertQuoteLineAdditionalCharges(
   return client.from("quoteLine").update(update).eq("id", lineId);
 }
 
+type QuoteLinePriceInput = {
+  quoteLineId: string;
+  unitPrice: number;
+  leadTime: number;
+  discountPercent: number;
+  quantity: number;
+  createdBy: string;
+  categoryMarkups?: Record<string, number>;
+  priceSource?: "system" | "manual";
+};
+
+// `quoteLinePrices` is spelled out rather than typed as QuoteLinePriceInput
+// because scripts/generate-mcp.ts only inlines literal object types — a named
+// alias collapses this tool's published schema to an untyped array. Comments
+// inside the parameter list leak into that schema, so keep them out here.
 export async function upsertQuoteLinePrices(
   db: Kysely<KyselyDatabase>,
   companyId: string,
@@ -3972,16 +3965,7 @@ async function rewriteQuoteLinePrices(
   companyId: string,
   quoteId: string,
   lineId: string,
-  quoteLinePrices: {
-    quoteLineId: string;
-    unitPrice: number;
-    leadTime: number;
-    discountPercent: number;
-    quantity: number;
-    createdBy: string;
-    categoryMarkups?: Record<string, number>;
-    priceSource?: "system" | "manual";
-  }[]
+  quoteLinePrices?: QuoteLinePriceInput[]
 ) {
   const existingPrices = await trx
     .selectFrom("quoteLinePrice")
@@ -3990,13 +3974,24 @@ async function rewriteQuoteLinePrices(
     .where("companyId", "=", companyId)
     .execute();
 
-  await trx
-    .deleteFrom("quoteLinePrice")
-    .where("quoteLineId", "=", lineId)
-    .where("companyId", "=", companyId)
-    .execute();
+  // Omitted replacements means "rewrite what is already there" (a precision
+  // change). node-postgres hands back NUMERIC as a string, so coerce the values
+  // this function does arithmetic on.
+  const replacements: QuoteLinePriceInput[] =
+    quoteLinePrices ??
+    existingPrices.map((price) => ({
+      quoteLineId: lineId,
+      quantity: Number(price.quantity),
+      unitPrice: Number(price.unitPrice),
+      leadTime: Number(price.leadTime),
+      discountPercent: Number(price.discountPercent),
+      createdBy: price.createdBy
+    }));
 
-  if (quoteLinePrices.length === 0) return;
+  // Nothing to write. Leave the existing rows alone rather than clearing the
+  // line's pricing — removing a quantity break is reconcileQuantityBreaks' job,
+  // not a side effect of an empty rewrite.
+  if (replacements.length === 0) return;
 
   const quote = await trx
     .selectFrom("quote")
@@ -4016,12 +4011,19 @@ async function rewriteQuoteLinePrices(
   // derives its companyId from the parent quote via trigger, so inserting
   // against a quote in another company would silently write there. Missing
   // rows also mean the exchange rate and precision below would fall back to
-  // 1 and 2 and mis-price the line. Throwing rolls the delete back.
+  // 1 and 2 and mis-price the line. Checked before the delete so a bad id
+  // never reaches it.
   if (!quote || !quoteLine) {
     throw new Error(
       `Quote ${quoteId} / line ${lineId} was not found for company ${companyId}`
     );
   }
+
+  await trx
+    .deleteFrom("quoteLinePrice")
+    .where("quoteLineId", "=", lineId)
+    .where("companyId", "=", companyId)
+    .execute();
 
   // node-postgres returns NUMERIC as a string ("10.00000"), where PostgREST
   // returned it as a number — so the quantity has to be normalized on both
@@ -4033,7 +4035,7 @@ async function rewriteQuoteLinePrices(
   await trx
     .insertInto("quoteLinePrice")
     .values(
-      quoteLinePrices.map((p) => {
+      replacements.map((p) => {
         const existing = existingByQuantity.get(Number(p.quantity));
 
         return {

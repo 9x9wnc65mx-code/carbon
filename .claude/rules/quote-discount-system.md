@@ -77,12 +77,17 @@ route must authorize with `requirePermissions` first. Any user-entered column ad
 to that carry-over list or the delete+reinsert silently resets it to its default.
 The rewrite throws if the quote or line is missing for that company, because the
 insert's `companyId` is overwritten by a trigger from the parent quote — without
-the check it would write into whichever company owns the quote.
+the check it would write into whichever company owns the quote. An **empty**
+`prices` array is a no-op, not a wipe: dropping a quantity break is
+`reconcileQuantityBreaks`' job, so an empty rewrite leaves the rows alone.
 
 `updateQuoteLinePrecision(db, companyId, quoteId, lineId, precision)` shares that
 transaction: it sets `quoteLine.unitPricePrecision` and re-rounds the existing
 price rows together, so the line can never advertise a precision its prices were
-never rounded to.
+never rounded to. `precision` is not validated in app code — `quoteLine` carries
+`CHECK ("unitPricePrecision" IN (2,3,4))`, and the update runs before any
+rounding, so an out-of-range value aborts the transaction before `toFixed` sees
+it.
 
 ## Types & UI
 
