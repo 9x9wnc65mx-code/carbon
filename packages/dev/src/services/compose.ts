@@ -53,15 +53,12 @@ export type Container = {
 // Lifecycle
 // ---------------------------------------------------------------------------
 
-// Every profile any `bootStack` call can enable. Teardown must activate all of
-// them: compose treats a profile-gated service as "defined but not enabled"
-// rather than an orphan, so a `down` without the profile skips those
-// containers entirely — `--remove-orphans` does not catch them either.
-// Keep this in sync when adding a profile to the compose file; the residual
-// sweep in `stopStack` is the backstop if it ever falls behind.
+// Every profile `bootStack` can enable. Compose treats profile-gated services
+// as "not enabled" rather than orphans, so a `down` missing one silently
+// leaves those containers running. `stopStack`'s sweep backstops drift here.
 const COMPOSE_PROFILES = ["full", "chrome"] as const;
 
-// Exported for tests: the exact `docker compose … up -d` argv.
+// Exported for tests: the `docker compose … up -d` argv.
 export function buildUpArgs(
   root: string,
   slug: string,
@@ -78,10 +75,8 @@ export function buildUpArgs(
   return args;
 }
 
-// Exported for tests: the exact `docker compose … down` argv. Enables every
-// profile unconditionally — a profile that was never booted simply matches no
-// running containers, so over-enabling on teardown is free, while
-// under-enabling silently leaks containers.
+// Exported for tests. Enables every profile unconditionally — one that was
+// never booted matches nothing, while a missing one leaks containers.
 export function buildDownArgs(
   root: string,
   slug: string,
@@ -210,12 +205,8 @@ export async function allImagesPresentLocally(
 // failures (missing .env.local, profile issues, renamed compose file), falls
 // back to raw `docker rm -f` via destroyProject so the stack is always torn
 // down even when compose can't parse the project to find its containers.
-//
-// The fallback is keyed on containers actually remaining, NOT on the exit code
-// alone: compose exits 0 after a teardown that skipped services it had no
-// profile for, so a partial teardown looks like a success and would otherwise
-// leave those containers running until the next Docker restart turned them
-// into a stale-network boot failure.
+// Keyed on containers actually remaining, not the exit code alone: compose
+// exits 0 after skipping services it had no profile for.
 export async function stopStack(
   root: string,
   slug: string,
@@ -226,15 +217,25 @@ export async function stopStack(
     reject: false
   });
   const project = projectName(slug);
-  const leftovers = await projectContainerIds(project);
-  if (r.exitCode !== 0 || leftovers.length > 0) {
+  let remaining = await projectContainerIds(project);
+  if (r.exitCode !== 0 || remaining.length > 0) {
     await destroyProject(project, withVolumes);
+    // destroyProject swallows docker errors — re-read rather than assume.
+    remaining = await projectContainerIds(project);
   }
-  return r.exitCode ?? 0;
+  return teardownExitCode(r.exitCode, remaining.length);
 }
 
-// Container ids belonging to a compose project, found by label so it works
-// even when the compose file or worktree directory is gone.
+// Describes the end state, not the compose invocation: `down` uses this only
+// to warn that containers may still be running.
+export function teardownExitCode(
+  composeExit: number | undefined,
+  remaining: number
+): number {
+  return remaining > 0 ? composeExit || 1 : 0;
+}
+
+// Container ids for a compose project, by label — works with no compose file.
 async function projectContainerIds(project: string): Promise<string[]> {
   const r = await execa(
     "docker",

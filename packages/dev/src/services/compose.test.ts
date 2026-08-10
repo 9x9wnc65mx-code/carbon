@@ -1,14 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { buildDownArgs, buildUpArgs } from "./compose.js";
+import { buildDownArgs, buildUpArgs, teardownExitCode } from "./compose.js";
 
-// The teardown itself talks to the Docker daemon and isn't unit-testable. What
-// IS testable — and what a mistake here actually costs — is the profile set on
-// the `down` argv. Compose treats a profile-gated service as "defined but not
-// enabled" rather than an orphan, so a `down` missing a profile exits 0 having
-// silently left those containers running. They accumulate per worktree until a
-// Docker restart recreates the project network, at which point the stale
-// containers hold a dead network id and the next `crbn up` fails with
-// "network <id> not found".
+// The teardown itself talks to Docker and isn't unit-testable. The argv is.
+// A `down` missing a profile exits 0 having left those containers running;
+// they accumulate until a Docker restart turns them into a stale-network boot
+// failure ("network <id> not found").
 
 const ROOT = "/tmp/carbon-worktree";
 const SLUG = "carbon-test";
@@ -23,7 +19,6 @@ function profilesIn(args: string[]): string[] {
 
 describe("buildDownArgs", () => {
   it("enables every profile that buildUpArgs can enable", () => {
-    // Union of the profiles reachable from any `crbn up` invocation.
     const bootable = new Set([
       ...profilesIn(buildUpArgs(ROOT, SLUG)),
       ...profilesIn(buildUpArgs(ROOT, SLUG, { chrome: true })),
@@ -40,16 +35,15 @@ describe("buildDownArgs", () => {
   });
 
   it("covers the profile-gated services by name", () => {
-    // Guards against the union test passing vacuously if buildUpArgs ever
-    // stops pushing profiles at all. `full` = studio/meta/inbucket,
-    // `chrome` = the opt-in thumbnail Chromium (`crbn up --thumbnails`).
+    // Stops the union test passing vacuously. full = studio/meta/inbucket,
+    // chrome = the opt-in thumbnail Chromium.
     expect(profilesIn(buildDownArgs(ROOT, SLUG, false))).toEqual(
       expect.arrayContaining(["full", "chrome"])
     );
   });
 
   it("preserves volumes unless explicitly asked to remove them", () => {
-    // A stray -v here silently destroys a developer's local database.
+    // A stray -v destroys a developer's local database.
     expect(buildDownArgs(ROOT, SLUG, false)).not.toContain("-v");
     expect(buildDownArgs(ROOT, SLUG, true)).toContain("-v");
   });
@@ -59,8 +53,31 @@ describe("buildDownArgs", () => {
   });
 });
 
+describe("teardownExitCode", () => {
+  it("reports success once nothing remains, even if compose failed", () => {
+    // The sweep cleaned up — warning that containers may still be running
+    // would be false.
+    expect(teardownExitCode(1, 0)).toBe(0);
+    expect(teardownExitCode(0, 0)).toBe(0);
+  });
+
+  it("reports failure when containers survive a compose success", () => {
+    // destroyProject ignores docker errors, so a failed sweep would otherwise
+    // be indistinguishable from a clean teardown.
+    expect(teardownExitCode(0, 2)).toBe(1);
+  });
+
+  it("preserves compose's code when it failed and containers remain", () => {
+    expect(teardownExitCode(137, 1)).toBe(137);
+  });
+
+  it("never returns 0 with containers remaining on an unknown exit", () => {
+    expect(teardownExitCode(undefined, 1)).toBe(1);
+  });
+});
+
 describe("buildUpArgs", () => {
-  // Locking in the pre-existing boot behavior, which the extraction preserved.
+  // Locks in the pre-existing boot behavior the extraction preserved.
   it("enables the full profile by default", () => {
     expect(profilesIn(buildUpArgs(ROOT, SLUG))).toEqual(["full"]);
   });
@@ -77,8 +94,8 @@ describe("buildUpArgs", () => {
   });
 
   it("activates no profiles when specific services are named", () => {
-    // Compose starts named services plus dependencies regardless of profiles;
-    // activating them here would pull in unrelated containers.
+    // Compose starts named services + deps regardless; enabling profiles here
+    // would pull in unrelated containers.
     const args = buildUpArgs(ROOT, SLUG, {
       services: ["postgres"],
       chrome: true
