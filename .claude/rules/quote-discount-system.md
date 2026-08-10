@@ -68,7 +68,9 @@ Standalone rules, `id` default `id('pr')`, scoped to a company. Columns: `name`,
    into `priceTrace`. The winning rule's id lands on `quoteLine.pricingRuleId`.
 
 `upsertQuoteLinePrices` deletes and re-inserts rows, **preserving** the existing
-`discountPercent`, `leadTime`, and `categoryMarkups` per quantity when present.
+`discountPercent`, `leadTime`, `shippingCost`, and `categoryMarkups` per quantity
+when present. Any user-entered column added to `quoteLinePrice` has to be added
+to that carry-over list or the delete+reinsert silently resets it to its default.
 
 ## Types & UI
 

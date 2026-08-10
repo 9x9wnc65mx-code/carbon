@@ -3917,6 +3917,7 @@ export async function upsertQuoteLinePrices(
       {
         discountPercent: number;
         leadTime: number;
+        shippingCost: number;
         categoryMarkups: unknown;
         priceSource: string;
       }
@@ -3939,6 +3940,10 @@ export async function upsertQuoteLinePrices(
       unitPrice: roundedUnitPrice,
       discountPercent: existing?.discountPercent ?? p.discountPercent,
       leadTime: existing?.leadTime ?? p.leadTime,
+      // Shipping is entered per quantity break and is independent of the price
+      // being rewritten — without this the delete+reinsert resets it to the
+      // column default of 0.
+      shippingCost: existing?.shippingCost ?? 0,
       categoryMarkups: p.categoryMarkups ?? existing?.categoryMarkups ?? {},
       // Explicit caller intent wins; otherwise keep the row's provenance so a
       // delete+reinsert can never turn a manual price back into a system one.
