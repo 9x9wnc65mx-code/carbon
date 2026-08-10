@@ -101,6 +101,7 @@ export const path = {
         ),
       inspectionDocuments: (itemId: string) =>
         generatePath(`${api}/production/inspection-documents/${itemId}`),
+      issueTypes: `${api}/quality/issue-types`,
       item: (type: string) => generatePath(`${api}/item/${type}`),
       itemConfigurable: `${api}/items/configurable`,
       itemCostRecalculate: (itemId: string) =>
@@ -2156,7 +2157,23 @@ export const path = {
       generatePath(`${x}/resources/work-centers/${id}`),
     workCenterActivate: (id: string) =>
       generatePath(`${x}/resources/work-centers/activate/${id}`),
-    workCenters: `${x}/resources/work-centers`
+    workCenters: `${x}/resources/work-centers`,
+    workflow: (id: string) => generatePath(`${x}/workflow/${id}`),
+    workflowCanvas: (id: string) => generatePath(`${x}/workflow/${id}/canvas`),
+    workflowDelete: (id: string) => generatePath(`${x}/workflows/delete/${id}`),
+    workflowNew: `${x}/workflows/new`,
+    workflowPublish: (id: string) =>
+      generatePath(`${x}/workflow/${id}/publish`),
+    workflowRename: (id: string) => generatePath(`${x}/workflows/${id}/rename`),
+    workflowRun: (id: string) => generatePath(`${x}/workflows/runs/${id}`),
+    workflowRuns: `${x}/workflows/runs`,
+    workflowSave: (id: string) => generatePath(`${x}/workflow/${id}/save`),
+    workflows: `${x}/workflows`,
+    workflowTestRun: (id: string) =>
+      generatePath(`${x}/workflow/${id}/test-run`),
+    workflowToggle: (id: string) => generatePath(`${x}/workflow/${id}/toggle`),
+    workflowVersionNew: (id: string) =>
+      generatePath(`${x}/workflow/${id}/version/new`)
   }
 } as const;
 

@@ -1,5 +1,6 @@
 import type { Database } from "@carbon/database";
 import { getCompanyTimeZone } from "@carbon/database";
+import { raiseMoment } from "@carbon/lib/workflows";
 import { getLogger } from "@carbon/logger";
 import type { JSONContent } from "@carbon/react";
 import {
@@ -193,7 +194,19 @@ export async function finishJobOperation(
     // last operation. Return any picked-but-unconsumed stock staged at lineside
     // back to its warehouse source — the SQL trigger can't call edge functions,
     // so we orchestrate it here.
-    await returnPickedRemainders(client, args);
+    const { jobId } = await returnPickedRemainders(client, args);
+
+    if (jobId) {
+      await raiseMoment("production.jobOperationCompleted", {
+        outputs: {
+          job: { id: jobId },
+          jobOperation: { id: args.jobOperationId },
+          completedBy: { id: args.userId }
+        },
+        companyId: args.companyId,
+        actorId: args.userId
+      });
+    }
   }
 
   return result;
@@ -218,7 +231,7 @@ export async function returnPickedRemainders(
     userId: string;
     companyId: string;
   }
-) {
+): Promise<{ jobId: string | undefined }> {
   const op = await client
     .from("jobOperation")
     .select("jobId")
@@ -226,7 +239,7 @@ export async function returnPickedRemainders(
     .eq("companyId", args.companyId)
     .maybeSingle();
   const jobId = op.data?.jobId;
-  if (!jobId) return;
+  if (!jobId) return { jobId: undefined };
 
   const job = await client
     .from("job")
@@ -234,7 +247,7 @@ export async function returnPickedRemainders(
     .eq("id", jobId)
     .eq("companyId", args.companyId)
     .maybeSingle();
-  if (!job.data) return;
+  if (!job.data) return { jobId };
 
   const body =
     job.data.status === "Completed"
@@ -262,6 +275,8 @@ export async function returnPickedRemainders(
       companyId: args.companyId
     });
   }
+
+  return { jobId };
 }
 
 export async function getActiveJobOperationsByEmployee(

@@ -58363,6 +58363,678 @@ export type Database = {
           },
         ]
       }
+      workflow: {
+        Row: {
+          active: boolean
+          activeVersionId: string | null
+          canvasState: Json | null
+          companyId: string
+          createdAt: string
+          createdBy: string
+          description: string | null
+          id: string
+          name: string
+          nextRunAt: string | null
+          ownerId: string
+          updatedAt: string | null
+          updatedBy: string | null
+        }
+        Insert: {
+          active?: boolean
+          activeVersionId?: string | null
+          canvasState?: Json | null
+          companyId: string
+          createdAt?: string
+          createdBy: string
+          description?: string | null
+          id?: string
+          name: string
+          nextRunAt?: string | null
+          ownerId: string
+          updatedAt?: string | null
+          updatedBy?: string | null
+        }
+        Update: {
+          active?: boolean
+          activeVersionId?: string | null
+          canvasState?: Json | null
+          companyId?: string
+          createdAt?: string
+          createdBy?: string
+          description?: string | null
+          id?: string
+          name?: string
+          nextRunAt?: string | null
+          ownerId?: string
+          updatedAt?: string | null
+          updatedBy?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_activeVersionId_fkey"
+            columns: ["activeVersionId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflowVersion"
+            referencedColumns: ["id", "companyId"]
+          },
+          {
+            foreignKeyName: "workflow_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflow_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflow_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "workflow_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "workflow_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+        ]
+      }
+      workflowRun: {
+        Row: {
+          causedByRunId: string | null
+          compactedAt: string | null
+          companyId: string
+          completedAt: string | null
+          createdAt: string
+          depth: number
+          durationMs: number | null
+          error: string | null
+          eventId: string
+          id: string
+          isTest: boolean
+          ownerId: string
+          path: string[]
+          rootRunId: string | null
+          sourceEventId: string
+          startedAt: string | null
+          status: string
+          statusReason: string | null
+          triggerRecordId: string | null
+          triggerTable: string | null
+          workflowId: string
+          workflowVersionId: string
+        }
+        Insert: {
+          causedByRunId?: string | null
+          compactedAt?: string | null
+          companyId: string
+          completedAt?: string | null
+          createdAt?: string
+          depth?: number
+          durationMs?: number | null
+          error?: string | null
+          eventId: string
+          id?: string
+          isTest?: boolean
+          ownerId: string
+          path?: string[]
+          rootRunId?: string | null
+          sourceEventId: string
+          startedAt?: string | null
+          status?: string
+          statusReason?: string | null
+          triggerRecordId?: string | null
+          triggerTable?: string | null
+          workflowId: string
+          workflowVersionId: string
+        }
+        Update: {
+          causedByRunId?: string | null
+          compactedAt?: string | null
+          companyId?: string
+          completedAt?: string | null
+          createdAt?: string
+          depth?: number
+          durationMs?: number | null
+          error?: string | null
+          eventId?: string
+          id?: string
+          isTest?: boolean
+          ownerId?: string
+          path?: string[]
+          rootRunId?: string | null
+          sourceEventId?: string
+          startedAt?: string | null
+          status?: string
+          statusReason?: string | null
+          triggerRecordId?: string | null
+          triggerTable?: string | null
+          workflowId?: string
+          workflowVersionId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowRun_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_ownerId_fkey"
+            columns: ["ownerId"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "workflowRun_workflowId_companyId_fkey"
+            columns: ["workflowId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflow"
+            referencedColumns: ["id", "companyId"]
+          },
+          {
+            foreignKeyName: "workflowRun_workflowVersionId_companyId_fkey"
+            columns: ["workflowVersionId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflowVersion"
+            referencedColumns: ["id", "companyId"]
+          },
+        ]
+      }
+      workflowStepRun: {
+        Row: {
+          branchTaken: string | null
+          compactedAt: string | null
+          companyId: string
+          completedAt: string | null
+          createdAt: string
+          detail: Json | null
+          durationMs: number | null
+          error: string | null
+          id: string
+          input: Json | null
+          itemKey: string
+          nodeId: string
+          nodeType: string
+          output: Json | null
+          runId: string
+          sequence: number
+          startedAt: string | null
+          status: string
+          statusReason: string | null
+        }
+        Insert: {
+          branchTaken?: string | null
+          compactedAt?: string | null
+          companyId: string
+          completedAt?: string | null
+          createdAt?: string
+          detail?: Json | null
+          durationMs?: number | null
+          error?: string | null
+          id?: string
+          input?: Json | null
+          itemKey?: string
+          nodeId: string
+          nodeType: string
+          output?: Json | null
+          runId: string
+          sequence: number
+          startedAt?: string | null
+          status: string
+          statusReason?: string | null
+        }
+        Update: {
+          branchTaken?: string | null
+          compactedAt?: string | null
+          companyId?: string
+          completedAt?: string | null
+          createdAt?: string
+          detail?: Json | null
+          durationMs?: number | null
+          error?: string | null
+          id?: string
+          input?: Json | null
+          itemKey?: string
+          nodeId?: string
+          nodeType?: string
+          output?: Json | null
+          runId?: string
+          sequence?: number
+          startedAt?: string | null
+          status?: string
+          statusReason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflowStepRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowStepRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowStepRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowStepRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowStepRun_runId_companyId_fkey"
+            columns: ["runId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflowLastRun"
+            referencedColumns: ["runId", "companyId"]
+          },
+          {
+            foreignKeyName: "workflowStepRun_runId_companyId_fkey"
+            columns: ["runId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflowRun"
+            referencedColumns: ["id", "companyId"]
+          },
+        ]
+      }
+      workflowTriggerEvent: {
+        Row: {
+          companyId: string
+          createdAt: string
+          eventId: string
+          id: string
+          origin: string
+          workflowId: string
+          workflowVersionId: string
+        }
+        Insert: {
+          companyId: string
+          createdAt?: string
+          eventId: string
+          id?: string
+          origin?: string
+          workflowId: string
+          workflowVersionId: string
+        }
+        Update: {
+          companyId?: string
+          createdAt?: string
+          eventId?: string
+          id?: string
+          origin?: string
+          workflowId?: string
+          workflowVersionId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflowTriggerEvent_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowTriggerEvent_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowTriggerEvent_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowTriggerEvent_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowTriggerEvent_workflowId_companyId_fkey"
+            columns: ["workflowId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflow"
+            referencedColumns: ["id", "companyId"]
+          },
+          {
+            foreignKeyName: "workflowTriggerEvent_workflowVersionId_companyId_fkey"
+            columns: ["workflowVersionId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflowVersion"
+            referencedColumns: ["id", "companyId"]
+          },
+        ]
+      }
+      workflowVersion: {
+        Row: {
+          companyId: string
+          createdAt: string
+          createdBy: string
+          edges: Json
+          formatVersion: number
+          id: string
+          nodes: Json
+          updatedAt: string | null
+          updatedBy: string | null
+          versionNumber: number
+          workflowId: string
+        }
+        Insert: {
+          companyId: string
+          createdAt?: string
+          createdBy: string
+          edges?: Json
+          formatVersion?: number
+          id?: string
+          nodes?: Json
+          updatedAt?: string | null
+          updatedBy?: string | null
+          versionNumber: number
+          workflowId: string
+        }
+        Update: {
+          companyId?: string
+          createdAt?: string
+          createdBy?: string
+          edges?: Json
+          formatVersion?: number
+          id?: string
+          nodes?: Json
+          updatedAt?: string | null
+          updatedBy?: string | null
+          versionNumber?: number
+          workflowId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflowVersion_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowVersion_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowVersion_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_createdBy_fkey"
+            columns: ["createdBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "workflowVersion_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeesAcrossCompanies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "employeeSummary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowVersion_updatedBy_fkey"
+            columns: ["updatedBy"]
+            isOneToOne: false
+            referencedRelation: "userDefaults"
+            referencedColumns: ["userId"]
+          },
+          {
+            foreignKeyName: "workflowVersion_workflowId_companyId_fkey"
+            columns: ["workflowId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflow"
+            referencedColumns: ["id", "companyId"]
+          },
+        ]
+      }
     }
     Views: {
       accounts: {
@@ -65443,14 +66115,14 @@ export type Database = {
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["id"]
+            columns: ["supplierLocationId"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "partner_id_fkey"
-            columns: ["supplierLocationId"]
+            columns: ["id"]
             isOneToOne: false
             referencedRelation: "supplierLocation"
             referencedColumns: ["id"]
@@ -70475,7 +71147,7 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["customerCountryCode"]
+            columns: ["shipmentCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["alpha2"]
@@ -70489,7 +71161,7 @@ export type Database = {
           },
           {
             foreignKeyName: "address_countryCode_fkey"
-            columns: ["shipmentCountryCode"]
+            columns: ["customerCountryCode"]
             isOneToOne: false
             referencedRelation: "country"
             referencedColumns: ["alpha2"]
@@ -74309,6 +74981,56 @@ export type Database = {
           },
         ]
       }
+      workflowLastRun: {
+        Row: {
+          companyId: string | null
+          completedAt: string | null
+          createdAt: string | null
+          durationMs: number | null
+          runId: string | null
+          startedAt: string | null
+          status: string | null
+          statusReason: string | null
+          workflowId: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "company"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "customFieldTables"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowRun_companyId_fkey"
+            columns: ["companyId"]
+            isOneToOne: false
+            referencedRelation: "integrations"
+            referencedColumns: ["companyId"]
+          },
+          {
+            foreignKeyName: "workflowRun_workflowId_companyId_fkey"
+            columns: ["workflowId", "companyId"]
+            isOneToOne: false
+            referencedRelation: "workflow"
+            referencedColumns: ["id", "companyId"]
+          },
+        ]
+      }
     }
     Functions: {
       _xid_machine_id: { Args: never; Returns: number }
@@ -77354,6 +78076,7 @@ export type Database = {
         | "Users"
         | "Quality"
         | "Printing"
+        | "Workflows"
       month:
         | "January"
         | "February"
@@ -78747,6 +79470,7 @@ export const Constants = {
         "Users",
         "Quality",
         "Printing",
+        "Workflows",
       ],
       month: [
         "January",

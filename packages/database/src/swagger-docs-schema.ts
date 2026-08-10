@@ -597,6 +597,195 @@ export default {
         tags: ["noQuoteReason"]
       }
     },
+    "/workflowVersion": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.versionNumber"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.formatVersion"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.nodes"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.edges"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedAt"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflowVersion"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflowVersion"]
+      },
+      post: {
+        parameters: [
+          {
+            $ref: "#/parameters/body.workflowVersion"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/preferPost"
+          }
+        ],
+        responses: {
+          "201": {
+            description: "Created"
+          }
+        },
+        tags: ["workflowVersion"]
+      },
+      delete: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.versionNumber"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.formatVersion"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.nodes"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.edges"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedAt"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowVersion"]
+      },
+      patch: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.versionNumber"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.formatVersion"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.nodes"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.edges"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowVersion.updatedAt"
+          },
+          {
+            $ref: "#/parameters/body.workflowVersion"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowVersion"]
+      }
+    },
     "/service": {
       get: {
         parameters: [
@@ -5421,6 +5610,213 @@ export default {
         tags: ["companyUsage"]
       }
     },
+    "/workflow": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflow.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.name"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.description"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.active"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.activeVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.nextRunAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.canvasState"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedAt"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflow"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflow"]
+      },
+      post: {
+        parameters: [
+          {
+            $ref: "#/parameters/body.workflow"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/preferPost"
+          }
+        ],
+        responses: {
+          "201": {
+            description: "Created"
+          }
+        },
+        tags: ["workflow"]
+      },
+      delete: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflow.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.name"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.description"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.active"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.activeVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.nextRunAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.canvasState"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedAt"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflow"]
+      },
+      patch: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflow.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.name"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.description"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.active"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.activeVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.nextRunAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.canvasState"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedBy"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflow.updatedAt"
+          },
+          {
+            $ref: "#/parameters/body.workflow"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflow"]
+      }
+    },
     "/approvalRequests": {
       get: {
         parameters: [
@@ -7186,6 +7582,75 @@ export default {
           }
         },
         tags: ["changeOrders"]
+      }
+    },
+    "/workflowLastRun": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.runId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowLastRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflowLastRun"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflowLastRun"]
       }
     },
     "/dimension": {
@@ -27648,6 +28113,159 @@ export default {
         tags: ["openJobMaterialLines"]
       }
     },
+    "/workflowTriggerEvent": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.origin"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.createdAt"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflowTriggerEvent"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflowTriggerEvent"]
+      },
+      post: {
+        parameters: [
+          {
+            $ref: "#/parameters/body.workflowTriggerEvent"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/preferPost"
+          }
+        ],
+        responses: {
+          "201": {
+            description: "Created"
+          }
+        },
+        tags: ["workflowTriggerEvent"]
+      },
+      delete: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.origin"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.createdAt"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowTriggerEvent"]
+      },
+      patch: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.origin"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowTriggerEvent.createdAt"
+          },
+          {
+            $ref: "#/parameters/body.workflowTriggerEvent"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowTriggerEvent"]
+      }
+    },
     "/externalIntegrationMapping": {
       get: {
         parameters: [
@@ -33405,6 +34023,267 @@ export default {
         tags: ["assemblyInstruction"]
       }
     },
+    "/workflowStepRun": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.runId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.sequence"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeType"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.itemKey"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.input"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.output"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.branchTaken"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.detail"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflowStepRun"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflowStepRun"]
+      },
+      post: {
+        parameters: [
+          {
+            $ref: "#/parameters/body.workflowStepRun"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/preferPost"
+          }
+        ],
+        responses: {
+          "201": {
+            description: "Created"
+          }
+        },
+        tags: ["workflowStepRun"]
+      },
+      delete: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.runId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.sequence"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeType"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.itemKey"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.input"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.output"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.branchTaken"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.detail"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowStepRun"]
+      },
+      patch: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.runId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.sequence"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.nodeType"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.itemKey"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.input"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.output"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.branchTaken"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowStepRun.detail"
+          },
+          {
+            $ref: "#/parameters/body.workflowStepRun"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowStepRun"]
+      }
+    },
     "/purchaseOrderStatusHistory": {
       get: {
         parameters: [
@@ -39019,6 +39898,294 @@ export default {
           }
         },
         tags: ["purchaseInvoice"]
+      }
+    },
+    "/workflowRun": {
+      get: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.sourceEventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerTable"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerRecordId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.isTest"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.rootRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.causedByRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.depth"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.path"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/order"
+          },
+          {
+            $ref: "#/parameters/range"
+          },
+          {
+            $ref: "#/parameters/rangeUnit"
+          },
+          {
+            $ref: "#/parameters/offset"
+          },
+          {
+            $ref: "#/parameters/limit"
+          },
+          {
+            $ref: "#/parameters/preferCount"
+          }
+        ],
+        responses: {
+          "200": {
+            description: "OK",
+            schema: {
+              items: {
+                $ref: "#/definitions/workflowRun"
+              },
+              type: "array"
+            }
+          },
+          "206": {
+            description: "Partial Content"
+          }
+        },
+        tags: ["workflowRun"]
+      },
+      post: {
+        parameters: [
+          {
+            $ref: "#/parameters/body.workflowRun"
+          },
+          {
+            $ref: "#/parameters/select"
+          },
+          {
+            $ref: "#/parameters/preferPost"
+          }
+        ],
+        responses: {
+          "201": {
+            description: "Created"
+          }
+        },
+        tags: ["workflowRun"]
+      },
+      delete: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.sourceEventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerTable"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerRecordId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.isTest"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.rootRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.causedByRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.depth"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.path"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowRun"]
+      },
+      patch: {
+        parameters: [
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.id"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.companyId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.workflowVersionId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.eventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.sourceEventId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerTable"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.triggerRecordId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.ownerId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.status"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.statusReason"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.isTest"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.rootRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.causedByRunId"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.depth"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.path"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.startedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.completedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.durationMs"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.error"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.compactedAt"
+          },
+          {
+            $ref: "#/parameters/rowFilter.workflowRun.createdAt"
+          },
+          {
+            $ref: "#/parameters/body.workflowRun"
+          },
+          {
+            $ref: "#/parameters/preferReturn"
+          }
+        ],
+        responses: {
+          "204": {
+            description: "No Content"
+          }
+        },
+        tags: ["workflowRun"]
       }
     },
     "/userAttribute": {
@@ -96418,6 +97585,74 @@ export default {
       },
       type: "object"
     },
+    workflowVersion: {
+      required: [
+        "id",
+        "companyId",
+        "workflowId",
+        "versionNumber",
+        "formatVersion",
+        "nodes",
+        "edges",
+        "createdBy",
+        "createdAt"
+      ],
+      properties: {
+        id: {
+          default: "public.id('wfv'::text)",
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        workflowId: {
+          format: "text",
+          type: "string"
+        },
+        versionNumber: {
+          format: "integer",
+          type: "integer"
+        },
+        formatVersion: {
+          default: 1,
+          format: "integer",
+          type: "integer"
+        },
+        nodes: {
+          format: "jsonb"
+        },
+        edges: {
+          format: "jsonb"
+        },
+        createdBy: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        createdAt: {
+          default: "now()",
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        updatedBy: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        updatedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        }
+      },
+      type: "object"
+    },
     service: {
       required: [
         "id",
@@ -98455,6 +99690,83 @@ export default {
       },
       type: "object"
     },
+    workflow: {
+      required: [
+        "id",
+        "companyId",
+        "name",
+        "ownerId",
+        "active",
+        "createdBy",
+        "createdAt"
+      ],
+      properties: {
+        id: {
+          default: "public.id('wf'::text)",
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        name: {
+          format: "text",
+          type: "string"
+        },
+        description: {
+          format: "text",
+          type: "string"
+        },
+        ownerId: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        active: {
+          default: false,
+          format: "boolean",
+          type: "boolean"
+        },
+        activeVersionId: {
+          format: "text",
+          type: "string"
+        },
+        nextRunAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        canvasState: {
+          format: "jsonb"
+        },
+        createdBy: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        createdAt: {
+          default: "now()",
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        updatedBy: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        updatedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        }
+      },
+      type: "object"
+    },
     approvalRequests: {
       properties: {
         id: {
@@ -99320,6 +100632,50 @@ export default {
         },
         affectedItems: {
           format: "jsonb"
+        }
+      },
+      type: "object"
+    },
+    workflowLastRun: {
+      properties: {
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        workflowId: {
+          format: "text",
+          type: "string"
+        },
+        runId: {
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        status: {
+          format: "text",
+          type: "string"
+        },
+        statusReason: {
+          format: "text",
+          type: "string"
+        },
+        createdAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        startedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        completedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        durationMs: {
+          format: "integer",
+          type: "integer"
         }
       },
       type: "object"
@@ -106116,7 +107472,8 @@ export default {
             "Settings",
             "Users",
             "Quality",
-            "Printing"
+            "Printing",
+            "Workflows"
           ],
           format: "public.module",
           type: "string"
@@ -106491,7 +107848,8 @@ export default {
             "Settings",
             "Users",
             "Quality",
-            "Printing"
+            "Printing",
+            "Workflows"
           ],
           format: "public.module",
           type: "string"
@@ -109368,6 +110726,54 @@ export default {
       },
       type: "object"
     },
+    workflowTriggerEvent: {
+      required: [
+        "id",
+        "companyId",
+        "workflowId",
+        "workflowVersionId",
+        "eventId",
+        "origin",
+        "createdAt"
+      ],
+      properties: {
+        id: {
+          default: "public.id('wfe'::text)",
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        workflowId: {
+          format: "text",
+          type: "string"
+        },
+        workflowVersionId: {
+          format: "text",
+          type: "string"
+        },
+        eventId: {
+          format: "text",
+          type: "string"
+        },
+        origin: {
+          default: "Both",
+          format: "text",
+          type: "string"
+        },
+        createdAt: {
+          default: "now()",
+          format: "timestamp with time zone",
+          type: "string"
+        }
+      },
+      type: "object"
+    },
     externalIntegrationMapping: {
       required: [
         "id",
@@ -111927,6 +113333,103 @@ export default {
             "Note:\nThis is a Foreign Key to `assemblyInstruction.id`.<fk table='assemblyInstruction' column='id'/>",
           format: "text",
           type: "string"
+        }
+      },
+      type: "object"
+    },
+    workflowStepRun: {
+      required: [
+        "id",
+        "companyId",
+        "runId",
+        "sequence",
+        "nodeId",
+        "nodeType",
+        "itemKey",
+        "status",
+        "createdAt"
+      ],
+      properties: {
+        id: {
+          default: "public.id('wfs'::text)",
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        runId: {
+          format: "text",
+          type: "string"
+        },
+        sequence: {
+          format: "integer",
+          type: "integer"
+        },
+        nodeId: {
+          format: "text",
+          type: "string"
+        },
+        nodeType: {
+          format: "text",
+          type: "string"
+        },
+        itemKey: {
+          default: "",
+          format: "text",
+          type: "string"
+        },
+        status: {
+          format: "text",
+          type: "string"
+        },
+        statusReason: {
+          format: "text",
+          type: "string"
+        },
+        input: {
+          format: "jsonb"
+        },
+        output: {
+          format: "jsonb"
+        },
+        branchTaken: {
+          format: "text",
+          type: "string"
+        },
+        startedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        completedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        durationMs: {
+          format: "integer",
+          type: "integer"
+        },
+        error: {
+          format: "text",
+          type: "string"
+        },
+        compactedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        createdAt: {
+          default: "now()",
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        detail: {
+          description:
+            'Diagnostics only (per-clause condition evaluation). Never node data - that is "output".',
+          format: "jsonb"
         }
       },
       type: "object"
@@ -114655,6 +116158,126 @@ export default {
             "Voided"
           ],
           format: 'public."purchaseInvoiceStatus"',
+          type: "string"
+        }
+      },
+      type: "object"
+    },
+    workflowRun: {
+      required: [
+        "id",
+        "companyId",
+        "workflowId",
+        "workflowVersionId",
+        "eventId",
+        "sourceEventId",
+        "ownerId",
+        "status",
+        "isTest",
+        "depth",
+        "path",
+        "createdAt"
+      ],
+      properties: {
+        id: {
+          default: "public.id('wfr'::text)",
+          description: "Note:\nThis is a Primary Key.<pk/>",
+          format: "text",
+          type: "string"
+        },
+        companyId: {
+          description:
+            "Note:\nThis is a Primary Key.<pk/>\nThis is a Foreign Key to `company.id`.<fk table='company' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        workflowId: {
+          format: "text",
+          type: "string"
+        },
+        workflowVersionId: {
+          format: "text",
+          type: "string"
+        },
+        eventId: {
+          format: "text",
+          type: "string"
+        },
+        sourceEventId: {
+          format: "text",
+          type: "string"
+        },
+        triggerTable: {
+          format: "text",
+          type: "string"
+        },
+        triggerRecordId: {
+          format: "text",
+          type: "string"
+        },
+        ownerId: {
+          description:
+            "Note:\nThis is a Foreign Key to `user.id`.<fk table='user' column='id'/>",
+          format: "text",
+          type: "string"
+        },
+        status: {
+          default: "Queued",
+          format: "text",
+          type: "string"
+        },
+        statusReason: {
+          format: "text",
+          type: "string"
+        },
+        isTest: {
+          default: false,
+          format: "boolean",
+          type: "boolean"
+        },
+        rootRunId: {
+          format: "text",
+          type: "string"
+        },
+        causedByRunId: {
+          format: "text",
+          type: "string"
+        },
+        depth: {
+          default: 0,
+          format: "integer",
+          type: "integer"
+        },
+        path: {
+          format: "text[]",
+          items: {
+            type: "string"
+          },
+          type: "array"
+        },
+        startedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        completedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        durationMs: {
+          format: "integer",
+          type: "integer"
+        },
+        error: {
+          format: "text",
+          type: "string"
+        },
+        compactedAt: {
+          format: "timestamp with time zone",
+          type: "string"
+        },
+        createdAt: {
+          default: "now()",
+          format: "timestamp with time zone",
           type: "string"
         }
       },
@@ -128761,7 +130384,8 @@ export default {
             "Settings",
             "Users",
             "Quality",
-            "Printing"
+            "Printing",
+            "Workflows"
           ],
           format: "public.module",
           type: "string"
@@ -135692,7 +137316,8 @@ export default {
             "Settings",
             "Users",
             "Quality",
-            "Printing"
+            "Printing",
+            "Workflows"
           ],
           format: "public.module",
           type: "string"
@@ -136203,7 +137828,8 @@ export default {
             "Settings",
             "Users",
             "Quality",
-            "Printing"
+            "Printing",
+            "Workflows"
           ],
           format: "public.module",
           type: "string"
@@ -136937,6 +138563,81 @@ export default {
     },
     "rowFilter.noQuoteReason.customFields": {
       name: "customFields",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "body.workflowVersion": {
+      name: "workflowVersion",
+      description: "workflowVersion",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflowVersion"
+      }
+    },
+    "rowFilter.workflowVersion.id": {
+      name: "id",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.workflowId": {
+      name: "workflowId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.versionNumber": {
+      name: "versionNumber",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.formatVersion": {
+      name: "formatVersion",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.nodes": {
+      name: "nodes",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.edges": {
+      name: "edges",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.createdBy": {
+      name: "createdBy",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.createdAt": {
+      name: "createdAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.updatedBy": {
+      name: "updatedBy",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowVersion.updatedAt": {
+      name: "updatedAt",
       required: false,
       in: "query",
       type: "string"
@@ -139278,6 +140979,93 @@ export default {
       in: "query",
       type: "string"
     },
+    "body.workflow": {
+      name: "workflow",
+      description: "workflow",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflow"
+      }
+    },
+    "rowFilter.workflow.id": {
+      name: "id",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.name": {
+      name: "name",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.description": {
+      name: "description",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.ownerId": {
+      name: "ownerId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.active": {
+      name: "active",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.activeVersionId": {
+      name: "activeVersionId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.nextRunAt": {
+      name: "nextRunAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.canvasState": {
+      name: "canvasState",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.createdBy": {
+      name: "createdBy",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.createdAt": {
+      name: "createdAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.updatedBy": {
+      name: "updatedBy",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflow.updatedAt": {
+      name: "updatedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
     "body.approvalRequests": {
       name: "approvalRequests",
       description: "approvalRequests",
@@ -140249,6 +142037,69 @@ export default {
     },
     "rowFilter.changeOrders.affectedItems": {
       name: "affectedItems",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "body.workflowLastRun": {
+      name: "workflowLastRun",
+      description: "workflowLastRun",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflowLastRun"
+      }
+    },
+    "rowFilter.workflowLastRun.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.workflowId": {
+      name: "workflowId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.runId": {
+      name: "runId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.status": {
+      name: "status",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.statusReason": {
+      name: "statusReason",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.createdAt": {
+      name: "createdAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.startedAt": {
+      name: "startedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.completedAt": {
+      name: "completedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowLastRun.durationMs": {
+      name: "durationMs",
       required: false,
       in: "query",
       type: "string"
@@ -151529,6 +153380,57 @@ export default {
       in: "query",
       type: "string"
     },
+    "body.workflowTriggerEvent": {
+      name: "workflowTriggerEvent",
+      description: "workflowTriggerEvent",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflowTriggerEvent"
+      }
+    },
+    "rowFilter.workflowTriggerEvent.id": {
+      name: "id",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.workflowId": {
+      name: "workflowId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.workflowVersionId": {
+      name: "workflowVersionId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.eventId": {
+      name: "eventId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.origin": {
+      name: "origin",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowTriggerEvent.createdAt": {
+      name: "createdAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
     "body.externalIntegrationMapping": {
       name: "externalIntegrationMapping",
       description: "externalIntegrationMapping",
@@ -154349,6 +156251,131 @@ export default {
     },
     "rowFilter.assemblyInstruction.rootInstructionId": {
       name: "rootInstructionId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "body.workflowStepRun": {
+      name: "workflowStepRun",
+      description: "workflowStepRun",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflowStepRun"
+      }
+    },
+    "rowFilter.workflowStepRun.id": {
+      name: "id",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.runId": {
+      name: "runId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.sequence": {
+      name: "sequence",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.nodeId": {
+      name: "nodeId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.nodeType": {
+      name: "nodeType",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.itemKey": {
+      name: "itemKey",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.status": {
+      name: "status",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.statusReason": {
+      name: "statusReason",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.input": {
+      name: "input",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.output": {
+      name: "output",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.branchTaken": {
+      name: "branchTaken",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.startedAt": {
+      name: "startedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.completedAt": {
+      name: "completedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.durationMs": {
+      name: "durationMs",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.error": {
+      name: "error",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.compactedAt": {
+      name: "compactedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.createdAt": {
+      name: "createdAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowStepRun.detail": {
+      name: "detail",
+      description:
+        'Diagnostics only (per-clause condition evaluation). Never node data - that is "output".',
       required: false,
       in: "query",
       type: "string"
@@ -157307,6 +159334,147 @@ export default {
     },
     "rowFilter.purchaseInvoice.status": {
       name: "status",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "body.workflowRun": {
+      name: "workflowRun",
+      description: "workflowRun",
+      required: false,
+      in: "body",
+      schema: {
+        $ref: "#/definitions/workflowRun"
+      }
+    },
+    "rowFilter.workflowRun.id": {
+      name: "id",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.companyId": {
+      name: "companyId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.workflowId": {
+      name: "workflowId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.workflowVersionId": {
+      name: "workflowVersionId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.eventId": {
+      name: "eventId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.sourceEventId": {
+      name: "sourceEventId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.triggerTable": {
+      name: "triggerTable",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.triggerRecordId": {
+      name: "triggerRecordId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.ownerId": {
+      name: "ownerId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.status": {
+      name: "status",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.statusReason": {
+      name: "statusReason",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.isTest": {
+      name: "isTest",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.rootRunId": {
+      name: "rootRunId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.causedByRunId": {
+      name: "causedByRunId",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.depth": {
+      name: "depth",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.path": {
+      name: "path",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.startedAt": {
+      name: "startedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.completedAt": {
+      name: "completedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.durationMs": {
+      name: "durationMs",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.error": {
+      name: "error",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.compactedAt": {
+      name: "compactedAt",
+      required: false,
+      in: "query",
+      type: "string"
+    },
+    "rowFilter.workflowRun.createdAt": {
+      name: "createdAt",
       required: false,
       in: "query",
       type: "string"
