@@ -1,12 +1,11 @@
 import { serve } from "https://deno.land/std@0.175.0/http/server.ts";
 import {
-  getLocalTimeZone,
-  today as getToday,
   parseDate,
   startOfWeek,
   type CalendarDate,
-} from "npm:@internationalized/date";
+} from "@internationalized/date";
 import { DB, getConnectionPool, getDatabaseClient } from "../lib/database.ts";
+import { datetime, getCompanyTimeZone } from "../lib/datetime.ts";
 import {
   explodeBom,
   splitKey,
@@ -81,7 +80,7 @@ serve(async (req: Request) => {
 
   console.log({ function: "mrp", type, companyId, userId });
 
-  const today = getToday(getLocalTimeZone());
+  const today = datetime.today(await getCompanyTimeZone(db, companyId));
   const ranges = getStartAndEndDates(today, "Week");
   const periods = await getOrCreateDemandPeriods(db, ranges, "Week");
 
@@ -353,14 +352,14 @@ serve(async (req: Request) => {
     type DemandForecastSourceInsert =
       Database["public"]["Tables"]["demandForecastSource"]["Insert"];
 
-    // Demand projections (netted against production supply)
+    // Demand projections. Do NOT net firm job/PO supply here — supply is
+    // credited exactly once by explodeBom's running balance (which receives
+    // jobAndPoSupplyByLocationPeriodItem below). Netting here as well would
+    // double-count supply and under-drive child demand.
     for (const projection of demandProjections.data) {
       if (!projection.itemId || !projection.forecastQuantity) continue;
 
-      let netDemand = projection.forecastQuantity;
-      const periodKey = `${projection.locationId ?? ""}-${projection.periodId}-${projection.itemId}`;
-      const plannedProduction = jobSupplyByLocationPeriodItem.get(periodKey) ?? 0;
-      netDemand = Math.max(0, projection.forecastQuantity - plannedProduction);
+      const netDemand = projection.forecastQuantity;
 
       if (netDemand > 0) {
         const key = `${projection.locationId ?? ""}-${projection.periodId}-${projection.itemId}`;
