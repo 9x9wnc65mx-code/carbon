@@ -75,6 +75,14 @@ quantity when present. It takes a `Kysely<KyselyDatabase>`, not a supabase clien
 so it bypasses RLS — every statement is scoped by `companyId` explicitly and the
 route must authorize with `requirePermissions` first. Any user-entered column added to `quoteLinePrice` has to be added
 to that carry-over list or the delete+reinsert silently resets it to its default.
+The rewrite throws if the quote or line is missing for that company, because the
+insert's `companyId` is overwritten by a trigger from the parent quote — without
+the check it would write into whichever company owns the quote.
+
+`updateQuoteLinePrecision(db, companyId, quoteId, lineId, precision)` shares that
+transaction: it sets `quoteLine.unitPricePrecision` and re-rounds the existing
+price rows together, so the line can never advertise a precision its prices were
+never rounded to.
 
 ## Types & UI
 

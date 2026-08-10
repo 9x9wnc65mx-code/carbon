@@ -1,17 +1,17 @@
 import { assertIsPost } from "@carbon/auth";
 import { requirePermissions } from "@carbon/auth/auth.server";
+import { getLogger } from "@carbon/logger";
 import type { ActionFunctionArgs } from "react-router";
 import { data } from "react-router";
-import {
-  updateQuoteLinePrecision,
-  upsertQuoteLinePrices
-} from "~/modules/sales";
+import { updateQuoteLinePrecision } from "~/modules/sales";
 import { getDatabaseClient } from "~/services/database.server";
+
+const logger = getLogger("erp", "quoteid-lineid-update-precision");
 
 export async function action({ request, params }: ActionFunctionArgs) {
   assertIsPost(request);
 
-  const { client, companyId } = await requirePermissions(request, {
+  const { companyId } = await requirePermissions(request, {
     update: "sales"
   });
 
@@ -23,48 +23,22 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const precision = Number(formData.get("precision") ?? 2);
 
-  const updatePrecision = await updateQuoteLinePrecision(
-    client,
-    lineId,
-    precision
-  );
-  if (updatePrecision.error) {
+  // Rounds the line's existing prices to the new precision in the same
+  // transaction that sets it.
+  try {
+    await updateQuoteLinePrecision(
+      getDatabaseClient(),
+      companyId,
+      quoteId,
+      lineId,
+      precision
+    );
+  } catch (err) {
+    logger.error("Failed to update quote line precision", { error: err });
     return data(
-      { data: null, error: updatePrecision.error.message },
+      { data: null, error: "Failed to update quote line precision" },
       { status: 400 }
     );
-  }
-
-  // Update all the prices for the quote line to reflect the new precision
-  const prices = await client
-    .from("quoteLinePrice")
-    .select("*")
-    .eq("quoteLineId", lineId);
-
-  if (prices.data) {
-    const roundedPrices = prices.data?.map((price) => ({
-      quoteLineId: price.quoteLineId,
-      unitPrice: Number(price.unitPrice.toFixed(precision)),
-      leadTime: price.leadTime,
-      discountPercent: price.discountPercent,
-      quantity: price.quantity,
-      createdBy: price.createdBy
-    }));
-
-    try {
-      await upsertQuoteLinePrices(
-        getDatabaseClient(),
-        companyId,
-        quoteId,
-        lineId,
-        roundedPrices
-      );
-    } catch {
-      return data(
-        { data: null, error: "Failed to update quote line prices" },
-        { status: 400 }
-      );
-    }
   }
 
   return { data: null, error: null };

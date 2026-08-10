@@ -1,6 +1,6 @@
 import type { Database, Json } from "@carbon/database";
 import { fetchAllFromTable, getCompanyTimeZone } from "@carbon/database";
-import type { Kysely, KyselyDatabase } from "@carbon/database/client";
+import type { Kysely, KyselyDatabase, KyselyTx } from "@carbon/database/client";
 import { getLogger } from "@carbon/logger";
 import type { PickPartial } from "@carbon/utils";
 import { datetime } from "@carbon/utils";
@@ -3189,16 +3189,56 @@ export async function updateQuoteExchangeRate(
 }
 
 export async function updateQuoteLinePrecision(
-  client: SupabaseClient<Database>,
-  quoteLineId: string,
+  db: Kysely<KyselyDatabase>,
+  companyId: string,
+  quoteId: string,
+  lineId: string,
   precision: number
 ) {
-  return client
-    .from("quoteLine")
-    .update({ unitPricePrecision: precision })
-    .eq("id", quoteLineId)
-    .select("id")
-    .single();
+  // The stored prices are rounded to the line's precision, so changing the
+  // precision and rewriting the rows have to commit together — otherwise the
+  // line advertises a precision its prices were never rounded to.
+  return db.transaction().execute(async (trx) => {
+    const line = await trx
+      .updateTable("quoteLine")
+      .set({ unitPricePrecision: precision })
+      .where("id", "=", lineId)
+      .where("companyId", "=", companyId)
+      .returning("id")
+      .executeTakeFirst();
+
+    if (!line) {
+      throw new Error(
+        `Quote line ${lineId} was not found for company ${companyId}`
+      );
+    }
+
+    const existingPrices = await trx
+      .selectFrom("quoteLinePrice")
+      .selectAll()
+      .where("quoteLineId", "=", lineId)
+      .where("companyId", "=", companyId)
+      .execute();
+
+    if (existingPrices.length === 0) return;
+
+    // node-postgres hands back NUMERIC as a string; rewriteQuoteLinePrices does
+    // arithmetic on these, so coerce before passing them back in.
+    await rewriteQuoteLinePrices(
+      trx,
+      companyId,
+      quoteId,
+      lineId,
+      existingPrices.map((price) => ({
+        quoteLineId: lineId,
+        quantity: Number(price.quantity),
+        unitPrice: Number(price.unitPrice),
+        leadTime: Number(price.leadTime),
+        discountPercent: Number(price.discountPercent),
+        createdBy: price.createdBy
+      }))
+    );
+  });
 }
 
 export async function updateSalesOrderExchangeRate(
@@ -3887,75 +3927,106 @@ export async function upsertQuoteLinePrices(
   // Rewriting a line's prices is a delete + reinsert, so it has to be atomic:
   // if the insert failed after the delete had already committed, the line would
   // be left with no pricing at all and the previous values unrecoverable.
-  // Kysely bypasses RLS, so every statement is scoped by companyId explicitly.
-  return db.transaction().execute(async (trx) => {
-    const existingPrices = await trx
-      .selectFrom("quoteLinePrice")
-      .selectAll()
-      .where("quoteLineId", "=", lineId)
-      .where("companyId", "=", companyId)
-      .execute();
-
-    await trx
-      .deleteFrom("quoteLinePrice")
-      .where("quoteLineId", "=", lineId)
-      .where("companyId", "=", companyId)
-      .execute();
-
-    if (quoteLinePrices.length === 0) return;
-
-    const quote = await trx
-      .selectFrom("quote")
-      .select("exchangeRate")
-      .where("id", "=", quoteId)
-      .where("companyId", "=", companyId)
-      .executeTakeFirst();
-
-    const quoteLine = await trx
-      .selectFrom("quoteLine")
-      .select("unitPricePrecision")
-      .where("id", "=", lineId)
-      .where("companyId", "=", companyId)
-      .executeTakeFirst();
-
-    // node-postgres returns NUMERIC as a string ("10.00000"), where PostgREST
-    // returned it as a number — so the quantity has to be normalized on both
-    // sides or every lookup misses and nothing gets preserved.
-    const existingByQuantity = new Map(
-      existingPrices.map((price) => [Number(price.quantity), price])
+  return db
+    .transaction()
+    .execute((trx) =>
+      rewriteQuoteLinePrices(trx, companyId, quoteId, lineId, quoteLinePrices)
     );
+}
 
-    await trx
-      .insertInto("quoteLinePrice")
-      .values(
-        quoteLinePrices.map((p) => {
-          const existing = existingByQuantity.get(Number(p.quantity));
+// Must run inside a caller-owned transaction so the delete below rolls back with
+// everything else. Kysely bypasses RLS, so every statement is scoped by
+// companyId explicitly.
+async function rewriteQuoteLinePrices(
+  trx: KyselyTx,
+  companyId: string,
+  quoteId: string,
+  lineId: string,
+  quoteLinePrices: {
+    quoteLineId: string;
+    unitPrice: number;
+    leadTime: number;
+    discountPercent: number;
+    quantity: number;
+    createdBy: string;
+    categoryMarkups?: Record<string, number>;
+    priceSource?: "system" | "manual";
+  }[]
+) {
+  const existingPrices = await trx
+    .selectFrom("quoteLinePrice")
+    .selectAll()
+    .where("quoteLineId", "=", lineId)
+    .where("companyId", "=", companyId)
+    .execute();
 
-          return {
-            ...p,
-            companyId,
-            quoteId,
-            unitPrice: Number(
-              p.unitPrice.toFixed(quoteLine?.unitPricePrecision ?? 2)
-            ),
-            discountPercent: existing?.discountPercent ?? p.discountPercent,
-            leadTime: existing?.leadTime ?? p.leadTime,
-            // Shipping is entered per quantity break and is independent of the
-            // price being rewritten — without this the delete+reinsert resets
-            // it to the column default of 0.
-            shippingCost: existing?.shippingCost ?? 0,
-            categoryMarkups:
-              p.categoryMarkups ?? existing?.categoryMarkups ?? {},
-            // Explicit caller intent wins; otherwise keep the row's provenance
-            // so a delete+reinsert can never turn a manual price back into a
-            // system one.
-            priceSource: p.priceSource ?? existing?.priceSource ?? "system",
-            exchangeRate: quote?.exchangeRate ?? 1
-          };
-        })
-      )
-      .execute();
-  });
+  await trx
+    .deleteFrom("quoteLinePrice")
+    .where("quoteLineId", "=", lineId)
+    .where("companyId", "=", companyId)
+    .execute();
+
+  if (quoteLinePrices.length === 0) return;
+
+  const quote = await trx
+    .selectFrom("quote")
+    .select("exchangeRate")
+    .where("id", "=", quoteId)
+    .where("companyId", "=", companyId)
+    .executeTakeFirst();
+
+  const quoteLine = await trx
+    .selectFrom("quoteLine")
+    .select("unitPricePrecision")
+    .where("id", "=", lineId)
+    .where("companyId", "=", companyId)
+    .executeTakeFirst();
+
+  // Neither lookup is scoped by anything the insert repeats: quoteLinePrice
+  // derives its companyId from the parent quote via trigger, so inserting
+  // against a quote in another company would silently write there. Missing
+  // rows also mean the exchange rate and precision below would fall back to
+  // 1 and 2 and mis-price the line. Throwing rolls the delete back.
+  if (!quote || !quoteLine) {
+    throw new Error(
+      `Quote ${quoteId} / line ${lineId} was not found for company ${companyId}`
+    );
+  }
+
+  // node-postgres returns NUMERIC as a string ("10.00000"), where PostgREST
+  // returned it as a number — so the quantity has to be normalized on both
+  // sides or every lookup misses and nothing gets preserved.
+  const existingByQuantity = new Map(
+    existingPrices.map((price) => [Number(price.quantity), price])
+  );
+
+  await trx
+    .insertInto("quoteLinePrice")
+    .values(
+      quoteLinePrices.map((p) => {
+        const existing = existingByQuantity.get(Number(p.quantity));
+
+        return {
+          ...p,
+          companyId,
+          quoteId,
+          unitPrice: Number(p.unitPrice.toFixed(quoteLine.unitPricePrecision)),
+          discountPercent: existing?.discountPercent ?? p.discountPercent,
+          leadTime: existing?.leadTime ?? p.leadTime,
+          // Shipping is entered per quantity break and is independent of the
+          // price being rewritten — without this the delete+reinsert resets
+          // it to the column default of 0.
+          shippingCost: existing?.shippingCost ?? 0,
+          categoryMarkups: p.categoryMarkups ?? existing?.categoryMarkups ?? {},
+          // Explicit caller intent wins; otherwise keep the row's provenance
+          // so a delete+reinsert can never turn a manual price back into a
+          // system one.
+          priceSource: p.priceSource ?? existing?.priceSource ?? "system",
+          exchangeRate: quote.exchangeRate ?? 1
+        };
+      })
+    )
+    .execute();
 }
 
 async function buildCostEffects(
