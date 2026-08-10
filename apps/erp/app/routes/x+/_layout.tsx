@@ -258,8 +258,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function AuthenticatedRoute() {
-  const { session, user, companySettings, openClockEntry, printerRoutes } =
-    useLoaderData<typeof loader>();
+  const {
+    company,
+    session,
+    user,
+    companySettings,
+    openClockEntry,
+    printerRoutes
+  } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const { isOpen, training, dismiss } = useTrainingPanel();
 
@@ -283,6 +289,15 @@ export default function AuthenticatedRoute() {
       email: user.email,
       name: `${user.firstName} ${user.lastName}`
     });
+
+    if (!company?.companyId) return;
+
+    // Adoption is measured per customer, and a user can belong to more than one
+    // company — so the company rides on the events rather than on the person.
+    // register() puts companyId on every event including autocapture; group()
+    // is what lets PostHog aggregate by customer.
+    posthog.register({ companyId: company.companyId });
+    posthog.group("company", company.companyId, { name: company.name });
   });
 
   return (

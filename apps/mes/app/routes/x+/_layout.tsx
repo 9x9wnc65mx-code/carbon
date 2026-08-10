@@ -253,10 +253,21 @@ export default function AuthenticatedRoute() {
   });
 
   useMount(() => {
-    posthog.identify(user?.id, {
-      email: user?.email,
-      name: `${user?.firstName} ${user?.lastName}`
+    if (!user) return;
+
+    posthog.identify(user.id, {
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`
     });
+
+    if (!company?.companyId) return;
+
+    // Adoption is measured per customer, and a user can belong to more than one
+    // company — so the company rides on the events rather than on the person.
+    // register() puts companyId on every event including autocapture; group()
+    // is what lets PostHog aggregate by customer.
+    posthog.register({ companyId: company.companyId });
+    posthog.group("company", company.companyId, { name: company.name });
   });
 
   // Scroll stays unlocked until lg, where the controls dock beside the content
