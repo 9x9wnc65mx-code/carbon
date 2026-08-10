@@ -1,17 +1,3 @@
-// Material-taxonomy importer — backs the six standalone material-property CSV
-// imports: materialSubstance, materialForm, materialFinish, materialGrade,
-// materialType, materialDimension.
-//
-// These are plain global-or-company lookup tables (see .claude/rules/material-tables.md).
-// Unlike the item/customer/supplier importers this is intentionally **create-only
-// with skip-duplicate** semantics (never upserts, never mutates existing rows):
-// a row that matches an existing entry — for THIS company OR a global system row
-// (companyId IS NULL) — is skipped, so re-importing the same file is a no-op.
-//
-// Parent references (a finish/grade/type's substance, a type/dimension's shape)
-// arrive already resolved to ids by the FieldMappings enum-mapping step, so this
-// importer treats them as ids; a blank/unresolved parent is reported as a row error.
-
 import { Kysely, Transaction } from "npm:kysely@0.27.6";
 import { DB } from "../lib/database.ts";
 
@@ -32,9 +18,6 @@ export type MaterialPropertyTable =
   | "materialType"
   | "materialDimension";
 
-// Case/whitespace-insensitive normalization for the dedup keys. Slightly stricter
-// than the DB unique constraints (which are case-sensitive), matching the
-// "never make a duplicate" intent for these human-entered lookups.
 const norm = (s: string | undefined) => (s ?? "").trim().toLowerCase();
 
 const isMetricValue = (s: string | undefined) => {
@@ -47,9 +30,6 @@ const SUBSTANCE_UNMATCHED =
 const SHAPE_UNMATCHED =
   "Shape could not be matched — make sure the shape exists and is mapped in the wizard";
 
-// A child taxonomy's parent reference: the record field carrying the resolved
-// parent id, the parent table the id must belong to, and the reason to report
-// when it is blank or points outside the tenant's allowlist.
 type ParentSpec = {
   field: "materialSubstanceId" | "materialFormId";
   table: "materialSubstance" | "materialForm";
@@ -57,42 +37,26 @@ type ParentSpec = {
 };
 
 type TableConfig = {
-  // Validate a mapped row; return an error reason, or null if the row is usable.
   validate: (r: Rec) => string | null;
-  // Every natural (uniqueness) key the row occupies. A row is a duplicate if ANY
-  // of its keys already exists (in the DB, or earlier in the same file). Types
-  // carry two keys (code + name, both enforced unique); the rest carry one.
   keysOf: (r: Rec) => string[];
-  // Preload the natural keys already present for this company OR the global
-  // (companyId IS NULL) system rows, so a company row never shadows a system row.
   loadExistingKeys: (
     trx: Transaction<DB>,
     companyId: string
   ) => Promise<Set<string>>;
-  // Insert the accepted rows. ON CONFLICT DO NOTHING guards races; the pre-scan
-  // above handles the normal skip path. Returns the number actually written.
   insert: (
     trx: Transaction<DB>,
     rows: Rec[],
     companyId: string,
     userId: string
   ) => Promise<number>;
-  // Parent references whose resolved id must be validated against a tenant-scoped
-  // allowlist. Empty/undefined for the root substance/form tables.
   parents?: ParentSpec[];
 };
 
-// Ids the company may legitimately reference: its own rows plus global system
-// rows (companyId IS NULL). A resolved parent id (which comes from the
-// client-supplied enum mapping) that isn't in here would let a child row point at
-// another tenant's parent while still satisfying the FK — so it must be rejected.
 const loadParentIds = async (
   trx: Transaction<DB>,
   table: "materialSubstance" | "materialForm",
   companyId: string
 ): Promise<Set<string>> => {
-  // Explicit per-table branches (not a union `selectFrom`) to keep each query
-  // fully type-checked, matching the fetchLiveEntityIds pattern in index.ts.
   const rows =
     table === "materialSubstance"
       ? await trx
@@ -313,7 +277,6 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
     keysOf: (r) => {
       const sub = r.materialSubstanceId.trim();
       const form = r.materialFormId.trim();
-      // Both (substance, form, code) and (substance, form, name) are unique.
       return [`${sub}:${form}:c:${norm(r.code)}`, `${sub}:${form}:n:${norm(r.name)}`];
     },
     loadExistingKeys: async (trx, companyId) => {
@@ -401,12 +364,6 @@ const CONFIGS: Record<MaterialPropertyTable, TableConfig> = {
   },
 };
 
-/**
- * Import a batch of material-property rows for one taxonomy table. Validates each
- * row, skips duplicates (against the DB and within the file), and bulk-inserts the
- * rest inside a single transaction. Mutates `summary` in place with the counts and
- * per-row error/skip reasons the results UI renders.
- */
 export async function importMaterialProperties(
   db: Kysely<DB>,
   {
@@ -428,9 +385,6 @@ export async function importMaterialProperties(
   await db.transaction().execute(async (trx) => {
     const existingKeys = await config.loadExistingKeys(trx, companyId);
 
-    // Tenant-scoped allowlist of parent ids (company + global) per referenced
-    // parent table, so a crafted/stale enum mapping can't point a child row at
-    // another tenant's substance/form (the FK alone wouldn't catch it).
     const parentSpecs = config.parents ?? [];
     const parentIds = new Map<string, Set<string>>();
     for (const parentTable of new Set(parentSpecs.map((p) => p.table))) {
@@ -447,8 +401,6 @@ export async function importMaterialProperties(
         continue;
       }
 
-      // Reject a resolved parent id that isn't this company's own or a global
-      // system row — prevents cross-tenant parent references.
       const foreignParent = parentSpecs.find(
         (p) => !parentIds.get(p.table)?.has((record[p.field] ?? "").trim())
       );

@@ -178,10 +178,6 @@ const unitOfMeasureFetcher = async (
   return { data: data.map((u) => ({ name: u.name, id: u.code })) };
 };
 
-// Material-taxonomy parent fetchers, shared by the material-property imports
-// (finish/grade/type reference a substance; dimension/type reference a form).
-// Both global system rows (companyId IS NULL) and company rows are returned so a
-// CSV can reference either; the FieldMappings step matches by name → id.
 const materialSubstanceFetcher = async (
   client: SupabaseClient<Database>,
   companyId: string
@@ -1629,10 +1625,6 @@ export const fieldMappings = {
       type: "string"
     }
   },
-  // Material taxonomy lookups. Each is a standalone import; child taxonomies
-  // (finish/grade/type/dimension) reference their parent substance/form by name
-  // via the enum fetchers above — the parent must already exist. Duplicates are
-  // skipped in the edge function (see material-property-import.ts).
   materialSubstance: {
     name: {
       label: "Name",
