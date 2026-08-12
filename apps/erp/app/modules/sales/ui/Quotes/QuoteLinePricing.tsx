@@ -177,8 +177,11 @@ const QuoteLinePricing = ({
   const baseCurrency = company?.baseCurrencyCode ?? "USD";
 
   const formatter = useCurrencyFormatter();
+  // Base currency: every value this formats (unit costs, category costs, net
+  // unit prices) reads a base-currency column. The quote-currency figures live
+  // in the converted rows below, behind the `currencyCode !== baseCurrency` gate.
   const unitPriceFormatter = useCurrencyFormatter({
-    currency: routeData?.quote?.currencyCode ?? baseCurrency,
+    currency: baseCurrency,
     maximumFractionDigits: unitPricePrecision
   });
   const presentationCurrencyFormatter = useCurrencyFormatter({
