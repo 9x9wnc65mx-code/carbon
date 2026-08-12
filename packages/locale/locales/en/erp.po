@@ -779,6 +779,10 @@ msgstr "Acceptance"
 msgid "Acceptance passed"
 msgstr "Acceptance passed"
 
+#. placeholder {0}: formatDate(certification.certifiedAt)
+msgid "Accepted {0}"
+msgstr "Accepted {0}"
+
 msgid "Account"
 msgstr "Account"
 
@@ -5782,6 +5786,15 @@ msgstr "Entities to split off"
 msgid "Entity"
 msgstr "Entity"
 
+msgid "Entity certification: Accepted"
+msgstr "Entity certification: Accepted"
+
+msgid "Entity certification: Expired"
+msgstr "Entity certification: Expired"
+
+msgid "Entity certification: Pending"
+msgstr "Entity certification: Pending"
+
 msgid "Entity Type"
 msgstr "Entity Type"
 
@@ -6045,6 +6058,7 @@ msgid "Expired"
 msgstr "Expired"
 
 #. placeholder {0}: formatDate(date)
+#. placeholder {0}: formatDate(expiresAt)
 msgid "Expired {0}"
 msgstr "Expired {0}"
 
@@ -6056,6 +6070,10 @@ msgstr "Expired Batches"
 
 msgid "Expires"
 msgstr "Expires"
+
+#. placeholder {0}: formatDate(expiresAt)
+msgid "Expires {0}"
+msgstr "Expires {0}"
 
 msgid "Expires <0/>"
 msgstr "Expires <0/>"
@@ -9662,6 +9680,9 @@ msgstr "No remaining entities to inspect."
 msgid "No reports match your search."
 msgstr "No reports match your search."
 
+msgid "No representative of this company has accepted the Carbon GovCloud Rider yet. An administrator at this company must accept it before anyone can access Carbon — Carbon staff cannot accept it on your behalf."
+msgstr "No representative of this company has accepted the Carbon GovCloud Rider yet. An administrator at this company must accept it before anyone can access Carbon — Carbon staff cannot accept it on your behalf."
+
 msgid "No results"
 msgstr "No results"
 
@@ -12128,6 +12149,10 @@ msgstr "RFQ Number"
 
 msgid "RFQs"
 msgstr "RFQs"
+
+#. placeholder {0}: certification.docVersion
+msgid "Rider v{0}"
+msgstr "Rider v{0}"
 
 msgid "Right item"
 msgstr "Right item"

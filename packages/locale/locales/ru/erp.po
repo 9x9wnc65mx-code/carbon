@@ -779,6 +779,10 @@ msgstr "Приемка"
 msgid "Acceptance passed"
 msgstr "Приемка пройдена"
 
+#. placeholder {0}: formatDate(certification.certifiedAt)
+msgid "Accepted {0}"
+msgstr "Принята {0}"
+
 msgid "Account"
 msgstr "Счет"
 
@@ -5782,6 +5786,15 @@ msgstr "Сущности для разделения"
 msgid "Entity"
 msgstr "Сущность"
 
+msgid "Entity certification: Accepted"
+msgstr "Сертификация организации: Принята"
+
+msgid "Entity certification: Expired"
+msgstr "Сертификация организации: Истекла"
+
+msgid "Entity certification: Pending"
+msgstr "Сертификация организации: Ожидание"
+
 msgid "Entity Type"
 msgstr "Тип Сущности"
 
@@ -6045,6 +6058,7 @@ msgid "Expired"
 msgstr "Истекло"
 
 #. placeholder {0}: formatDate(date)
+#. placeholder {0}: formatDate(expiresAt)
 msgid "Expired {0}"
 msgstr "Истекла {0}"
 
@@ -6056,6 +6070,10 @@ msgstr "Истекшие партии"
 
 msgid "Expires"
 msgstr "Истекает"
+
+#. placeholder {0}: formatDate(expiresAt)
+msgid "Expires {0}"
+msgstr "Истекает {0}"
 
 msgid "Expires <0/>"
 msgstr "Истекает <0/>"
@@ -9662,6 +9680,9 @@ msgstr "Нет оставшихся объектов для проверки."
 msgid "No reports match your search."
 msgstr "Никакие отчеты не соответствуют вашему поиску."
 
+msgid "No representative of this company has accepted the Carbon GovCloud Rider yet. An administrator at this company must accept it before anyone can access Carbon — Carbon staff cannot accept it on your behalf."
+msgstr "Ни один представитель этой компании ещё не принял Carbon GovCloud Rider. Администратор этой компании должен принять его, прежде чем кто-либо получит доступ к Carbon — сотрудники Carbon не могут принять его от вашего имени."
+
 msgid "No results"
 msgstr "Нет результатов"
 
@@ -12128,6 +12149,10 @@ msgstr "Номер РФП"
 
 msgid "RFQs"
 msgstr "РФЗ"
+
+#. placeholder {0}: certification.docVersion
+msgid "Rider v{0}"
+msgstr "Rider v{0}"
 
 msgid "Right item"
 msgstr "Правый элемент"

@@ -779,6 +779,10 @@ msgstr "Accettazione"
 msgid "Acceptance passed"
 msgstr "Accettazione superata"
 
+#. placeholder {0}: formatDate(certification.certifiedAt)
+msgid "Accepted {0}"
+msgstr "Accettata il {0}"
+
 msgid "Account"
 msgstr "Conto"
 
@@ -5782,6 +5786,15 @@ msgstr "Entità da dividere"
 msgid "Entity"
 msgstr "Entità"
 
+msgid "Entity certification: Accepted"
+msgstr "Certificazione dell'entità: Accettata"
+
+msgid "Entity certification: Expired"
+msgstr "Certificazione dell'entità: Scaduta"
+
+msgid "Entity certification: Pending"
+msgstr "Certificazione dell'entità: In sospeso"
+
 msgid "Entity Type"
 msgstr "Tipo di Entità"
 
@@ -6045,6 +6058,7 @@ msgid "Expired"
 msgstr "Scaduto"
 
 #. placeholder {0}: formatDate(date)
+#. placeholder {0}: formatDate(expiresAt)
 msgid "Expired {0}"
 msgstr "Scaduto {0}"
 
@@ -6056,6 +6070,10 @@ msgstr "Lotti Scaduti"
 
 msgid "Expires"
 msgstr "Scade"
+
+#. placeholder {0}: formatDate(expiresAt)
+msgid "Expires {0}"
+msgstr "Scade il {0}"
 
 msgid "Expires <0/>"
 msgstr "Scade <0/>"
@@ -9662,6 +9680,9 @@ msgstr "Nessuna entità rimanente da ispezionare."
 msgid "No reports match your search."
 msgstr "Nessun report corrisponde alla tua ricerca."
 
+msgid "No representative of this company has accepted the Carbon GovCloud Rider yet. An administrator at this company must accept it before anyone can access Carbon — Carbon staff cannot accept it on your behalf."
+msgstr "Nessun rappresentante di questa azienda ha ancora accettato il Carbon GovCloud Rider. Un amministratore dell'azienda deve accettarlo prima che chiunque possa accedere a Carbon — il personale di Carbon non può accettarlo per vostro conto."
+
 msgid "No results"
 msgstr "Nessun risultato"
 
@@ -12128,6 +12149,10 @@ msgstr "Numero RFQ"
 
 msgid "RFQs"
 msgstr "RFQ"
+
+#. placeholder {0}: certification.docVersion
+msgid "Rider v{0}"
+msgstr "Rider v{0}"
 
 msgid "Right item"
 msgstr "Elemento destro"
