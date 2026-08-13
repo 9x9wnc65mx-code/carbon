@@ -6,14 +6,25 @@ import {
   Heading,
   Input,
   LoadingBars,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   SidebarTrigger,
+  Switch,
   ToggleGroup,
   ToggleGroupItem,
-  useLocalStorage
+  useLocalStorage,
+  VStack
 } from "@carbon/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMemo, useState } from "react";
-import { LuKanban, LuList, LuSearch, LuTriangleAlert } from "react-icons/lu";
+import {
+  LuKanban,
+  LuList,
+  LuSearch,
+  LuSettings2,
+  LuTriangleAlert
+} from "react-icons/lu";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { OperationsList } from "~/components";
@@ -22,7 +33,7 @@ import { Kanban } from "~/components/Kanban";
 import { userContext } from "~/context";
 import {
   getJobOperationsAssignedToEmployee,
-  getWorkCentersByLocation
+  getWorkCentersByCompany
 } from "~/services/operations.service";
 import { makeDurations } from "~/utils/durations";
 
@@ -34,18 +45,21 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 
   const [operations, workCenters] = await Promise.all([
     getJobOperationsAssignedToEmployee(serviceRole, userId, companyId),
-    getWorkCentersByLocation(serviceRole, locationId)
+    getWorkCentersByCompany(serviceRole, companyId)
   ]);
 
   return {
     operations: operations?.data?.map(makeDurations) ?? [],
-    workCenters: workCenters?.data ?? []
+    workCenters: workCenters?.data ?? [],
+    locationId
   };
 }
 
 type AssignedView = "board" | "list";
 
 const ASSIGNED_VIEW_KEY = "assigned-view";
+const EMPTY_WORK_CENTERS_KEY = "assigned-show-empty-work-centers";
+const UNASSIGNED_COLUMN_ID = "unassigned";
 
 const displaySettings: DisplaySettings = {
   emptyWorkCenters: false,
@@ -62,11 +76,16 @@ const displaySettings: DisplaySettings = {
 
 export default function AssignedRoute() {
   const { t } = useLingui();
-  const { operations, workCenters } = useLoaderData<typeof loader>();
+  const { operations, workCenters, locationId } =
+    useLoaderData<typeof loader>();
   const [searchTerm, setSearchTerm] = useState("");
   const [view, setView] = useLocalStorage<AssignedView>(
     ASSIGNED_VIEW_KEY,
     "board"
+  );
+  const [showEmptyWorkCenters, setShowEmptyWorkCenters] = useLocalStorage(
+    EMPTY_WORK_CENTERS_KEY,
+    false
   );
 
   const filteredOperations = useMemo(() => {
@@ -83,19 +102,36 @@ export default function AssignedRoute() {
 
   const { columns, items } = useMemo(() => {
     const activeWorkCenterIds = new Set<string>();
-    const workCenterIdsWithOperations = new Set<string>();
+    const columnWorkCenterIds = new Set<string>();
+    let hasUnassignedOperations = false;
+    let hasActiveUnassignedOperations = false;
 
     for (const operation of filteredOperations) {
-      if (!operation.workCenterId) continue;
-      workCenterIdsWithOperations.add(operation.workCenterId);
-      if (operation.operationStatus === "In Progress") {
-        activeWorkCenterIds.add(operation.workCenterId);
+      const isActive = operation.operationStatus === "In Progress";
+      if (operation.workCenterId) {
+        columnWorkCenterIds.add(operation.workCenterId);
+        if (isActive) {
+          activeWorkCenterIds.add(operation.workCenterId);
+        }
+      } else {
+        hasUnassignedOperations = true;
+        if (isActive) {
+          hasActiveUnassignedOperations = true;
+        }
       }
     }
 
-    // Only work centers with assigned operations become columns, so empty
-    // work centers are always hidden on this board.
-    const columns = Array.from(workCenterIdsWithOperations)
+    // By default only work centers with assigned operations become columns;
+    // the display setting adds the rest of the current location's work centers.
+    if (showEmptyWorkCenters) {
+      for (const workCenter of workCenters) {
+        if (workCenter.id && workCenter.locationId === locationId) {
+          columnWorkCenterIds.add(workCenter.id);
+        }
+      }
+    }
+
+    const columns: Column[] = Array.from(columnWorkCenterIds)
       .map((workCenterId) => {
         const workCenter = workCenters.find((wc) => wc.id === workCenterId);
         return {
@@ -109,47 +145,54 @@ export default function AssignedRoute() {
             workCenter?.blockingDispatchReadableId ?? undefined
         };
       })
-      .sort((a, b) => a.title.localeCompare(b.title)) satisfies Column[];
+      .sort((a, b) => a.title.localeCompare(b.title));
 
-    const items = filteredOperations
-      .filter((operation) => Boolean(operation.workCenterId))
-      .map((operation, index) => ({
-        id: operation.id,
-        assignee: operation.assignee,
-        tags: operation.tags,
-        columnId: operation.workCenterId,
-        columnType: operation.processId,
-        // the RPC orders by priority but does not return it
-        priority: index,
-        title: operation.jobReadableId,
-        subtitle: operation.itemReadableId,
-        description: operation.description,
-        dueDate: operation.operationDueDate,
-        duration:
-          operation.setupDuration +
-          Math.max(operation.laborDuration, operation.machineDuration),
-        deadlineType: operation.jobDeadlineType,
-        customerId: operation.jobCustomerId,
-        operationQuantity: operation.operationQuantity,
-        targetQuantity: operation.targetQuantity ?? operation.operationQuantity,
-        jobReadableId: operation.jobReadableId,
-        itemReadableId: operation.itemReadableId,
-        itemDescription: operation.itemDescription,
-        salesOrderReadableId: operation.salesOrderReadableId,
-        salesOrderId: operation.salesOrderId,
-        salesOrderLineId: operation.salesOrderLineId,
-        status: operation.operationStatus,
-        thumbnailPath: operation.thumbnailPath,
-        quantity: operation.operationQuantity,
-        quantityCompleted: operation.quantityComplete,
-        quantityScrapped: operation.quantityScrapped,
-        setupDuration: operation.setupDuration,
-        laborDuration: operation.laborDuration,
-        machineDuration: operation.machineDuration
-      })) satisfies Item[];
+    if (hasUnassignedOperations) {
+      columns.push({
+        id: UNASSIGNED_COLUMN_ID,
+        title: t`No Work Center`,
+        type: [],
+        active: hasActiveUnassignedOperations
+      });
+    }
+
+    const items = filteredOperations.map((operation, index) => ({
+      id: operation.id,
+      assignee: operation.assignee,
+      tags: operation.tags,
+      columnId: operation.workCenterId ?? UNASSIGNED_COLUMN_ID,
+      columnType: operation.processId,
+      // the RPC orders by priority but does not return it
+      priority: index,
+      title: operation.jobReadableId,
+      subtitle: operation.itemReadableId,
+      description: operation.description,
+      dueDate: operation.operationDueDate,
+      duration:
+        operation.setupDuration +
+        Math.max(operation.laborDuration, operation.machineDuration),
+      deadlineType: operation.jobDeadlineType,
+      customerId: operation.jobCustomerId,
+      operationQuantity: operation.operationQuantity,
+      targetQuantity: operation.targetQuantity ?? operation.operationQuantity,
+      jobReadableId: operation.jobReadableId,
+      itemReadableId: operation.itemReadableId,
+      itemDescription: operation.itemDescription,
+      salesOrderReadableId: operation.salesOrderReadableId,
+      salesOrderId: operation.salesOrderId,
+      salesOrderLineId: operation.salesOrderLineId,
+      status: operation.operationStatus,
+      thumbnailPath: operation.thumbnailPath,
+      quantity: operation.operationQuantity,
+      quantityCompleted: operation.quantityComplete,
+      quantityScrapped: operation.quantityScrapped,
+      setupDuration: operation.setupDuration,
+      laborDuration: operation.laborDuration,
+      machineDuration: operation.machineDuration
+    })) satisfies Item[];
 
     return { columns, items };
-  }, [filteredOperations, workCenters]);
+  }, [filteredOperations, workCenters, showEmptyWorkCenters, locationId, t]);
 
   return (
     <div className="flex flex-col flex-1 min-w-0">
@@ -175,20 +218,48 @@ export default function AssignedRoute() {
                   className="pl-8"
                 />
               </div>
-              <ToggleGroup
-                type="single"
-                value={view}
-                onValueChange={(value) => {
-                  if (value) setView(value as AssignedView);
-                }}
-              >
-                <ToggleGroupItem value="board" aria-label={t`Board view`}>
-                  <LuKanban />
-                </ToggleGroupItem>
-                <ToggleGroupItem value="list" aria-label={t`List view`}>
-                  <LuList />
-                </ToggleGroupItem>
-              </ToggleGroup>
+              <div className="flex items-center gap-2">
+                {view === "board" && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        leftIcon={<LuSettings2 />}
+                        variant="secondary"
+                        className="border-dashed border-border"
+                      >
+                        <Trans>Display</Trans>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56">
+                      <VStack>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          <Trans>Columns</Trans>
+                        </span>
+                        <Switch
+                          variant="small"
+                          label={t`Empty work centers`}
+                          checked={showEmptyWorkCenters}
+                          onCheckedChange={setShowEmptyWorkCenters}
+                        />
+                      </VStack>
+                    </PopoverContent>
+                  </Popover>
+                )}
+                <ToggleGroup
+                  type="single"
+                  value={view}
+                  onValueChange={(value) => {
+                    if (value) setView(value as AssignedView);
+                  }}
+                >
+                  <ToggleGroupItem value="board" aria-label={t`Board view`}>
+                    <LuKanban />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="list" aria-label={t`List view`}>
+                    <LuList />
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
             </div>
           </div>
         </div>

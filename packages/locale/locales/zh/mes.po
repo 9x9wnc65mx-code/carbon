@@ -865,6 +865,9 @@ msgstr "本周无考勤记录"
 msgid "No warehouse stock is on record for this item. You can still pick it — on-hand will go negative until the count is reconciled."
 msgstr "此项目没有仓库库存记录。您仍然可以领取它——现有库存将变为负数，直到库存被核对。"
 
+msgid "No Work Center"
+msgstr "无工作中心"
+
 msgid "No work centers are blocked"
 msgstr "无工作中心被阻塞"
 

@@ -865,6 +865,9 @@ msgstr "Nessuna registrazione oraria per questa settimana"
 msgid "No warehouse stock is on record for this item. You can still pick it — on-hand will go negative until the count is reconciled."
 msgstr "Nessun stock di magazzino è registrato per questo articolo. Puoi comunque prelevarlo — la giacenza disponibile diventerà negativa fino al riconciliamento del conteggio."
 
+msgid "No Work Center"
+msgstr "Nessun centro di lavoro"
+
 msgid "No work centers are blocked"
 msgstr "Nessun centro di lavoro bloccato"
 

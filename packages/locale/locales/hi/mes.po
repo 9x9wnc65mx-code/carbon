@@ -865,6 +865,9 @@ msgstr "इस सप्ताह के लिए कोई समय प्र
 msgid "No warehouse stock is on record for this item. You can still pick it — on-hand will go negative until the count is reconciled."
 msgstr "इस आइटम के लिए कोई गोदाम स्टॉक रिकॉर्ड पर नहीं है। आप इसे अभी भी चुन सकते हैं — ऑन-हैंड नकारात्मक हो जाएगा जब तक गिनती समेकित नहीं हो जाती।"
 
+msgid "No Work Center"
+msgstr "कोई कार्य केंद्र नहीं"
+
 msgid "No work centers are blocked"
 msgstr "कोई कार्य केंद्र अवरुद्ध नहीं हैं"
 
