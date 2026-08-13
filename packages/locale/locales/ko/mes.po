@@ -176,6 +176,9 @@ msgstr "{0}에 의해 차단됨"
 msgid "Blocking"
 msgstr "차단"
 
+msgid "Board view"
+msgstr "보드 보기"
+
 msgid "But don't worry. You can use the forgot password flow to request a new magic link."
 msgstr "걱정하지 마세요. 비밀번호 찾기를 통해 새 매직 링크를 요청할 수 있습니다."
 
@@ -629,6 +632,9 @@ msgstr "무언가를 만들어봅시다"
 
 msgid "lines"
 msgstr "라인"
+
+msgid "List view"
+msgstr "목록 보기"
 
 msgid "Loading item details..."
 msgstr "품목 세부정보를 불러오는 중..."

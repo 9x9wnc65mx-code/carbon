@@ -176,6 +176,9 @@ msgstr "被 {0} 阻塞"
 msgid "Blocking"
 msgstr "阻塞中"
 
+msgid "Board view"
+msgstr "看板视图"
+
 msgid "But don't worry. You can use the forgot password flow to request a new magic link."
 msgstr "但别担心。您可以使用忘记密码流程来请求新的魔法链接。"
 
@@ -629,6 +632,9 @@ msgstr "让我们开始构建"
 
 msgid "lines"
 msgstr "行"
+
+msgid "List view"
+msgstr "列表视图"
 
 msgid "Loading item details..."
 msgstr "正在加载物料详情..."

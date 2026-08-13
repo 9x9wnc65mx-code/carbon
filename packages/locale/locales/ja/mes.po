@@ -176,6 +176,9 @@ msgstr "{0} によりブロック中"
 msgid "Blocking"
 msgstr "ブロック中"
 
+msgid "Board view"
+msgstr "ボード表示"
+
 msgid "But don't worry. You can use the forgot password flow to request a new magic link."
 msgstr "ご心配なく。パスワード忘却フローを使用して新しいマジックリンクをリクエストできます。"
 
@@ -629,6 +632,9 @@ msgstr "さあ、何かを作りましょう"
 
 msgid "lines"
 msgstr "行"
+
+msgid "List view"
+msgstr "リスト表示"
 
 msgid "Loading item details..."
 msgstr "品目詳細を読み込み中..."

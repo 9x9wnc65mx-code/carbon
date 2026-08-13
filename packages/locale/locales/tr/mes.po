@@ -176,6 +176,9 @@ msgstr "Engelli edildi: {0}"
 msgid "Blocking"
 msgstr "Bloklayıcı"
 
+msgid "Board view"
+msgstr "Pano görünümü"
+
 msgid "But don't worry. You can use the forgot password flow to request a new magic link."
 msgstr "Ama endişelenmeyin. Yeni bir sihirli bağlantı talep etmek için şifremi unuttum akışını kullanabilirsiniz."
 
@@ -629,6 +632,9 @@ msgstr "Bir şeyler inşa edelim"
 
 msgid "lines"
 msgstr "satırlar"
+
+msgid "List view"
+msgstr "Liste görünümü"
 
 msgid "Loading item details..."
 msgstr "Ürün detayları yükleniyor..."

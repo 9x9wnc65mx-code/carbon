@@ -176,6 +176,9 @@ msgstr "Bloqueado por {0}"
 msgid "Blocking"
 msgstr "Bloqueando"
 
+msgid "Board view"
+msgstr "Vista de tablero"
+
 msgid "But don't worry. You can use the forgot password flow to request a new magic link."
 msgstr "Pero no te preocupes. Puedes usar el flujo de contraseña olvidada para solicitar un nuevo enlace mágico."
 
@@ -629,6 +632,9 @@ msgstr "Construyamos algo"
 
 msgid "lines"
 msgstr "líneas"
+
+msgid "List view"
+msgstr "Vista de lista"
 
 msgid "Loading item details..."
 msgstr "Cargando detalles del artículo..."
