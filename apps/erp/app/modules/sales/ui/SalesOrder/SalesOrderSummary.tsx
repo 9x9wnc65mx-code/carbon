@@ -43,7 +43,12 @@ import {
 import { Link, useParams } from "react-router";
 import { CustomerAvatar, DateTime, Hyperlink, MethodIcon } from "~/components";
 import { Confirm } from "~/components/Modals";
-import { usePercentFormatter, usePermissions, useRouteData } from "~/hooks";
+import {
+  usePercentFormatter,
+  usePermissions,
+  useRouteData,
+  useUser
+} from "~/hooks";
 import JobStatus from "~/modules/production/ui/Jobs/JobStatus";
 import { getPrivateUrl, path } from "~/utils/path";
 import { isSalesOrderLocked } from "../../sales.models";
@@ -80,13 +85,17 @@ const SalesOrderSummary = ({
   const salesOrderToJobsModal = useDisclosure();
 
   const { locale } = useLocale();
+  const { company } = useUser();
+  const baseCurrency = company?.baseCurrencyCode ?? "USD";
+  // Base currency: this formats `line.unitPrice`, a base-currency column. The
+  // order-currency figure is `convertedUnitPrice`, rendered above the badge.
   const formatter = useMemo(
     () =>
       new Intl.NumberFormat(locale, {
         style: "currency",
-        currency: routeData?.salesOrder?.currencyCode ?? "USD"
+        currency: baseCurrency
       }),
-    [locale, routeData?.salesOrder?.currencyCode]
+    [locale, baseCurrency]
   );
 
   const isEditable = !isSalesOrderLocked(routeData?.salesOrder?.status);
