@@ -64,7 +64,7 @@ const ItemManufacturingForm = ({
               name="scrapPercentage"
               label={t`Scrap Percent`}
               termId="item-scrap-percent"
-              formatOptions={INPUT_FORMAT.rate}
+              formatOptions={INPUT_FORMAT.percent}
             />
             <Number
               name="leadTime"

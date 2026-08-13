@@ -842,7 +842,7 @@ function MaterialForm({
             label={t`Unit Cost`}
             value={itemData.unitCost}
             minValue={0}
-            formatOptions={INPUT_FORMAT.price(baseCurrency, currencyDecimals)}
+            formatOptions={INPUT_FORMAT.rate(baseCurrency, currencyDecimals)}
           />
         )}
       </div>

@@ -1,7 +1,8 @@
 import {
   DEFAULT_CURRENCY_DECIMALS,
   formatPercent,
-  moneyFormatOptions
+  moneyFormatOptions,
+  SCALE
 } from "@carbon/utils";
 import type { ResolvedSection } from "../template";
 import { DEFAULT_REGISTRATION_NUMBER, interpolateString } from "../template";
@@ -100,5 +101,23 @@ export const getMoneyFormatter = (
     locale,
     moneyFormatOptions(decimalPlaces ?? DEFAULT_CURRENCY_DECIMALS, {
       currency: currency ?? undefined
+    })
+  );
+
+/** A per-unit RATE for documents — same padding as getMoneyFormatter, but the
+ *  currency's decimals are a FLOOR, not a ceiling: a printed $0.164 unit price
+ *  stays $0.164 instead of rounding to $0.16. Use for a unit-price COLUMN;
+ *  totals, tax, and shipping on the same document stay on getMoneyFormatter,
+ *  since those are settlement amounts, not rates. */
+export const getRateFormatter = (
+  locale: string,
+  decimalPlaces?: number | null,
+  currency?: string | null
+) =>
+  new Intl.NumberFormat(
+    locale,
+    moneyFormatOptions(decimalPlaces ?? DEFAULT_CURRENCY_DECIMALS, {
+      currency: currency ?? undefined,
+      maxDecimalPlaces: SCALE
     })
   );

@@ -1,8 +1,9 @@
-import { moneyFormatOptions, priceFormatOptions } from "@carbon/utils";
+import { useRouteData } from "@carbon/react";
+import { moneyFormatOptions, rateFormatOptions } from "@carbon/utils";
 import { useLocale } from "@react-aria/i18n";
 import { useMemo } from "react";
+import { path } from "~/utils/path";
 import { useCurrencyDecimals, useCurrencyMinDecimals } from "./useCurrencies";
-import { useUser } from "./useUser";
 
 /** Everything a call site is allowed to override, and nothing else.
  *
@@ -20,11 +21,11 @@ export type CurrencyFormatterOptions = {
   /** Drop the fraction entirely — a report that deliberately shows whole units.
    *  Combined with `compact` this is "$1M" rather than "$1.2M". */
   wholeUnits?: boolean;
-  /** A per-unit PRICE rather than a settlement amount: still padded to the
-   *  currency's decimals, but allowed to exceed them up to the storage scale,
-   *  so a $0.00123 fastener price displays as it is stored rather than as
-   *  "$0.00". Matches what the price INPUT commits — see priceFormatOptions. */
-  price?: boolean;
+  /** A RATE rather than a settlement amount — a per-unit price or cost. Still
+   *  padded to the currency's decimals, but allowed to exceed them up to the
+   *  storage scale, so a $0.00123 fastener price displays as it is stored
+   *  rather than as "$0.00". Matches what INPUT_FORMAT.rate commits. */
+  rate?: boolean;
 };
 
 /**
@@ -38,12 +39,20 @@ export type CurrencyFormatterOptions = {
  * non-significant zeros by turning `showCurrencyTrailingZeros` off; that
  * preference is read here once (useCurrencyMinDecimals) rather than at 55 call sites.
  *
- * Callers pick a KIND, never a digit count: `wholeUnits` for a report that shows
- * whole amounts, `compact` for a "$1.2M" dashboard tile.
+ * Callers pick a KIND, never a digit count: `rate` for a per-unit price (the
+ * currency's decimals become a floor, not a ceiling), `wholeUnits` for a report
+ * that shows whole amounts, `compact` for a "$1.2M" dashboard tile.
  */
 export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
-  const { company } = useUser();
-  const baseCurrency = company?.baseCurrencyCode ?? "USD";
+  // NOT useUser(): that THROWS when the authenticated route isn't mounted, and
+  // this hook is used on the public quote share page, where it 500'd the whole
+  // render. The company is only ever the FALLBACK currency here — an
+  // unauthenticated caller always passes `currency` explicitly — so read the
+  // route data directly and let it be absent.
+  const authenticatedData = useRouteData<{
+    company?: { baseCurrencyCode?: string | null };
+  }>(path.to.authenticatedRoot);
+  const baseCurrency = authenticatedData?.company?.baseCurrencyCode ?? "USD";
   const { locale } = useLocale();
   const currency = options?.currency ?? baseCurrency;
   const currencyDecimals = useCurrencyDecimals(currency);
@@ -53,7 +62,7 @@ export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
   // identity meant the memo never hit: a new Intl.NumberFormat on every render,
   // and — since the formatter is itself a dep of the `columns` memo in several
   // tables — a full column rebuild with it. Depend on the primitive fields.
-  const { decimalPlaces, compact, wholeUnits, price } = options ?? {};
+  const { decimalPlaces, compact, wholeUnits, rate } = options ?? {};
 
   return useMemo(() => {
     // `wholeUnits` is a digit count of zero, expressed as the intent rather than
@@ -61,8 +70,8 @@ export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
     const decimals = wholeUnits ? 0 : (decimalPlaces ?? currencyDecimals);
     const min = wholeUnits ? 0 : minDecimals;
     return new Intl.NumberFormat(locale, {
-      ...(price && !wholeUnits
-        ? priceFormatOptions(currency, decimals, min)
+      ...(rate && !wholeUnits
+        ? rateFormatOptions(currency, decimals, min)
         : moneyFormatOptions(decimals, { currency, minDecimalPlaces: min })),
       ...(compact
         ? { notation: "compact" as const, compactDisplay: "short" as const }
@@ -76,6 +85,6 @@ export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
     decimalPlaces,
     compact,
     wholeUnits,
-    price
+    rate
   ]);
 }

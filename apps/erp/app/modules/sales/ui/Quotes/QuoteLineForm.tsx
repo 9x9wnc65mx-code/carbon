@@ -496,8 +496,8 @@ const QuoteLineForm = ({
                         label={t`Tax Percent`}
                         minValue={0}
                         maxValue={1}
-                        step={INPUT_STEP.rate}
-                        formatOptions={INPUT_FORMAT.rate}
+                        step={INPUT_STEP.percent}
+                        formatOptions={INPUT_FORMAT.percent}
                       />
 
                       <CustomFormFields table="quoteLine" />

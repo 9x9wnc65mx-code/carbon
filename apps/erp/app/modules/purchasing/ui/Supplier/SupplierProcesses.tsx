@@ -68,7 +68,8 @@ const SupplierProccesses = ({ processes }: SupplierProccessesProps) => {
 
   const customColumns = useCustomColumns<SupplierProcess>("supplierProcess");
 
-  const formatter = useCurrencyFormatter();
+  // minimumCost is a RATE — its own edit form (SupplierProcessForm) already uses INPUT_FORMAT.rate
+  const formatter = useCurrencyFormatter({ rate: true });
 
   const columns = useMemo<ColumnDef<SupplierProcess>[]>(() => {
     const defaultColumns: ColumnDef<SupplierProcess>[] = [
@@ -141,7 +142,7 @@ const SupplierProccesses = ({ processes }: SupplierProccessesProps) => {
   const editableComponents = useMemo(
     () => ({
       minimumCost: EditableNumber(onCellEdit, {
-        formatOptions: INPUT_FORMAT.price(baseCurrency, currencyDecimals)
+        formatOptions: INPUT_FORMAT.rate(baseCurrency, currencyDecimals)
       }),
       leadTime: EditableNumber(onCellEdit)
     }),

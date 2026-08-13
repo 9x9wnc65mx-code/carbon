@@ -8,7 +8,11 @@ import {
   resolveTemplate
 } from "../template";
 import type { AccountsReceivableBillingAddress, PDF } from "../types";
-import { getMoneyFormatter, resolveRegistrationLine } from "../utils/shared";
+import {
+  getMoneyFormatter,
+  getRateFormatter,
+  resolveRegistrationLine
+} from "../utils/shared";
 import type { SalesInvoiceData, SalesInvoiceLocations } from "./blocks";
 import { buildSalesInvoiceVars, salesInvoiceBlockRegistry } from "./blocks";
 import { Template } from "./components";
@@ -57,6 +61,9 @@ const SalesInvoicePDF = ({
 }: SalesInvoicePDFProps) => {
   const currencyCode = salesInvoice.currencyCode ?? company.baseCurrencyCode;
   const numberFormatter = getMoneyFormatter(locale, currencyDecimals);
+  // The unit-price COLUMN is a rate, not a settlement amount — see
+  // getRateFormatter. Totals/tax/shipping stay on numberFormatter.
+  const rateFormatter = getRateFormatter(locale, currencyDecimals);
 
   const { blocks, theme, settings, headerSectionId, footerSectionId } =
     resolveTemplate("salesInvoice", template);
@@ -101,6 +108,7 @@ const SalesInvoicePDF = ({
     sections,
     currencyCode,
     numberFormatter,
+    rateFormatter,
     vars,
     headerOptions
   };

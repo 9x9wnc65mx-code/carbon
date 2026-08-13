@@ -307,7 +307,7 @@ const PurchaseOrderLineForm = ({
     decimalPlaces: currencyDecimals
   });
   const priceFormatter = useCurrencyFormatter({
-    price: true,
+    rate: true,
     currency: orderCurrency,
     decimalPlaces: currencyDecimals
   });
@@ -713,7 +713,7 @@ const PurchaseOrderLineForm = ({
                           name="supplierUnitPrice"
                           label={t`Unit Price`}
                           value={itemData.supplierUnitPrice}
-                          formatOptions={INPUT_FORMAT.price(
+                          formatOptions={INPUT_FORMAT.rate(
                             orderCurrency,
                             currencyDecimals
                           )}
@@ -958,7 +958,7 @@ const PurchaseOrderLineForm = ({
                             label={t`Unit Price`}
                             isOptional={false}
                             value={indirectData.supplierUnitPrice}
-                            formatOptions={INPUT_FORMAT.price(
+                            formatOptions={INPUT_FORMAT.rate(
                               orderCurrency,
                               currencyDecimals
                             )}

@@ -659,7 +659,7 @@ const SalesOrderLineForm = ({
                               <NumberControlled
                                 name="unitPrice"
                                 value={itemData.unitPrice}
-                                formatOptions={INPUT_FORMAT.price(
+                                formatOptions={INPUT_FORMAT.rate(
                                   baseCurrency,
                                   currencyDecimals
                                 )}
@@ -799,8 +799,8 @@ const SalesOrderLineForm = ({
                                 label={t`Tax Percent`}
                                 minValue={0}
                                 maxValue={1}
-                                step={INPUT_STEP.rate}
-                                formatOptions={INPUT_FORMAT.rate}
+                                step={INPUT_STEP.percent}
+                                formatOptions={INPUT_FORMAT.percent}
                               />
                               <Number
                                 name="shippingCost"
@@ -895,7 +895,7 @@ const SalesOrderLineForm = ({
                             label={t`Unit Price`}
                             isOptional={false}
                             value={assetData.unitPrice}
-                            formatOptions={INPUT_FORMAT.price(
+                            formatOptions={INPUT_FORMAT.rate(
                               baseCurrency,
                               currencyDecimals
                             )}
@@ -970,8 +970,8 @@ const SalesOrderLineForm = ({
                               value={assetData.taxPercent}
                               minValue={0}
                               maxValue={1}
-                              step={INPUT_STEP.rate}
-                              formatOptions={INPUT_FORMAT.rate}
+                              step={INPUT_STEP.percent}
+                              formatOptions={INPUT_FORMAT.percent}
                               onChange={(value) =>
                                 setAssetData((d) => ({
                                   ...d,

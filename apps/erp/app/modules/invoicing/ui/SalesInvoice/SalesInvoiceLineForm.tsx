@@ -377,7 +377,7 @@ const SalesInvoiceLineForm = ({
     decimalPlaces: currencyDecimals
   });
   const priceFormatter = useCurrencyFormatter({
-    price: true,
+    rate: true,
     currency: routeData?.salesInvoice?.currencyCode ?? company.baseCurrencyCode,
     decimalPlaces: currencyDecimals
   });
@@ -599,7 +599,7 @@ const SalesInvoiceLineForm = ({
                             name="unitPrice"
                             label={t`Unit Price`}
                             value={itemData.unitPrice}
-                            formatOptions={INPUT_FORMAT.price(
+                            formatOptions={INPUT_FORMAT.rate(
                               invoiceCurrency,
                               currencyDecimals
                             )}
@@ -817,7 +817,7 @@ const SalesInvoiceLineForm = ({
                           label={t`Unit Price`}
                           isOptional={false}
                           value={assetData.unitPrice}
-                          formatOptions={INPUT_FORMAT.price(
+                          formatOptions={INPUT_FORMAT.rate(
                             invoiceCurrency,
                             currencyDecimals
                           )}
@@ -873,8 +873,8 @@ const SalesInvoiceLineForm = ({
                             value={assetData.taxPercent}
                             minValue={0}
                             maxValue={1}
-                            step={INPUT_STEP.rate}
-                            formatOptions={INPUT_FORMAT.rate}
+                            step={INPUT_STEP.percent}
+                            formatOptions={INPUT_FORMAT.percent}
                             onChange={(value) =>
                               setAssetData((d) => ({
                                 ...d,

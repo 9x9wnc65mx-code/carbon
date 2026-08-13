@@ -125,7 +125,7 @@ const WorkCenterForm = ({
                   name="laborRate"
                   label={t`Labor Rate (Hourly)`}
                   termId="work-center-labor-rate"
-                  formatOptions={INPUT_FORMAT.price(
+                  formatOptions={INPUT_FORMAT.rate(
                     baseCurrency,
                     currencyDecimals
                   )}
@@ -134,7 +134,7 @@ const WorkCenterForm = ({
                   name="machineRate"
                   label={t`Machine Rate (Hourly)`}
                   termId="work-center-machine-rate"
-                  formatOptions={INPUT_FORMAT.price(
+                  formatOptions={INPUT_FORMAT.rate(
                     baseCurrency,
                     currencyDecimals
                   )}
@@ -143,7 +143,7 @@ const WorkCenterForm = ({
                   name="overheadRate"
                   label={t`Overhead Rate (Hourly)`}
                   termId="work-center-overhead-rate"
-                  formatOptions={INPUT_FORMAT.price(
+                  formatOptions={INPUT_FORMAT.rate(
                     baseCurrency,
                     currencyDecimals
                   )}

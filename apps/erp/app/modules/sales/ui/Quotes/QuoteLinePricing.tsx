@@ -183,7 +183,7 @@ const QuoteLinePricing = ({
   const formatter = useCurrencyFormatter();
   const percentFormatter = usePercentFormatter();
   const unitPriceFormatter = useCurrencyFormatter({
-    price: true,
+    rate: true,
     currency: routeData?.quote?.currencyCode ?? baseCurrency,
     decimalPlaces: unitPricePrecision
   });
@@ -796,7 +796,7 @@ const QuoteLinePricing = ({
                     <Td key={index} className="group-hover:bg-muted/50">
                       <EditableNumberCell
                         value={editableFields.unitCost}
-                        formatOptions={INPUT_FORMAT.price(
+                        formatOptions={INPUT_FORMAT.rate(
                           baseCurrency,
                           currencyDecimals
                         )}
@@ -836,7 +836,7 @@ const QuoteLinePricing = ({
                       {cost > 0 ? (
                         <EditableNumberCell
                           value={markup}
-                          formatOptions={INPUT_FORMAT.rate}
+                          formatOptions={INPUT_FORMAT.percent}
                           minValue={0}
                           isEditable={isEditable}
                           onChange={(value) =>
@@ -899,7 +899,7 @@ const QuoteLinePricing = ({
                                 <VStack spacing={0}>
                                   <EditableNumberCell
                                     value={markupValue / 100}
-                                    formatOptions={INPUT_FORMAT.rate}
+                                    formatOptions={INPUT_FORMAT.percent}
                                     minValue={0}
                                     isEditable={isEditable}
                                     onChange={(value) =>
@@ -937,7 +937,7 @@ const QuoteLinePricing = ({
                   <Td key={quantity.toString()}>
                     <EditableNumberCell
                       value={price}
-                      formatOptions={INPUT_FORMAT.price(
+                      formatOptions={INPUT_FORMAT.rate(
                         baseCurrency,
                         unitPricePrecision
                       )}
@@ -966,7 +966,7 @@ const QuoteLinePricing = ({
                   <Td key={index}>
                     <EditableNumberCell
                       value={discount}
-                      formatOptions={INPUT_FORMAT.rate}
+                      formatOptions={INPUT_FORMAT.percent}
                       minValue={0}
                       maxValue={1}
                       isEditable={isEditable}
@@ -1258,7 +1258,7 @@ const QuoteLinePricing = ({
                   <Td key={index} className="group-hover:bg-muted/50">
                     <EditableNumberCell
                       value={taxPercent}
-                      formatOptions={INPUT_FORMAT.rate}
+                      formatOptions={INPUT_FORMAT.percent}
                       minValue={0}
                       isEditable={isEditable}
                       onChange={(value) => {

@@ -191,7 +191,7 @@ const SupplierPartForm = ({
                   name="unitPrice"
                   label={t`Unit Price`}
                   minValue={0}
-                  formatOptions={INPUT_FORMAT.price(
+                  formatOptions={INPUT_FORMAT.rate(
                     baseCurrency,
                     currencyDecimals
                   )}
@@ -269,7 +269,7 @@ function PurchaseHistory({
 }) {
   const { t } = useLingui();
   const priceFormatter = useCurrencyFormatter({
-    price: true,
+    rate: true,
     currency: baseCurrency
   });
   if (history.length === 0) return null;
@@ -366,7 +366,8 @@ function PriceBreaks({
 }) {
   const currencyDecimals = useCurrencyDecimals(baseCurrency);
   const { t } = useLingui();
-  const formatter = useCurrencyFormatter();
+  // unitPrice is a RATE, not a settlement amount — see numeric-precision.md
+  const formatter = useCurrencyFormatter({ rate: true });
 
   const removeRow = useCallback(
     (index: number) => {
@@ -395,7 +396,7 @@ function PriceBreaks({
     () => ({
       quantity: EditableNumber(noOpMutation),
       unitPrice: EditableNumber(noOpMutation, {
-        formatOptions: INPUT_FORMAT.price(baseCurrency, currencyDecimals)
+        formatOptions: INPUT_FORMAT.rate(baseCurrency, currencyDecimals)
       })
     }),
     [noOpMutation, baseCurrency, currencyDecimals]

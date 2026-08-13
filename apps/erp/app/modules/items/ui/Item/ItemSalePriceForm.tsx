@@ -44,7 +44,7 @@ const ItemSalePriceForm = ({ initialValues }: ItemSalePriceFormProps) => {
               name="unitSalePrice"
               label={t`Unit Sale Price`}
               minValue={0}
-              formatOptions={INPUT_FORMAT.price(
+              formatOptions={INPUT_FORMAT.rate(
                 company?.baseCurrencyCode ?? "USD",
                 currencyDecimals
               )}

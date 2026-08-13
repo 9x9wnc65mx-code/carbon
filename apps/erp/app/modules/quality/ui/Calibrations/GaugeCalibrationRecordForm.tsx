@@ -325,7 +325,7 @@ const GaugeCalibrationRecordForm = ({
                 <Number
                   name="humidity"
                   label={t`Humidity`}
-                  formatOptions={INPUT_FORMAT.rate}
+                  formatOptions={INPUT_FORMAT.percent}
                 />
                 <Input
                   name="measurementStandard"

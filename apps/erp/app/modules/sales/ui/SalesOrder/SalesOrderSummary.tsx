@@ -568,6 +568,7 @@ function LineItems({
                           value={line.convertedUnitPrice ?? 0}
                           currency={currencyCode}
                           decimalPlaces={currencyDecimals}
+                          rate
                         />
                       </Td>
                     </Tr>

@@ -38,6 +38,7 @@ export function LineItemsBlock({
     purchaseOrderLines,
     thumbnails,
     numberFormatter,
+    rateFormatter,
     theme,
     locale
   } = data;
@@ -159,7 +160,7 @@ export function LineItemsBlock({
                 <Text style={tw("w-[12%] text-center text-gray-600")}>
                   {line.purchaseOrderLineType === "Comment"
                     ? ""
-                    : numberFormatter.format(line.supplierUnitPrice ?? 0)}
+                    : rateFormatter.format(line.supplierUnitPrice ?? 0)}
                 </Text>
                 <Text style={tw("w-[12%] text-center text-gray-600")}>
                   {line.purchaseOrderLineType === "Comment"

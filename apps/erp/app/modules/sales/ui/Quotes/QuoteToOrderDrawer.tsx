@@ -722,7 +722,7 @@ const LinePricingOptions = ({
                         ? overridePricing.convertedNetUnitPrice
                         : overridePricing.netUnitPrice
                     }
-                    formatOptions={INPUT_FORMAT.price(
+                    formatOptions={INPUT_FORMAT.rate(
                       quoteCurrency,
                       currencyDecimals
                     )}

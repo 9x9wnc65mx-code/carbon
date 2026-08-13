@@ -456,7 +456,7 @@ const LinePricingOptions = ({
                     aria-label={t`Unit Price`}
                     minValue={0}
                     value={overridePricing.supplierUnitPrice}
-                    formatOptions={INPUT_FORMAT.price(
+                    formatOptions={INPUT_FORMAT.rate(
                       quoteCurrency,
                       currencyDecimals
                     )}

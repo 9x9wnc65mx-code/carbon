@@ -192,7 +192,7 @@ const ConsumableForm = ({
                   <Number
                     name="unitCost"
                     label={t`Unit Cost`}
-                    formatOptions={INPUT_FORMAT.price(
+                    formatOptions={INPUT_FORMAT.rate(
                       baseCurrency,
                       currencyDecimals
                     )}

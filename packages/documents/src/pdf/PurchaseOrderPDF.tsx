@@ -8,7 +8,11 @@ import {
   resolveTemplate
 } from "../template";
 import type { AccountsPayableBillingAddress, PDF } from "../types";
-import { getMoneyFormatter, resolveRegistrationLine } from "../utils/shared";
+import {
+  getMoneyFormatter,
+  getRateFormatter,
+  resolveRegistrationLine
+} from "../utils/shared";
 import type { PurchaseOrderData } from "./blocks/purchaseOrder";
 import {
   buildPurchaseOrderVars,
@@ -55,6 +59,9 @@ const PurchaseOrderPDF = ({
   const currencyCode =
     purchaseOrder.currencyCode ?? company.baseCurrencyCode ?? "USD";
   const numberFormatter = getMoneyFormatter(locale, currencyDecimals);
+  // The unit-price COLUMN is a rate, not a settlement amount — see
+  // getRateFormatter. Totals/tax/shipping stay on numberFormatter.
+  const rateFormatter = getRateFormatter(locale, currencyDecimals);
 
   const headerTitle = purchaseOrder?.purchaseOrderId
     ? `${title}: ${purchaseOrder.purchaseOrderId}`
@@ -98,6 +105,7 @@ const PurchaseOrderPDF = ({
     sections,
     currencyCode,
     numberFormatter,
+    rateFormatter,
     vars,
     headerOptions
   };

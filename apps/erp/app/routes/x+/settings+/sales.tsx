@@ -715,7 +715,7 @@ function CategoryMarkupsCard({
                   <Number
                     name={key}
                     label=""
-                    formatOptions={INPUT_FORMAT.rate}
+                    formatOptions={INPUT_FORMAT.percent}
                     minValue={0}
                   />
                 </div>

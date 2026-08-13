@@ -82,7 +82,7 @@ const ItemCostingForm = ({ initialValues }: ItemCostingFormProps) => {
             <Number
               name="unitCost"
               label={t`Unit Cost`}
-              formatOptions={INPUT_FORMAT.price(baseCurrency, currencyDecimals)}
+              formatOptions={INPUT_FORMAT.rate(baseCurrency, currencyDecimals)}
               helperText={
                 replenishmentSystem === "Make"
                   ? undefined

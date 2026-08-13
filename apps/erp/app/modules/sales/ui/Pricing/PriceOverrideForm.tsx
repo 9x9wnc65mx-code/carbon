@@ -275,7 +275,8 @@ function PriceBreaks({
   companyId?: string;
 }) {
   const { t } = useLingui();
-  const formatter = useCurrencyFormatter();
+  // overridePrice is a per-unit RATE (customerItemPriceOverrideBreak), not a settlement amount
+  const formatter = useCurrencyFormatter({ rate: true });
   const currencyDecimals = useCurrencyDecimals(baseCurrency);
 
   const [historyBreakId, setHistoryBreakId] = useState<string | null>(null);
@@ -358,7 +359,7 @@ function PriceBreaks({
     () => ({
       quantity: EditableNumber(noOpMutation),
       overridePrice: EditableNumber(noOpMutation, {
-        formatOptions: INPUT_FORMAT.price(baseCurrency, currencyDecimals)
+        formatOptions: INPUT_FORMAT.rate(baseCurrency, currencyDecimals)
       })
     }),
     [noOpMutation, baseCurrency]

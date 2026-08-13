@@ -22,6 +22,7 @@ import {
   NumberInputStepper,
   VStack
 } from "@carbon/react";
+import { SCALE_FORMAT } from "@carbon/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { ElementRef } from "react";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
@@ -83,6 +84,12 @@ const ConversionFactor = forwardRef<
     const [open, setOpen] = useState(false);
     const initialValue = useRef(defaultValue);
 
+    // A conversion factor is a RATE, not a settlement amount: inventoryQty =
+    // purchaseQty x factor, and the modal also shows its inverse. A bare
+    // NumberField falls to Intl's 3-digit decimal default, which stored 1/3 as
+    // 0.333 and 0.16455 as 0.165 — a permanent error on every receipt of that
+    // item, even though the columns are bare NUMERIC. SCALE_FORMAT is the
+    // storage scale, and react-aria commits parse(format(x)).
     const [conversionFactor, setConversionFactor] = useState(
       initialValue.current
     );
@@ -249,6 +256,7 @@ const ConversionFactor = forwardRef<
                       <NumberField
                         value={1 / conversionFactor}
                         onChange={onPurchaseUnitChange}
+                        formatOptions={SCALE_FORMAT}
                       >
                         <NumberInputGroup className="relative">
                           <NumberInput />
@@ -287,6 +295,7 @@ const ConversionFactor = forwardRef<
                       <NumberField
                         value={conversionFactor}
                         onChange={onInventoryUnitChange}
+                        formatOptions={SCALE_FORMAT}
                       >
                         <NumberInputGroup className="relative">
                           <NumberInput />

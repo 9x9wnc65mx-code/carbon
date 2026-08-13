@@ -36,7 +36,7 @@ describe("no-inline-fraction-digits", () => {
   });
 
   it("allows named kinds", () => {
-    const src = "formatOptions={INPUT_FORMAT.rate}";
+    const src = "formatOptions={INPUT_FORMAT.percent}";
     expect(noInlineFractionDigits.scan("a.tsx", src)).toHaveLength(0);
   });
 });

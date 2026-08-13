@@ -120,7 +120,7 @@ const SupplierProcessForm = ({
                 <Number
                   name="minimumCost"
                   label={t`Minimum Cost`}
-                  formatOptions={INPUT_FORMAT.price(
+                  formatOptions={INPUT_FORMAT.rate(
                     baseCurrency,
                     currencyDecimals
                   )}

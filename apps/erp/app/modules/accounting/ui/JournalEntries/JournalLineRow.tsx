@@ -104,7 +104,7 @@ const JournalLineRow = ({
         <NumberField
           value={line.debit ?? 0}
           onChange={handleDebitChange}
-          formatOptions={INPUT_FORMAT.price(currencyCode, currencyDecimals)}
+          formatOptions={INPUT_FORMAT.rate(currencyCode, currencyDecimals)}
           minValue={0}
           isDisabled={isDisabled}
           isReadOnly={isDisabled}
@@ -119,7 +119,7 @@ const JournalLineRow = ({
         <NumberField
           value={line.credit ?? 0}
           onChange={handleCreditChange}
-          formatOptions={INPUT_FORMAT.price(currencyCode, currencyDecimals)}
+          formatOptions={INPUT_FORMAT.rate(currencyCode, currencyDecimals)}
           minValue={0}
           isDisabled={isDisabled}
           isReadOnly={isDisabled}

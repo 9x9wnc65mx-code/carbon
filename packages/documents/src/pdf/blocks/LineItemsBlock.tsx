@@ -24,8 +24,14 @@ export function LineItemsBlock({
   data: SalesInvoiceData;
 }) {
   const tw = useTw();
-  const { salesInvoiceLines, thumbnails, numberFormatter, theme, locale } =
-    data;
+  const {
+    salesInvoiceLines,
+    thumbnails,
+    numberFormatter,
+    rateFormatter,
+    theme,
+    locale
+  } = data;
   const opts = { ...DEFAULT_LINE_ITEMS_OPTIONS, ...block.options };
   const overflow = itemTextOverflowStyle(opts);
   let rowIndex = 0;
@@ -138,7 +144,7 @@ export function LineItemsBlock({
               <Text style={tw("w-1/6 text-center text-gray-600")}>
                 {line.invoiceLineType === "Comment"
                   ? ""
-                  : numberFormatter.format(line.convertedUnitPrice ?? 0)}
+                  : rateFormatter.format(line.convertedUnitPrice ?? 0)}
               </Text>
               <Text style={tw("w-1/6 text-center text-gray-800 font-medium")}>
                 {line.invoiceLineType === "Comment"

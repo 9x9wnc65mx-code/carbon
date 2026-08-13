@@ -139,8 +139,8 @@ const PricingRuleForm = ({ initialValues, onClose }: PricingRuleFormProps) => {
                     label={t`Amount`}
                     minValue={0}
                     maxValue={1}
-                    step={INPUT_STEP.rate}
-                    formatOptions={INPUT_FORMAT.rate}
+                    step={INPUT_STEP.percent}
+                    formatOptions={INPUT_FORMAT.percent}
                   />
                 ) : (
                   <Number

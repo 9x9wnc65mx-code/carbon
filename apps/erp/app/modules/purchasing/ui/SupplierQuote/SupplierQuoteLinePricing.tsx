@@ -93,6 +93,10 @@ const SupplierQuoteLinePricing = ({
     routeData?.presentationCurrency?.decimalPlaces ?? configuredDecimals;
 
   const formatter = useCurrencyFormatter();
+  // The inventory-unit price (unitPrice / conversionFactor) is a RATE, not a
+  // settlement amount — `formatter` above is also used for an extended total
+  // (unitPrice*qty + shipping + tax), so it can't just take rate:true.
+  const inventoryPriceFormatter = useCurrencyFormatter({ rate: true });
   const presentationCurrencyFormatter = useCurrencyFormatter({
     currency: quoteCurrency
   });
@@ -261,7 +265,7 @@ const SupplierQuoteLinePricing = ({
                   <Td key={quantity.toString()}>
                     <EditableNumberCell
                       value={price}
-                      formatOptions={INPUT_FORMAT.price(
+                      formatOptions={INPUT_FORMAT.rate(
                         quoteCurrency,
                         currencyDecimals
                       )}
@@ -295,7 +299,9 @@ const SupplierQuoteLinePricing = ({
                   <Td key={index} className="group-hover:bg-muted/50">
                     <VStack spacing={0}>
                       <span>
-                        {formatter.format(price / (line.conversionFactor ?? 1))}
+                        {inventoryPriceFormatter.format(
+                          price / (line.conversionFactor ?? 1)
+                        )}
                       </span>
                     </VStack>
                   </Td>
@@ -388,7 +394,7 @@ const SupplierQuoteLinePricing = ({
                   <Td key={index} className="group-hover:bg-muted/50">
                     <EditableNumberCell
                       value={taxPercent}
-                      formatOptions={INPUT_FORMAT.rate}
+                      formatOptions={INPUT_FORMAT.percent}
                       minValue={0}
                       maxValue={1}
                       isEditable={isEditable}

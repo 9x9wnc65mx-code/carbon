@@ -7,8 +7,8 @@ export type MoneyFormatOptions = {
   currency?: string;
   /** Drops the non-significant zeros when 0. See below. */
   minDecimalPlaces?: number;
-  /** Raises the CEILING above the currency's decimals — see priceFormatOptions.
-   *  Settlement amounts never pass this; only per-unit prices do. */
+  /** Raises the CEILING above the currency's decimals — see rateFormatOptions.
+   *  Settlement amounts never pass this; only RATES do. */
   maxDecimalPlaces?: number;
 };
 
@@ -81,7 +81,8 @@ export function moneyFormatOptions(
   };
 }
 
-/** A per-unit PRICE. Same kind as money and it PADS the same way — a price
+/** A RATE — a per-unit price, cost, or any value you MULTIPLY BY rather
+ *  than settle. Same kind as money and it PADS the same way — a price
  *  column still reads "$300.00", "$3.50" — but the currency's decimals are only
  *  its FLOOR, not its ceiling. Above that it carries the storage scale.
  *
@@ -102,7 +103,7 @@ export function moneyFormatOptions(
  *  `parse(format(x))`, so the ceiling here is what a typed price is STORED at.
  *  A 2-decimal ceiling is what issue #1203 reports — the columns already hold
  *  five decimals and the input was rounding them away before the save. */
-export function priceFormatOptions(
+export function rateFormatOptions(
   currency: string,
   decimalPlaces: number,
   minDecimalPlaces?: number
@@ -170,7 +171,7 @@ export const SCALE_FORMAT: Intl.NumberFormatOptions = Object.freeze({
 /** Editable inputs MUST use these: react-aria's blur commit runs parse(format(x)),
  *  making the input formatter part of the storage round-trip. */
 export const INPUT_FORMAT = {
-  rate: PERCENT_FORMAT,
+  percent: PERCENT_FORMAT,
   percentPoints: PERCENT_POINTS_FORMAT,
   quantity: SCALE_FORMAT,
   exchangeRate: SCALE_FORMAT,
@@ -182,10 +183,11 @@ export const INPUT_FORMAT = {
    *  JPY's 0 a typed 63.4 commits as 63. */
   money: (currency: string, decimalPlaces: number, minDecimalPlaces?: number) =>
     moneyFormatOptions(decimalPlaces, { currency, minDecimalPlaces }),
-  /** A per-unit price INPUT. The ceiling is the storage scale, not the
-   *  currency's — react-aria commits parse(format(x)), so this is what lets a
-   *  typed 0.00123 reach the column instead of committing as 0.00 (#1203). */
-  price: priceFormatOptions
+  /** A RATE input — a per-unit price or cost. The ceiling is the storage scale,
+   *  not the currency's: react-aria commits parse(format(x)), so this is what
+   *  lets a typed 0.00123 reach the column instead of committing as 0.00
+   *  (#1203). MONEY is the settlement counterpart and caps at the currency. */
+  rate: rateFormatOptions
 };
 
 const SCALE_STEP = 1 / 10 ** SCALE;
@@ -194,17 +196,17 @@ const SCALE_STEP = 1 / 10 ** SCALE;
  *  committed value to the nearest multiple of `step`, so a step coarser than
  *  the field's scale truncates it — take the step from here or omit the prop. */
 export const INPUT_STEP = {
-  rate: SCALE_STEP,
+  percent: SCALE_STEP,
   quantity: SCALE_STEP,
   exchangeRate: SCALE_STEP,
   /** Money steps in its own smallest unit (1 for JPY, 0.01 for USD) — a
    *  settlement amount cannot move by less than the currency settles in. */
   money: (decimalPlaces: number) => 1 / 10 ** decimalPlaces,
-  /** A price steps at the storage scale, because its FORMAT reaches that far
-   *  (priceFormatOptions). react-aria snaps the committed value to a multiple of
-   *  `step`, so `money`'s cent step on a price field would truncate exactly the
+  /** A rate steps at the storage scale, because its FORMAT reaches that far
+   *  (rateFormatOptions). react-aria snaps the committed value to a multiple of
+   *  `step`, so `money`'s cent step on a rate field would truncate exactly the
    *  digits the format was widened to keep. */
-  price: SCALE_STEP
+  rate: SCALE_STEP
 };
 
 export function formatMoney(

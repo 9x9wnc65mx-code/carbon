@@ -6,7 +6,7 @@ import {
   INPUT_FORMAT,
   INPUT_STEP,
   moneyFormatOptions,
-  priceFormatOptions
+  rateFormatOptions
 } from "./format";
 
 describe("formatPercent", () => {
@@ -52,7 +52,7 @@ describe("formatMoney", () => {
   });
 
   it("money and price agree until the currency's decimals run out", () => {
-    const price = new Intl.NumberFormat("en-US", INPUT_FORMAT.price("USD", 2));
+    const price = new Intl.NumberFormat("en-US", INPUT_FORMAT.rate("USD", 2));
     const money = new Intl.NumberFormat("en-US", INPUT_FORMAT.money("USD", 2));
     // A settlement amount and a per-unit price of the same value look alike...
     for (const v of [0, 300, 18.75]) {
@@ -81,7 +81,7 @@ describe("INPUT_STEP", () => {
   it("is never coarser than the scale the field holds", () => {
     // A step coarser than the stored scale SNAPS on commit: step 0.0001 turned
     // a typed 6.255% into 6.25%, silently, before anything could format it.
-    expect(INPUT_STEP.rate).toBe(1e-5);
+    expect(INPUT_STEP.percent).toBe(1e-5);
     expect(INPUT_STEP.quantity).toBe(1e-5);
     expect(INPUT_STEP.exchangeRate).toBe(1e-5);
   });
@@ -90,8 +90,8 @@ describe("INPUT_STEP", () => {
     // 3 percent-digits == 5 fraction decimals; each must be a whole multiple
     // of the step, or react-aria snaps it away.
     for (const percent of [0.0625, 0.06255, 0.12345, 0.05, 0.001]) {
-      expect(Math.round(percent / INPUT_STEP.rate)).toBeCloseTo(
-        percent / INPUT_STEP.rate,
+      expect(Math.round(percent / INPUT_STEP.percent)).toBeCloseTo(
+        percent / INPUT_STEP.percent,
         9
       );
     }
@@ -104,11 +104,11 @@ describe("INPUT_STEP", () => {
   });
 });
 
-describe("priceFormatOptions — the price kind (issue #1203)", () => {
+describe("rateFormatOptions — the price kind (issue #1203)", () => {
   const fmt = (v: number, currency = "USD", decimals = 2) =>
     new Intl.NumberFormat(
       "en-US",
-      priceFormatOptions(currency, decimals)
+      rateFormatOptions(currency, decimals)
     ).format(v);
 
   it("still PADS to the currency's decimals — a price column stays aligned", () => {
@@ -140,7 +140,7 @@ describe("priceFormatOptions — the price kind (issue #1203)", () => {
       "en-US",
       moneyFormatOptions(2, { currency: "USD" })
     );
-    const price = new Intl.NumberFormat("en-US", priceFormatOptions("USD", 2));
+    const price = new Intl.NumberFormat("en-US", rateFormatOptions("USD", 2));
     // identical where the value fits the currency
     for (const v of [0, 3.5, 300, 1234.5]) {
       expect(price.format(v)).toBe(money.format(v));
@@ -150,15 +150,15 @@ describe("priceFormatOptions — the price kind (issue #1203)", () => {
     expect(price.format(0.164)).toBe("$0.164");
   });
 
-  it("INPUT_FORMAT.price is that kind, so a typed price commits at its width", () => {
+  it("INPUT_FORMAT.rate is that kind, so a typed price commits at its width", () => {
     // react-aria commits parse(format(x)); this is what #1203 was about.
-    const opts = INPUT_FORMAT.price("USD", 2);
+    const opts = INPUT_FORMAT.rate("USD", 2);
     expect(opts.maximumFractionDigits).toBe(5);
     expect(opts.minimumFractionDigits).toBe(2);
   });
 
-  it("INPUT_STEP.price cannot snap away the digits the format keeps", () => {
-    expect(INPUT_STEP.price).toBe(1e-5);
+  it("INPUT_STEP.rate cannot snap away the digits the format keeps", () => {
+    expect(INPUT_STEP.rate).toBe(1e-5);
     expect(INPUT_STEP.money(2)).toBe(0.01);
   });
 });
