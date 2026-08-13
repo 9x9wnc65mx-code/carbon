@@ -1,6 +1,7 @@
 import { moneyFormatOptions, SCALE } from "@carbon/utils";
 import { useLocale } from "@react-aria/i18n";
 import MotionNumber from "motion-number";
+import { useMemo } from "react";
 import { useCurrencyMinDecimals } from "~/hooks/useCurrencies";
 
 type MotionMoneyProps = {
@@ -35,17 +36,32 @@ const MotionMoney = ({
   const { locale } = useLocale();
   const minDecimals = useCurrencyMinDecimals();
 
+  // MotionNumber memoizes its formatted parts on `format` BY REFERENCE, so a
+  // fresh literal every render re-derives every digit and re-drives framer's
+  // layout projection on each one.
+  const format = useMemo(
+    () => ({
+      ...moneyFormatOptions(decimalPlaces, {
+        currency,
+        minDecimalPlaces: minDecimals,
+        maxDecimalPlaces: rate ? Math.max(decimalPlaces, SCALE) : undefined
+      }),
+      notation: "standard" as const
+    }),
+    [currency, decimalPlaces, minDecimals, rate]
+  );
+
   return (
     <MotionNumber
+      // MotionNumber animates a VALUE change; a FORMAT change is not one. Losing
+      // the trailing zeros drops three parts, and AnimatePresence's popLayout
+      // pulls them out absolutely-positioned over a one-second fade — the ".00"
+      // ghosting on top of the amount when the trailing-zeros setting is toggled.
+      // Keying on the format remounts instead, so re-formatting is instant and
+      // only real value changes animate.
+      key={`${locale}:${currency}:${decimalPlaces}:${minDecimals}:${rate}`}
       value={value}
-      format={{
-        ...moneyFormatOptions(decimalPlaces, {
-          currency,
-          minDecimalPlaces: minDecimals,
-          maxDecimalPlaces: rate ? Math.max(decimalPlaces, SCALE) : undefined
-        }),
-        notation: "standard" as const
-      }}
+      format={format}
       locales={locale}
       className={className}
     />

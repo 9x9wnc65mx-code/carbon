@@ -5,9 +5,13 @@ import {
   useRouteData,
   useUrlParams
 } from "@carbon/react";
-import { useCompanySettings } from "./useCompanySettings";
+import {
+  CompanySettingsProvider,
+  useCompanySettings
+} from "./useCompanySettings";
 import { useCompanyTimeZone, useCompanyToday } from "./useCompanyTimeZone";
 import {
+  CurrenciesProvider,
   useCurrencies,
   useCurrencyDecimals,
   useCurrencyDecimalsLookup
@@ -36,6 +40,7 @@ import { useTrainingPanel } from "./useTrainingPanel";
 import { useUser } from "./useUser";
 
 export {
+  CompanySettingsProvider,
   useCompanySettings,
   useCompanyTimeZone,
   useCompanyToday,
@@ -54,6 +59,7 @@ export {
   useNotifications,
   useOnboarding,
   useOptimisticLocation,
+  CurrenciesProvider,
   useCurrencies,
   useCurrencyDecimals,
   useCurrencyDecimalsLookup,

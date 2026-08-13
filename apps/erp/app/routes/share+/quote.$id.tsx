@@ -54,11 +54,13 @@ import type { LoaderFunctionArgs } from "react-router";
 import { useFetcher, useLoaderData, useParams } from "react-router";
 import { DateTime, MotionMoney } from "~/components";
 import {
+  CompanySettingsProvider,
+  CurrenciesProvider,
   useCurrencyDecimals,
   useCurrencyFormatter,
   usePercentFormatter
 } from "~/hooks";
-import { getPaymentTermsList } from "~/modules/accounting";
+import { getCurrenciesList, getPaymentTermsList } from "~/modules/accounting";
 import { getShippingMethodsList } from "~/modules/inventory";
 import type {
   QuotationLine,
@@ -149,6 +151,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     getOpportunity(serviceRole, quote.data.opportunityId)
   ]);
 
+  // Started before the conditional await below so this costs no extra round trip.
+  // The group's configured currency.decimalPlaces is authoritative over CLDR, and
+  // useCurrencies' own fetcher is permission-gated, so a public page has to carry
+  // the list itself or every amount here silently falls back to CLDR.
+  const currenciesPromise = company.data?.companyGroupId
+    ? getCurrenciesList(serviceRole, company.data.companyGroupId)
+    : null;
+
   let salesOrderLines: PostgrestResponse<SalesOrderLine> | null = null;
   if (
     opportunity.data?.salesOrders?.length &&
@@ -199,6 +209,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       quote: quote.data,
       company: company.data,
       companySettings: companySettings.data,
+      currencies: (await currenciesPromise)?.data ?? [],
       quoteLines:
         quoteLines.data?.map(({ internalNotes, ...line }) => ({
           ...line
@@ -1579,7 +1590,16 @@ export default function ExternalQuote() {
   switch (state) {
     case QuoteState.Valid:
       if (data) {
-        return <Quote data={data as QuoteData} />;
+        // The authenticated route this would otherwise be read from isn't mounted
+        // here, so hand the loader's own copy down — otherwise the customer-facing
+        // quote ignores the company's currency display preferences.
+        return (
+          <CompanySettingsProvider value={data.companySettings ?? undefined}>
+            <CurrenciesProvider value={data.currencies ?? []}>
+              <Quote data={data as QuoteData} />
+            </CurrenciesProvider>
+          </CompanySettingsProvider>
+        );
       }
       return (
         <ErrorMessage

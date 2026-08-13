@@ -1,10 +1,22 @@
 import { useMount } from "@carbon/react";
 import { cldrCurrencyDecimals, DEFAULT_CURRENCY_DECIMALS } from "@carbon/utils";
-import { useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { useFetcher } from "react-router";
 import type { getCurrenciesList } from "~/modules/accounting";
 import { path } from "~/utils/path";
 import { useCompanySettings } from "./useCompanySettings";
+
+type CurrencyList = NonNullable<
+  Awaited<ReturnType<typeof getCurrenciesList>>["data"]
+>;
+
+/** Set by a route that loaded the list itself. The currencies API is
+ *  `requirePermissions`-gated, so the fetcher below returns nothing on a public
+ *  page and every amount silently falls back to CLDR — which is the one thing
+ *  the standard says is NOT authoritative. */
+const CurrenciesContext = createContext<CurrencyList | undefined>(undefined);
+
+export const CurrenciesProvider = CurrenciesContext.Provider;
 
 /**
  * The ISO currency list with the company group's configured `decimalPlaces`
@@ -12,15 +24,18 @@ import { useCompanySettings } from "./useCompanySettings";
  * the cached currencies clientLoader, so mounting this in many components
  * costs one network round-trip per session, not per mount.
  */
-export function useCurrencies() {
+export function useCurrencies(): CurrencyList {
+  const provided = useContext(CurrenciesContext);
   const currencyFetcher =
     useFetcher<Awaited<ReturnType<typeof getCurrenciesList>>>();
 
   useMount(() => {
-    currencyFetcher.load(path.to.api.currencies);
+    // A provided list means the route already has it and the endpoint is not
+    // reachable anyway — asking would be a guaranteed 401 on every public view.
+    if (!provided) currencyFetcher.load(path.to.api.currencies);
   });
 
-  return currencyFetcher.data?.data ?? [];
+  return provided ?? currencyFetcher.data?.data ?? [];
 }
 
 /**
@@ -66,10 +81,11 @@ export function useCurrencyDecimals(
  * `showCurrencyTrailingZeros` preference resolved to a number for
  * `moneyFormatOptions`.
  *
- * `undefined` means "pad to the currency's decimals", which is both the default
- * and what an UNAUTHENTICATED context gets: the public quote share page has no
- * company settings to read, and a customer-facing document should show money at
- * full width regardless of an internal display preference.
+ * `undefined` means "pad to the currency's decimals" — the default, and what any
+ * context without settings gets. A public page is NOT automatically one of those:
+ * the quote share page hands its own service-role copy down through
+ * `CompanySettingsProvider`, because the preference is how the company wants its
+ * money to read, and a customer looking at the quote is exactly who it is for.
  */
 export function useCurrencyMinDecimals(): number | undefined {
   const settings = useCompanySettings();
