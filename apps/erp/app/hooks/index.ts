@@ -7,6 +7,11 @@ import {
 } from "@carbon/react";
 import { useCompanySettings } from "./useCompanySettings";
 import { useCompanyTimeZone, useCompanyToday } from "./useCompanyTimeZone";
+import {
+  useCurrencies,
+  useCurrencyDecimals,
+  useCurrencyDecimalsLookup
+} from "./useCurrencies";
 import { useCurrencyFormatter } from "./useCurrencyFormatter";
 import { useDateFormatter } from "./useDateFormatter";
 import { useFlags } from "./useFlags";
@@ -49,6 +54,9 @@ export {
   useNotifications,
   useOnboarding,
   useOptimisticLocation,
+  useCurrencies,
+  useCurrencyDecimals,
+  useCurrencyDecimalsLookup,
   usePercentFormatter,
   usePermissions,
   usePlanGate,

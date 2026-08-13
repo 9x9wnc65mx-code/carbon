@@ -49,7 +49,7 @@ const QuoteLineCosting = ({
 
   const formatter = useCurrencyFormatter();
   const unitCostFormatter = useCurrencyFormatter({
-    maximumFractionDigits: unitPricePrecision
+    decimalPlaces: unitPricePrecision
   });
 
   const detailsDisclosure = useDisclosure();
