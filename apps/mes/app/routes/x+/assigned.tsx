@@ -163,8 +163,8 @@ export default function AssignedRoute() {
       </header>
 
       <main className="h-[calc(100dvh-var(--header-height))] w-full overflow-y-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent">
-        <div className="w-full p-4 h-[var(--header-height)]">
-          <div className="relative">
+        <div className="w-full px-4 h-[var(--header-height)] flex items-center">
+          <div className="relative w-full">
             <div className="flex justify-between gap-4">
               <div className="flex flex-grow">
                 <LuSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -203,8 +203,11 @@ export default function AssignedRoute() {
               }
             >
               {() => (
-                <div className="flex flex-grow items-stretch overflow-hidden relative">
-                  <div className="flex flex-1 min-h-full w-full relative">
+                <div className="flex flex-grow items-stretch justify-center overflow-hidden relative">
+                  <div
+                    className="flex flex-1 min-h-full w-full relative"
+                    style={{ maxWidth: `${columns.length * 350}px` }}
+                  >
                     <Kanban
                       columns={columns}
                       items={items}
