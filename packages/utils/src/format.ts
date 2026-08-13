@@ -7,6 +7,9 @@ export type MoneyFormatOptions = {
   currency?: string;
   /** Drops the non-significant zeros when 0. See below. */
   minDecimalPlaces?: number;
+  /** Raises the CEILING above the currency's decimals — see priceFormatOptions.
+   *  Settlement amounts never pass this; only per-unit prices do. */
+  maxDecimalPlaces?: number;
 };
 
 /** The one stand-in when no currency is in play at all. ISO's own default. */
@@ -59,7 +62,11 @@ export function cldrCurrencyDecimals(currencyCode: string): number {
  *  field commits at this width too (see INPUT_FORMAT). */
 export function moneyFormatOptions(
   decimalPlaces: number,
-  { currency, minDecimalPlaces = decimalPlaces }: MoneyFormatOptions = {}
+  {
+    currency,
+    minDecimalPlaces = decimalPlaces,
+    maxDecimalPlaces = decimalPlaces
+  }: MoneyFormatOptions = {}
 ): Intl.NumberFormatOptions {
   return {
     // The symbol is the only thing `currency` decides. Digits are the same
@@ -70,8 +77,41 @@ export function moneyFormatOptions(
       ? { style: "currency" as const, currency }
       : { style: "decimal" as const }),
     minimumFractionDigits: minDecimalPlaces,
-    maximumFractionDigits: decimalPlaces
+    maximumFractionDigits: maxDecimalPlaces
   };
+}
+
+/** A per-unit PRICE. Same kind as money and it PADS the same way — a price
+ *  column still reads "$300.00", "$3.50" — but the currency's decimals are only
+ *  its FLOOR, not its ceiling. Above that it carries the storage scale.
+ *
+ *  Money and price differ by ROLE, which is why this is a second function and
+ *  not a second set of digits:
+ *
+ *    settlement (total, line amount, payment, tax) -> what someone PAYS,
+ *      and a currency cannot settle a fraction of its smallest unit;
+ *    price/rate -> what you MULTIPLY BY, and $0.00123 per fastener is a real
+ *      quoted price that a 2-decimal field silently turns into $0.00.
+ *
+ *  Every ERP splits these. Xero settles at 2 but takes 4 on UnitAmount (opt-in
+ *  `unitdp=4`); QuickBooks Desktop settles at 2 and shows 5 in the Rate column;
+ *  SAP keeps money at the currency's decimals and reaches sub-cent prices with a
+ *  price unit (per 100/1000) instead. None of them widens settlement values.
+ *
+ *  On an editable field this is not decoration: react-aria commits
+ *  `parse(format(x))`, so the ceiling here is what a typed price is STORED at.
+ *  A 2-decimal ceiling is what issue #1203 reports — the columns already hold
+ *  five decimals and the input was rounding them away before the save. */
+export function priceFormatOptions(
+  currency: string,
+  decimalPlaces: number,
+  minDecimalPlaces?: number
+): Intl.NumberFormatOptions {
+  return moneyFormatOptions(decimalPlaces, {
+    currency,
+    minDecimalPlaces,
+    maxDecimalPlaces: Math.max(decimalPlaces, SCALE)
+  });
 }
 
 /** Already-built currency options with a different MINIMUM — the company's
@@ -142,8 +182,10 @@ export const INPUT_FORMAT = {
    *  JPY's 0 a typed 63.4 commits as 63. */
   money: (currency: string, decimalPlaces: number, minDecimalPlaces?: number) =>
     moneyFormatOptions(decimalPlaces, { currency, minDecimalPlaces }),
-  price: (currency: string, decimalPlaces: number, minDecimalPlaces?: number) =>
-    moneyFormatOptions(decimalPlaces, { currency, minDecimalPlaces })
+  /** A per-unit price INPUT. The ceiling is the storage scale, not the
+   *  currency's — react-aria commits parse(format(x)), so this is what lets a
+   *  typed 0.00123 reach the column instead of committing as 0.00 (#1203). */
+  price: priceFormatOptions
 };
 
 const SCALE_STEP = 1 / 10 ** SCALE;
@@ -155,11 +197,14 @@ export const INPUT_STEP = {
   rate: SCALE_STEP,
   quantity: SCALE_STEP,
   exchangeRate: SCALE_STEP,
-  /** Currency steps in its own smallest unit (1 for JPY, 0.01 for USD) — for
-   *  money and prices alike, since they share one format. There is deliberately
-   *  no finer `price` step: react-aria commits parse(format(x)), so a step below
-   *  the field's own format can only produce values the formatter rounds away. */
-  money: (decimalPlaces: number) => 1 / 10 ** decimalPlaces
+  /** Money steps in its own smallest unit (1 for JPY, 0.01 for USD) — a
+   *  settlement amount cannot move by less than the currency settles in. */
+  money: (decimalPlaces: number) => 1 / 10 ** decimalPlaces,
+  /** A price steps at the storage scale, because its FORMAT reaches that far
+   *  (priceFormatOptions). react-aria snaps the committed value to a multiple of
+   *  `step`, so `money`'s cent step on a price field would truncate exactly the
+   *  digits the format was widened to keep. */
+  price: SCALE_STEP
 };
 
 export function formatMoney(

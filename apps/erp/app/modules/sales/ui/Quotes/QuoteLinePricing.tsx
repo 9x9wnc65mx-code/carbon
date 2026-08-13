@@ -183,6 +183,7 @@ const QuoteLinePricing = ({
   const formatter = useCurrencyFormatter();
   const percentFormatter = usePercentFormatter();
   const unitPriceFormatter = useCurrencyFormatter({
+    price: true,
     currency: routeData?.quote?.currencyCode ?? baseCurrency,
     decimalPlaces: unitPricePrecision
   });

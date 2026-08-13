@@ -287,6 +287,7 @@ const PurchaseInvoiceLineForm = ({
     decimalPlaces: currencyDecimals
   });
   const priceFormatter = useCurrencyFormatter({
+    price: true,
     currency: invoiceCurrency,
     decimalPlaces: currencyDecimals
   });

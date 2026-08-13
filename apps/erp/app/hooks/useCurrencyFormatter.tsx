@@ -1,4 +1,4 @@
-import { moneyFormatOptions } from "@carbon/utils";
+import { moneyFormatOptions, priceFormatOptions } from "@carbon/utils";
 import { useLocale } from "@react-aria/i18n";
 import { useMemo } from "react";
 import { useCurrencyDecimals, useCurrencyMinDecimals } from "./useCurrencies";
@@ -20,6 +20,11 @@ export type CurrencyFormatterOptions = {
   /** Drop the fraction entirely — a report that deliberately shows whole units.
    *  Combined with `compact` this is "$1M" rather than "$1.2M". */
   wholeUnits?: boolean;
+  /** A per-unit PRICE rather than a settlement amount: still padded to the
+   *  currency's decimals, but allowed to exceed them up to the storage scale,
+   *  so a $0.00123 fastener price displays as it is stored rather than as
+   *  "$0.00". Matches what the price INPUT commits — see priceFormatOptions. */
+  price?: boolean;
 };
 
 /**
@@ -48,17 +53,17 @@ export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
   // identity meant the memo never hit: a new Intl.NumberFormat on every render,
   // and — since the formatter is itself a dep of the `columns` memo in several
   // tables — a full column rebuild with it. Depend on the primitive fields.
-  const { decimalPlaces, compact, wholeUnits } = options ?? {};
+  const { decimalPlaces, compact, wholeUnits, price } = options ?? {};
 
   return useMemo(() => {
     // `wholeUnits` is a digit count of zero, expressed as the intent rather than
     // the number — this hook names kinds, it does not choose digits.
     const decimals = wholeUnits ? 0 : (decimalPlaces ?? currencyDecimals);
+    const min = wholeUnits ? 0 : minDecimals;
     return new Intl.NumberFormat(locale, {
-      ...moneyFormatOptions(decimals, {
-        currency,
-        minDecimalPlaces: wholeUnits ? 0 : minDecimals
-      }),
+      ...(price && !wholeUnits
+        ? priceFormatOptions(currency, decimals, min)
+        : moneyFormatOptions(decimals, { currency, minDecimalPlaces: min })),
       ...(compact
         ? { notation: "compact" as const, compactDisplay: "short" as const }
         : {})
@@ -70,6 +75,7 @@ export function useCurrencyFormatter(options?: CurrencyFormatterOptions) {
     minDecimals,
     decimalPlaces,
     compact,
-    wholeUnits
+    wholeUnits,
+    price
   ]);
 }

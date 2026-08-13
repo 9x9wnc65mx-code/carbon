@@ -4,7 +4,9 @@ import {
   formatPercent,
   formatQuantity,
   INPUT_FORMAT,
-  INPUT_STEP
+  INPUT_STEP,
+  moneyFormatOptions,
+  priceFormatOptions
 } from "./format";
 
 describe("formatPercent", () => {
@@ -41,7 +43,7 @@ describe("formatMoney", () => {
   it("gives editable fields the SAME digits they display with", () => {
     // react-aria's blur commit is setNumberValue(parse(format(x))), so this
     // options object decides the precision a typed amount is STORED at.
-    const usd = new Intl.NumberFormat("en-US", INPUT_FORMAT.price("USD", 2));
+    const usd = new Intl.NumberFormat("en-US", INPUT_FORMAT.money("USD", 2));
     expect(usd.format(300)).toBe("$300.00");
     expect(usd.format(300.22121)).toBe("$300.22");
 
@@ -49,14 +51,17 @@ describe("formatMoney", () => {
     expect(jpy.format(63.4)).toBe("¥63");
   });
 
-  it("formats money and price inputs identically", () => {
-    for (const v of [0, 300, 300.22121, 18.75]) {
-      expect(
-        new Intl.NumberFormat("en-US", INPUT_FORMAT.price("USD", 2)).format(v)
-      ).toBe(
-        new Intl.NumberFormat("en-US", INPUT_FORMAT.money("USD", 2)).format(v)
-      );
+  it("money and price agree until the currency's decimals run out", () => {
+    const price = new Intl.NumberFormat("en-US", INPUT_FORMAT.price("USD", 2));
+    const money = new Intl.NumberFormat("en-US", INPUT_FORMAT.money("USD", 2));
+    // A settlement amount and a per-unit price of the same value look alike...
+    for (const v of [0, 300, 18.75]) {
+      expect(price.format(v)).toBe(money.format(v));
     }
+    // ...until the value needs more than the currency settles in, where a
+    // SETTLEMENT amount rounds and a PRICE keeps its digits (#1203).
+    expect(money.format(300.22121)).toBe("$300.22");
+    expect(price.format(300.22121)).toBe("$300.22121");
   });
 });
 
@@ -96,5 +101,64 @@ describe("INPUT_STEP", () => {
     expect(INPUT_STEP.money(2)).toBe(0.01);
     expect(INPUT_STEP.money(0)).toBe(1);
     expect(INPUT_STEP.money(3)).toBe(0.001);
+  });
+});
+
+describe("priceFormatOptions — the price kind (issue #1203)", () => {
+  const fmt = (v: number, currency = "USD", decimals = 2) =>
+    new Intl.NumberFormat(
+      "en-US",
+      priceFormatOptions(currency, decimals)
+    ).format(v);
+
+  it("still PADS to the currency's decimals — a price column stays aligned", () => {
+    expect(fmt(300)).toBe("$300.00");
+    expect(fmt(3.5)).toBe("$3.50");
+    expect(fmt(0)).toBe("$0.00");
+  });
+
+  it("but the currency's decimals are a FLOOR, not a ceiling", () => {
+    // The whole point: a distributor price that a 2-decimal field would have
+    // turned into $0.00 survives.
+    expect(fmt(0.164)).toBe("$0.164");
+    expect(fmt(0.00123)).toBe("$0.00123");
+    expect(fmt(12.34567)).toBe("$12.34567");
+  });
+
+  it("never exceeds the storage scale — display cannot imply more than is kept", () => {
+    expect(fmt(1.234567891)).toBe("$1.23457");
+  });
+
+  it("respects a currency whose own decimals already exceed nothing", () => {
+    expect(fmt(63, "JPY", 0)).toBe("¥63");
+    expect(fmt(63.4, "JPY", 0)).toBe("¥63.4");
+    expect(fmt(0.563, "BHD", 3)).toBe("BHD\u00a00.563");
+  });
+
+  it("differs from money ONLY in the ceiling", () => {
+    const money = new Intl.NumberFormat(
+      "en-US",
+      moneyFormatOptions(2, { currency: "USD" })
+    );
+    const price = new Intl.NumberFormat("en-US", priceFormatOptions("USD", 2));
+    // identical where the value fits the currency
+    for (const v of [0, 3.5, 300, 1234.5]) {
+      expect(price.format(v)).toBe(money.format(v));
+    }
+    // and only diverges past it
+    expect(money.format(0.164)).toBe("$0.16");
+    expect(price.format(0.164)).toBe("$0.164");
+  });
+
+  it("INPUT_FORMAT.price is that kind, so a typed price commits at its width", () => {
+    // react-aria commits parse(format(x)); this is what #1203 was about.
+    const opts = INPUT_FORMAT.price("USD", 2);
+    expect(opts.maximumFractionDigits).toBe(5);
+    expect(opts.minimumFractionDigits).toBe(2);
+  });
+
+  it("INPUT_STEP.price cannot snap away the digits the format keeps", () => {
+    expect(INPUT_STEP.price).toBe(1e-5);
+    expect(INPUT_STEP.money(2)).toBe(0.01);
   });
 });

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-13T13:42:54.728Z",
+  "generated": "2026-08-13T15:12:30.047Z",
   "totalTools": 1436,
   "modules": 15,
   "tools": [
@@ -42804,15 +42804,15 @@
       }
     },
     {
-      "name": "settings_updateHideCurrencyTrailingZerosSetting",
+      "name": "settings_updateShowCurrencyTrailingZerosSetting",
       "module": "settings",
       "classification": "WRITE",
-      "description": "update hide currency trailing zeros setting",
+      "description": "update show currency trailing zeros setting",
       "paramCount": 1,
       "serviceParams": [
         "client",
         "companyId",
-        "hideCurrencyTrailingZeros"
+        "showCurrencyTrailingZeros"
       ],
       "injectAuth": [
         "companyId",
@@ -42821,12 +42821,12 @@
       "schema": {
         "type": "object",
         "properties": {
-          "hideCurrencyTrailingZeros": {
+          "showCurrencyTrailingZeros": {
             "type": "boolean"
           }
         },
         "required": [
-          "hideCurrencyTrailingZeros"
+          "showCurrencyTrailingZeros"
         ]
       }
     },

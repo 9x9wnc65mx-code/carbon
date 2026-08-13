@@ -65,7 +65,10 @@ const QuoteLinePricingHistory = ({
   // Default to the tab that has items
   const defaultTab = hasOrderLines ? "salesOrderLines" : "quoteLines";
   const [customers] = useCustomers();
-  const priceFormatter = useCurrencyFormatter({ currency: baseCurrency });
+  const priceFormatter = useCurrencyFormatter({
+    price: true,
+    currency: baseCurrency
+  });
 
   return (
     <Card>

@@ -268,7 +268,10 @@ function PurchaseHistory({
   baseCurrency: string;
 }) {
   const { t } = useLingui();
-  const priceFormatter = useCurrencyFormatter({ currency: baseCurrency });
+  const priceFormatter = useCurrencyFormatter({
+    price: true,
+    currency: baseCurrency
+  });
   if (history.length === 0) return null;
 
   return (

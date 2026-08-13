@@ -307,6 +307,7 @@ const PurchaseOrderLineForm = ({
     decimalPlaces: currencyDecimals
   });
   const priceFormatter = useCurrencyFormatter({
+    price: true,
     currency: orderCurrency,
     decimalPlaces: currencyDecimals
   });

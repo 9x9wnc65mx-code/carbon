@@ -377,6 +377,7 @@ const SalesInvoiceLineForm = ({
     decimalPlaces: currencyDecimals
   });
   const priceFormatter = useCurrencyFormatter({
+    price: true,
     currency: routeData?.salesInvoice?.currencyCode ?? company.baseCurrencyCode,
     decimalPlaces: currencyDecimals
   });
