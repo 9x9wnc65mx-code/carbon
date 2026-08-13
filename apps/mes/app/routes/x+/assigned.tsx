@@ -1,5 +1,6 @@
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { getCarbonServiceRole } from "@carbon/auth/client.server";
+import { getLogger } from "@carbon/logger";
 import {
   Button,
   ClientOnly,
@@ -37,6 +38,8 @@ import {
 } from "~/services/operations.service";
 import { makeDurations } from "~/utils/durations";
 
+const log = getLogger("mes");
+
 export async function loader({ context, request }: LoaderFunctionArgs) {
   const { companyId, userId } = await requirePermissions(request, {});
 
@@ -47,6 +50,16 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     getJobOperationsAssignedToEmployee(serviceRole, userId, companyId),
     getWorkCentersByCompany(serviceRole, companyId)
   ]);
+
+  if (operations.error) {
+    log.error("Failed to load assigned operations", {
+      error: operations.error
+    });
+  }
+
+  if (workCenters.error) {
+    log.error("Failed to load work centers", { error: workCenters.error });
+  }
 
   return {
     operations: operations?.data?.map(makeDurations) ?? [],
@@ -194,6 +207,14 @@ export default function AssignedRoute() {
     return { columns, items };
   }, [filteredOperations, workCenters, showEmptyWorkCenters, locationId, t]);
 
+  // With "Empty work centers" on, an empty board of location columns is
+  // still worth showing — but a search with no matches keeps its empty state.
+  const showEmptyBoard =
+    view === "board" &&
+    showEmptyWorkCenters &&
+    !searchTerm &&
+    columns.length > 0;
+
   return (
     <div className="flex flex-col flex-1 min-w-0">
       <header className="sticky top-0 z-10 flex h-[var(--header-height)] overflow-y-scroll scrollbar-thin scrollbar-thumb-accent scrollbar-track-transparent shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b bg-background">
@@ -264,7 +285,7 @@ export default function AssignedRoute() {
           </div>
         </div>
 
-        {filteredOperations.length > 0 ? (
+        {filteredOperations.length > 0 || showEmptyBoard ? (
           view === "board" ? (
             <ClientOnly
               fallback={

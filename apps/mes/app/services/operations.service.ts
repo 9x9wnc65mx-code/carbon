@@ -1439,6 +1439,10 @@ export async function getWorkCentersByCompany(
     return workCentersResult;
   }
 
+  if (blockingStatusResult.error) {
+    return { data: null, error: blockingStatusResult.error };
+  }
+
   const blockingStatusMap = new Map(
     blockingStatusResult.data?.map((wc) => [wc.id, wc]) ?? []
   );
