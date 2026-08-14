@@ -278,6 +278,7 @@ const LinePricingOptions = ({
     supplierShippingCost: 0,
     shippingCost: 0,
     supplierTaxAmount: 0,
+    taxAmount: 0,
     taxPercent: 0
   });
 
@@ -294,6 +295,7 @@ const LinePricingOptions = ({
           shippingCost: overridePricing.shippingCost,
           leadTime: overridePricing.leadTime,
           supplierTaxAmount: overridePricing.supplierTaxAmount,
+          taxAmount: overridePricing.taxAmount,
           // Override collects amounts only — seed the rate from the canonical
           // denominator (unit price x quantity + shipping).
           taxPercent: deriveRate(
@@ -337,6 +339,7 @@ const LinePricingOptions = ({
                 shippingCost: selectedOption.shippingCost ?? 0,
                 leadTime: selectedOption.leadTime,
                 supplierTaxAmount: selectedOption.supplierTaxAmount ?? 0,
+                taxAmount: selectedOption.taxAmount ?? 0,
                 taxPercent: selectedOption.taxPercent ?? 0
               }
             }));
@@ -536,7 +539,10 @@ const LinePricingOptions = ({
                     onChange={(taxAmount) =>
                       setOverridePricing((v) => ({
                         ...v,
-                        supplierTaxAmount: taxAmount
+                        supplierTaxAmount: taxAmount,
+                        // Same conversion the unit price and shipping overrides
+                        // above use, so the three stay consistent with each other.
+                        taxAmount: taxAmount * quoteExchangeRate
                       }))
                     }
                   >
