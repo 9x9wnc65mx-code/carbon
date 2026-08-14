@@ -31,7 +31,6 @@ import {
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useLocale } from "@react-aria/i18n";
 import { motion } from "framer-motion";
-import MotionNumber from "motion-number";
 import { useMemo, useState } from "react";
 import {
   LuChevronRight,
@@ -41,9 +40,17 @@ import {
   LuTriangleAlert
 } from "react-icons/lu";
 import { Link, useParams } from "react-router";
-import { CustomerAvatar, DateTime, Hyperlink, MethodIcon } from "~/components";
+import {
+  CustomerAvatar,
+  DateTime,
+  Hyperlink,
+  MethodIcon,
+  MotionMoney
+} from "~/components";
 import { Confirm } from "~/components/Modals";
 import {
+  useCurrencyDecimals,
+  useCurrencyFormatter,
   usePercentFormatter,
   usePermissions,
   useRouteData,
@@ -89,16 +96,13 @@ const SalesOrderSummary = ({
   const baseCurrency = company?.baseCurrencyCode ?? "USD";
   // Base currency: this formats `line.unitPrice`, a base-currency column. The
   // order-currency figure is `convertedUnitPrice`, rendered above the badge.
-  const formatter = useMemo(
-    () =>
-      new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency: baseCurrency
-      }),
-    [locale, baseCurrency]
-  );
+  const formatter = useCurrencyFormatter({ currency: baseCurrency });
 
   const isEditable = !isSalesOrderLocked(routeData?.salesOrder?.status);
+  // Settlement money at the document currency's configured decimals.
+  const currencyDecimals = useCurrencyDecimals(
+    routeData?.salesOrder?.currencyCode ?? "USD"
+  );
 
   // Calculate totals
   const subtotal =
@@ -240,26 +244,20 @@ const SalesOrderSummary = ({
               <span>
                 <Trans>Subtotal:</Trans>
               </span>
-              <MotionNumber
+              <MotionMoney
                 value={subtotal}
-                format={{
-                  style: "currency",
-                  currency: routeData?.salesOrder?.currencyCode ?? "USD"
-                }}
-                locales={locale}
+                currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                decimalPlaces={currencyDecimals}
               />
             </HStack>
             <HStack className="justify-between text-sm text-muted-foreground w-full">
               <span>
                 <Trans>Tax:</Trans>
               </span>
-              <MotionNumber
+              <MotionMoney
                 value={tax}
-                format={{
-                  style: "currency",
-                  currency: routeData?.salesOrder?.currencyCode ?? "USD"
-                }}
-                locales={locale}
+                currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                decimalPlaces={currencyDecimals}
               />
             </HStack>
             <HStack className="justify-between text-sm text-muted-foreground w-full">
@@ -278,13 +276,10 @@ const SalesOrderSummary = ({
                       <Trans>Edit Shipping</Trans>
                     </Button>
                   </VStack>
-                  <MotionNumber
+                  <MotionMoney
                     value={convertedShippingCost}
-                    format={{
-                      style: "currency",
-                      currency: routeData?.salesOrder.currencyCode ?? "USD"
-                    }}
-                    locales={locale}
+                    currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                    decimalPlaces={currencyDecimals}
                   />
                 </>
               ) : isEditable ? (
@@ -302,13 +297,10 @@ const SalesOrderSummary = ({
               <span>
                 <Trans>Total:</Trans>
               </span>
-              <MotionNumber
+              <MotionMoney
                 value={total}
-                format={{
-                  style: "currency",
-                  currency: routeData?.salesOrder?.currencyCode ?? "USD"
-                }}
-                locales={locale}
+                currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                decimalPlaces={currencyDecimals}
               />
             </HStack>
             <div className="h-px bg-border my-2 w-full" />
@@ -316,26 +308,20 @@ const SalesOrderSummary = ({
               <span>
                 <Trans>Invoiced Amount:</Trans>
               </span>
-              <MotionNumber
+              <MotionMoney
                 value={routeData?.invoiceSummary?.invoicedAmount ?? 0}
-                format={{
-                  style: "currency",
-                  currency: routeData?.salesOrder?.currencyCode ?? "USD"
-                }}
-                locales={locale}
+                currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                decimalPlaces={currencyDecimals}
               />
             </HStack>
             <HStack className="justify-between text-sm text-muted-foreground w-full">
               <span>
                 <Trans>Paid Amount:</Trans>
               </span>
-              <MotionNumber
+              <MotionMoney
                 value={routeData?.invoiceSummary?.paidAmount ?? 0}
-                format={{
-                  style: "currency",
-                  currency: routeData?.salesOrder?.currencyCode ?? "USD"
-                }}
-                locales={locale}
+                currency={routeData?.salesOrder?.currencyCode ?? "USD"}
+                decimalPlaces={currencyDecimals}
               />
             </HStack>
             {(routeData?.invoiceSummary?.currencyMismatchCount ?? 0) > 0 && (
@@ -372,6 +358,8 @@ function LineItems({
   if (!orderId) throw new Error("Could not find orderId");
 
   const percentFormatter = usePercentFormatter();
+  // Settlement money at the document currency's configured decimals.
+  const currencyDecimals = useCurrencyDecimals(currencyCode);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const todaysDate = useMemo(() => today(getLocalTimeZone()), []);
 
@@ -454,8 +442,7 @@ function LineItems({
                       className="flex-shrink-0 items-end w-auto"
                     >
                       <HStack spacing={4}>
-                        <MotionNumber
-                          className="font-bold text-xl whitespace-nowrap"
+                        <MotionMoney
                           value={
                             ((line?.convertedUnitPrice ?? 0) *
                               (line?.saleQuantity ?? 0) +
@@ -464,11 +451,8 @@ function LineItems({
                               (1 + (line?.taxPercent ?? 0)) +
                             (line?.convertedNonTaxableAddOnCost ?? 0)
                           }
-                          format={{
-                            style: "currency",
-                            currency: currencyCode
-                          }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
                         />
                         <motion.div
                           animate={{
@@ -583,23 +567,24 @@ function LineItems({
                     <Tr>
                       <Td>Unit Price</Td>
                       <Td className="text-right">
-                        <MotionNumber
+                        <MotionMoney
                           value={line.convertedUnitPrice ?? 0}
-                          format={{ style: "currency", currency: currencyCode }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
+                          rate
                         />
                       </Td>
                     </Tr>
                     <Tr className="border-b border-border">
                       <Td>Extended Price</Td>
                       <Td className="text-right">
-                        <MotionNumber
+                        <MotionMoney
                           value={
                             (line.convertedUnitPrice ?? 0) *
                             (line.saleQuantity ?? 0)
                           }
-                          format={{ style: "currency", currency: currencyCode }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
                         />
                       </Td>
                     </Tr>
@@ -608,13 +593,10 @@ function LineItems({
                       <Tr>
                         <Td>Additional Charges</Td>
                         <Td className="text-right">
-                          <MotionNumber
+                          <MotionMoney
                             value={line.addOnCost ?? 0}
-                            format={{
-                              style: "currency",
-                              currency: currencyCode
-                            }}
-                            locales={locale}
+                            currency={currencyCode}
+                            decimalPlaces={currencyDecimals}
                           />
                         </Td>
                       </Tr>
@@ -624,13 +606,10 @@ function LineItems({
                       <Tr>
                         <Td>Non-Taxable Charges</Td>
                         <Td className="text-right">
-                          <MotionNumber
+                          <MotionMoney
                             value={line.nonTaxableAddOnCost ?? 0}
-                            format={{
-                              style: "currency",
-                              currency: currencyCode
-                            }}
-                            locales={locale}
+                            currency={currencyCode}
+                            decimalPlaces={currencyDecimals}
                           />
                         </Td>
                       </Tr>
@@ -639,7 +618,7 @@ function LineItems({
                     <Tr key="subtotal">
                       <Td>Subtotal</Td>
                       <Td className="text-right">
-                        <MotionNumber
+                        <MotionMoney
                           value={
                             (line.convertedUnitPrice ?? 0) *
                               (line.saleQuantity ?? 0) +
@@ -647,11 +626,8 @@ function LineItems({
                             (line.convertedNonTaxableAddOnCost ?? 0) +
                             (line.convertedShippingCost ?? 0)
                           }
-                          format={{
-                            style: "currency",
-                            currency: currencyCode
-                          }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
                         />
                       </Td>
                     </Tr>
@@ -661,7 +637,7 @@ function LineItems({
                         Tax ({percentFormatter.format(line.taxPercent ?? 0)})
                       </Td>
                       <Td className="text-right">
-                        <MotionNumber
+                        <MotionMoney
                           value={
                             ((line.convertedUnitPrice ?? 0) *
                               (line.saleQuantity ?? 0) +
@@ -669,11 +645,8 @@ function LineItems({
                               (line.convertedShippingCost ?? 0)) *
                             (line.taxPercent ?? 0)
                           }
-                          format={{
-                            style: "currency",
-                            currency: currencyCode
-                          }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
                         />
                       </Td>
                     </Tr>
@@ -681,7 +654,7 @@ function LineItems({
                     <Tr key="total" className="font-bold">
                       <Td>Total</Td>
                       <Td className="text-right">
-                        <MotionNumber
+                        <MotionMoney
                           value={
                             ((line.convertedUnitPrice ?? 0) *
                               (line.saleQuantity ?? 0) +
@@ -690,11 +663,8 @@ function LineItems({
                               (1 + (line.taxPercent ?? 0)) +
                             (line.convertedNonTaxableAddOnCost ?? 0)
                           }
-                          format={{
-                            style: "currency",
-                            currency: currencyCode
-                          }}
-                          locales={locale}
+                          currency={currencyCode}
+                          decimalPlaces={currencyDecimals}
                         />
                       </Td>
                     </Tr>
