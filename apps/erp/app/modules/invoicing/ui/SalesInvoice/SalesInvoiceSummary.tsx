@@ -127,15 +127,14 @@ const LineItems = ({
                   className="flex flex-col cursor-pointer w-full"
                   onClick={() => toggleOpen(line.id!)}
                 >
+                  {/* The text column must shrink (flex-1 min-w-0) or a long
+                      description shoves the totals out of the card, and its
+                      children need w-full because VStack is items-start, which
+                      sizes each child to its own content and leaves truncate
+                      inert no matter how narrow the column gets. */}
                   <div className="flex items-center justify-between w-full">
-                    <VStack
-                      spacing={0}
-                      className="flex-shrink-0 min-w-0 w-auto"
-                    >
-                      <HStack
-                        spacing={2}
-                        className="flex min-w-0 flex-shrink-0"
-                      >
+                    <VStack spacing={0} className="flex-1 min-w-0">
+                      <HStack spacing={2} className="flex min-w-0 w-full">
                         <Heading className="truncate">{itemReadableId}</Heading>
                         <Button
                           asChild
@@ -151,7 +150,7 @@ const LineItems = ({
                         </Button>
                       </HStack>
                       <TruncatedTooltipText
-                        className="text-muted-foreground text-sm truncate"
+                        className="text-muted-foreground text-sm truncate w-full"
                         tooltip={line.description}
                       >
                         {line.description}
