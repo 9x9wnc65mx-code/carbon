@@ -12,6 +12,7 @@ import {
   Tbody,
   Td,
   Tr,
+  TruncatedTooltipText,
   VStack
 } from "@carbon/react";
 import { getItemReadableId } from "@carbon/utils";
@@ -82,6 +83,12 @@ const LineItems = ({
           : isFixedAsset
             ? line.assetReadableId || "Fixed Asset"
             : getItemReadableId(items, line.itemId);
+        const lineDescription = isGlAccount
+          ? (accounts.find((a) => a.id === line.accountId)?.name ??
+            "Indirect Expense")
+          : isFixedAsset
+            ? line.description || "Fixed Asset"
+            : line.description;
         const lineTotal = (line.unitPrice ?? 0) * (line.quantity ?? 0);
         const supplierLineTotal =
           (line.supplierUnitPrice ?? 0) * (line.quantity ?? 0);
@@ -144,14 +151,12 @@ const LineItems = ({
                           </Link>
                         </Button>
                       </HStack>
-                      <span className="text-muted-foreground text-sm truncate">
-                        {isGlAccount
-                          ? (accounts.find((a) => a.id === line.accountId)
-                              ?.name ?? "Indirect Expense")
-                          : isFixedAsset
-                            ? line.description || "Fixed Asset"
-                            : line.description}
-                      </span>
+                      <TruncatedTooltipText
+                        className="text-muted-foreground text-sm truncate"
+                        tooltip={lineDescription}
+                      >
+                        {lineDescription}
+                      </TruncatedTooltipText>
                     </VStack>
                     <VStack
                       spacing={2}

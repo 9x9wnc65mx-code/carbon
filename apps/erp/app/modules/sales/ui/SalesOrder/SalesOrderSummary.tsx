@@ -17,6 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   Tr,
+  TruncatedTooltipText,
   useDisclosure,
   VStack
 } from "@carbon/react";
@@ -430,9 +431,12 @@ function LineItems({
                           </Link>
                         </Button>
                       </HStack>
-                      <span className="text-muted-foreground text-sm truncate">
+                      <TruncatedTooltipText
+                        className="text-muted-foreground text-sm truncate"
+                        tooltip={line.description}
+                      >
                         {line.description}
-                      </span>
+                      </TruncatedTooltipText>
                     </VStack>
                     <VStack
                       spacing={2}

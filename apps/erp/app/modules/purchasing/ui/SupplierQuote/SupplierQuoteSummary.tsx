@@ -13,6 +13,7 @@ import {
   Th,
   Thead,
   Tr,
+  TruncatedTooltipText,
   VStack
 } from "@carbon/react";
 import { getItemReadableId } from "@carbon/utils";
@@ -96,6 +97,10 @@ const LineItems = ({
         const itemReadableId = isGlAccount
           ? line.description || "Indirect Expense"
           : getItemReadableId(items, line.itemId);
+        const lineDescription = isGlAccount
+          ? (accounts.find((a) => a.id === line.accountId)?.name ??
+            "G/L Account")
+          : line.description;
         if (!line || !prices || !line.id) {
           return null;
         }
@@ -151,12 +156,12 @@ const LineItems = ({
                       </motion.div>
                     </HStack>
                   </div>
-                  <span className="text-muted-foreground text-sm truncate">
-                    {isGlAccount
-                      ? (accounts.find((a) => a.id === line.accountId)?.name ??
-                        "G/L Account")
-                      : line.description}
-                  </span>
+                  <TruncatedTooltipText
+                    className="text-muted-foreground text-sm truncate"
+                    tooltip={lineDescription}
+                  >
+                    {lineDescription}
+                  </TruncatedTooltipText>
                 </div>
               </VStack>
             </HStack>

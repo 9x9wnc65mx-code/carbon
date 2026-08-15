@@ -15,6 +15,7 @@ import {
   Th,
   Thead,
   Tr,
+  TruncatedTooltipText,
   useMode,
   VStack
 } from "@carbon/react";
@@ -219,9 +220,12 @@ const LineItems = ({
                       </motion.div>
                     </HStack>
                   </div>
-                  <span className="text-muted-foreground text-base truncate">
+                  <TruncatedTooltipText
+                    className="text-muted-foreground text-base truncate"
+                    tooltip={line.description}
+                  >
                     {line.description}
-                  </span>
+                  </TruncatedTooltipText>
                 </div>
               </VStack>
             </HStack>

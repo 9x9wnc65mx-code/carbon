@@ -12,6 +12,7 @@ import {
   Tbody,
   Td,
   Tr,
+  TruncatedTooltipText,
   VStack
 } from "@carbon/react";
 import { getItemReadableId } from "@carbon/utils";
@@ -149,9 +150,12 @@ const LineItems = ({
                           </Link>
                         </Button>
                       </HStack>
-                      <span className="text-muted-foreground text-sm truncate">
+                      <TruncatedTooltipText
+                        className="text-muted-foreground text-sm truncate"
+                        tooltip={line.description}
+                      >
                         {line.description}
-                      </span>
+                      </TruncatedTooltipText>
                     </VStack>
                     <VStack
                       spacing={2}

@@ -26,6 +26,7 @@ import {
   Th,
   Thead,
   Tr,
+  TruncatedTooltipText,
   VStack
 } from "@carbon/react";
 import { pluralize } from "@carbon/utils";
@@ -705,9 +706,12 @@ const LineSelectionView = ({
                   the card edge. min-w-0 is what lets truncate bite. */}
               <VStack spacing={0} className="flex-1 min-w-0">
                 <Heading className="min-w-0">{line.itemReadableId}</Heading>
-                <span className="text-muted-foreground text-base truncate">
+                <TruncatedTooltipText
+                  className="text-muted-foreground text-base truncate"
+                  tooltip={line.description}
+                >
                   {line.description}
-                </span>
+                </TruncatedTooltipText>
               </VStack>
             </HStack>
 

@@ -22,6 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   Tr,
+  TruncatedTooltipText,
   VStack
 } from "@carbon/react";
 import {
@@ -204,6 +205,10 @@ const LinePricingForm = ({
         const lineHeading = isGlAccount
           ? line.description || "Indirect Expense"
           : line.itemReadableId;
+        const lineDescription = isGlAccount
+          ? (accounts.find((a) => a.id === line.accountId)?.name ??
+            "G/L Account")
+          : line.description;
 
         return (
           <VStack key={line.id}>
@@ -226,12 +231,12 @@ const LinePricingForm = ({
                   the card edge. min-w-0 is what lets truncate bite. */}
               <VStack spacing={0} className="flex-1 min-w-0">
                 <Heading className="min-w-0">{lineHeading}</Heading>
-                <span className="text-muted-foreground text-base truncate">
-                  {isGlAccount
-                    ? (accounts.find((a) => a.id === line.accountId)?.name ??
-                      "G/L Account")
-                    : line.description}
-                </span>
+                <TruncatedTooltipText
+                  className="text-muted-foreground text-base truncate"
+                  tooltip={lineDescription}
+                >
+                  {lineDescription}
+                </TruncatedTooltipText>
               </VStack>
             </HStack>
             <LinePricingOptions

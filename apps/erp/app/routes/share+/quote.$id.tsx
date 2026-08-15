@@ -29,6 +29,7 @@ import {
   Th,
   Thead,
   Tr,
+  TruncatedTooltipText,
   toast,
   useDisclosure,
   useMode,
@@ -456,9 +457,12 @@ const LineItems = ({
                       </motion.div>
                     </HStack>
                   </div>
-                  <span className="text-muted-foreground text-base truncate">
+                  <TruncatedTooltipText
+                    className="text-muted-foreground text-base truncate"
+                    tooltip={line.description}
+                  >
                     {line.description}
-                  </span>
+                  </TruncatedTooltipText>
                   {Object.keys(line.externalNotes ?? {}).length > 0 && (
                     <div
                       className="prose dark:prose-invert mt-2 text-muted-foreground"

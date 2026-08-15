@@ -30,6 +30,7 @@ import {
   Th,
   Thead,
   Tr,
+  TruncatedTooltipText,
   useDisclosure,
   useMode,
   VStack
@@ -373,6 +374,9 @@ const LineItems = ({
         const lineHeading = isGlAccount
           ? line.description || "Indirect Expense"
           : line.itemReadableId;
+        const lineDescription = isGlAccount
+          ? "Indirect Expense"
+          : line.description;
 
         return (
           <motion.div
@@ -419,9 +423,12 @@ const LineItems = ({
                       </motion.div>
                     </HStack>
                   </div>
-                  <span className="text-muted-foreground text-base truncate">
-                    {isGlAccount ? "Indirect Expense" : line.description}
-                  </span>
+                  <TruncatedTooltipText
+                    className="text-muted-foreground text-base truncate"
+                    tooltip={lineDescription}
+                  >
+                    {lineDescription}
+                  </TruncatedTooltipText>
                 </div>
               </VStack>
             </HStack>
