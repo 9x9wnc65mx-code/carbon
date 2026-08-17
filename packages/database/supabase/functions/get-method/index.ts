@@ -584,6 +584,7 @@ serve(async (req: Request) => {
             const ledgerTotals = await reader
               .selectFrom("itemLedger")
               .where("locationId", "=", jobLocationId)
+              .where("companyId", "=", companyId)
               .where("itemId", "in", missing)
               .where("storageUnitId", "is not", null)
               .groupBy(["itemId", "storageUnitId"])
@@ -611,6 +612,7 @@ serve(async (req: Request) => {
               .selectFrom("pickMethod")
               .select(["itemId", "defaultStorageUnitId"])
               .where("locationId", "=", jobLocationId)
+              .where("companyId", "=", companyId)
               .where("itemId", "in", missing)
               .where("defaultStorageUnitId", "is not", null)
               .execute();
@@ -858,6 +860,16 @@ serve(async (req: Request) => {
 
             let jobOperationsInserts: Database["public"]["Tables"]["jobOperation"]["Insert"][] =
               [];
+            // The method operation each insert came from, kept index-aligned
+            // with jobOperationsInserts. The inserted ids come back in the
+            // order they were inserted, and that order matches neither the
+            // length nor the sequence of relatedOperations.data: a blank
+            // configured processId skips a row below, and a billOfProcess
+            // configuration reorders and filters them. Pairing the returned
+            // ids against the source array instead of this one attaches an
+            // operation's tools, parameters and steps to the wrong job
+            // operation — or reads past the end of the array and throws.
+            let sourceOperations: typeof relatedOperations.data = [];
             for await (const op of relatedOperations?.data ?? []) {
               const [
                 processId,
@@ -937,6 +949,7 @@ serve(async (req: Request) => {
 
               if (processId === "") continue;
 
+              sourceOperations.push(op);
               jobOperationsInserts.push({
                 jobId,
                 jobMakeMethodId: parentJobMakeMethodId!,
@@ -983,20 +996,26 @@ serve(async (req: Request) => {
             }
 
             if (bopConfiguration) {
-              // @ts-expect-error - we can't assign undefined to materialsWithConfiguredFields but we filter them in the next step
-              jobOperationsInserts = bopConfiguration
-                .map((description, index) => {
-                  const operation = jobOperationsInserts.find(
-                    (operation) => operation.description === description
-                  );
-                  if (operation) {
-                    return {
-                      ...operation,
-                      order: index + 1,
-                    };
-                  }
-                })
-                .filter(Boolean);
+              // Reorder and filter both arrays together so an insert and the
+              // method operation it came from stay at the same index.
+              // findIndex keeps the original `.find` semantics: with duplicate
+              // descriptions the first match wins.
+              const configuredInserts: typeof jobOperationsInserts = [];
+              const configuredSources: typeof sourceOperations = [];
+              bopConfiguration.forEach((description, index) => {
+                const position = jobOperationsInserts.findIndex(
+                  (operation) => operation.description === description
+                );
+                if (position !== -1) {
+                  configuredInserts.push({
+                    ...jobOperationsInserts[position],
+                    order: index + 1,
+                  });
+                  configuredSources.push(sourceOperations[position]);
+                }
+              });
+              jobOperationsInserts = configuredInserts;
+              sourceOperations = configuredSources;
             }
 
             if (jobOperationsInserts?.length > 0) {
@@ -1006,10 +1025,8 @@ serve(async (req: Request) => {
                 .returning(["id"])
                 .execute();
 
-              for (const [index, operation] of (
-                relatedOperations.data ?? []
-              ).entries()) {
-                const operationId = operationIds[index].id;
+              for (const [index, operation] of sourceOperations.entries()) {
+                const operationId = operationIds[index]?.id;
 
                 if (operationId) {
                   const {
@@ -1187,16 +1204,15 @@ serve(async (req: Request) => {
                 }
               }
 
-              methodOperationsToJobOperations =
-                relatedOperations.data?.reduce<Record<string, string>>(
-                  (acc, op, index) => {
-                    if (operationIds[index].id) {
-                      acc[op.id!] = operationIds[index].id!;
-                    }
-                    return acc;
-                  },
-                  {}
-                ) ?? {};
+              methodOperationsToJobOperations = sourceOperations.reduce<
+                Record<string, string>
+              >((acc, op, index) => {
+                const operationId = operationIds[index]?.id;
+                if (operationId) {
+                  acc[op.id!] = operationId;
+                }
+                return acc;
+              }, {});
             }
             } // end if (parts.billOfProcess)
 
