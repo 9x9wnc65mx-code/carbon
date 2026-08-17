@@ -1353,9 +1353,15 @@ serve(async (req: Request) => {
                 scrapQuantity: childScrapQuantity,
                 estimatedQuantity: childEstimatedQuantity,
                 storageUnitId: locationId
-                  ? // @ts-ignore
+                  ? // The bin explicitly set on the BOM line stays keyed on the
+                    // line, but the default bin belongs to the item this row is
+                    // actually for — `itemId`, after any supersession or
+                    // configuration swap. Keyed on child.data.itemId a swapped
+                    // line took the predecessor's bin, or none when only the
+                    // successor had one.
+                    // @ts-ignore
                     (child.data.storageUnitIds?.[locationId] as string) ||
-                    defaultStorageUnitByItemId.get(child.data.itemId)
+                    defaultStorageUnitByItemId.get(itemId)
                   : undefined,
                 requiresSerialTracking,
                 requiresBatchTracking,
