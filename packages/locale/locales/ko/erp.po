@@ -9129,6 +9129,9 @@ msgstr "더 보기"
 msgid "More actions"
 msgstr "추가 작업"
 
+msgid "More information"
+msgstr "자세한 정보"
+
 msgid "More options"
 msgstr "추가 옵션"
 

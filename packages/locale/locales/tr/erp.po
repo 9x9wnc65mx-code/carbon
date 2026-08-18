@@ -9129,6 +9129,9 @@ msgstr "Daha fazla"
 msgid "More actions"
 msgstr "Daha fazla işlem"
 
+msgid "More information"
+msgstr "Daha fazla bilgi"
+
 msgid "More options"
 msgstr "Daha fazla seçenek"
 
