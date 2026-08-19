@@ -15463,6 +15463,9 @@ msgstr "Esta página de tu Centro de Implementación está en construcción. Com
 msgid "This part has {quantityOnHand} on hand at this location. No Stock means it will be neither planned nor consumed."
 msgstr "Esta pieza tiene {quantityOnHand} disponible en esta ubicación. Sin Stock significa que no será ni planificada ni consumida."
 
+msgid "This part is activated when change notice {activationLockId} is released."
+msgstr ""
+
 msgid "This part is being phased out."
 msgstr "Esta pieza se está descontinuando."
 
@@ -15511,6 +15514,9 @@ msgstr "Este tipo de almacenamiento está siendo utilizado actualmente por {usag
 
 msgid "this supplier"
 msgstr "este proveedor"
+
+msgid "This tool is activated when change notice {activationLockId} is released."
+msgstr ""
 
 msgid "This updates the theme for all users of the application"
 msgstr "Esto actualiza el tema para todos los usuarios de la aplicación"

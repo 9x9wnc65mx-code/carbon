@@ -46,6 +46,7 @@ import {
   itemReplenishmentSystems,
   itemTrackingTypes
 } from "../../items.models";
+import type { UnreleasedChangeOrderItem } from "../../items.server";
 import type {
   ItemFile,
   MakeMethod,
@@ -53,6 +54,7 @@ import type {
   PickMethod,
   SupplierPart
 } from "../../types";
+import { ItemChangeNoticeLock } from "../ChangeNotice/ItemChangeNoticeLock";
 import { FileBadge, ItemDescription, SourcingTypeProperty } from "../Item";
 
 export type PartPropertiesData = {
@@ -135,6 +137,8 @@ const PartProperties = ({
         name: string;
       } | null;
     }>;
+    // Set while the change notice that minted this item is still open.
+    unreleasedChangeOrder?: UnreleasedChangeOrderItem | null;
   }>(path.to.part(itemId));
   const routeData = data ?? routeDataFromRoute;
 
@@ -227,6 +231,14 @@ const PartProperties = ({
 
     [routeData?.partSummary?.readableId]
   );
+
+  // The change notice that minted this part activates it at release. Until then
+  // the toggle is locked: an unreleased revision switched Active by hand reaches
+  // the item pickers, MRP and job creation carrying the notice's draft BOM.
+  // An already-active part is left alone so it can still be switched off.
+  const activationLockId = routeDataFromRoute?.partSummary?.active
+    ? undefined
+    : routeDataFromRoute?.unreleasedChangeOrder?.changeOrderReadableId;
 
   const [suppliers] = useSuppliers();
 
@@ -726,25 +738,40 @@ const PartProperties = ({
       {/* Active is a lifecycle flag the change notice controls at release — not a
           user-editable attribute in the CO card. Keep it on the part page only. */}
       {!embedded && (
-        <ValidatedForm
-          defaultValues={{
-            active: routeData?.partSummary?.active ?? undefined
-          }}
-          validator={z.object({
-            active: zfd.checkbox()
-          })}
+        <ItemChangeNoticeLock
+          changeNotices={[]}
+          isLocked={!!activationLockId}
           className="w-full"
-          isReadOnly={isReadOnly}
+          reason={
+            activationLockId ? (
+              <Trans>
+                This part is activated when change notice {activationLockId} is
+                released.
+              </Trans>
+            ) : undefined
+          }
         >
-          <Boolean
-            label={t`Active`}
-            name="active"
-            variant="small"
-            onChange={(value) => {
-              onUpdate("active", value ? "on" : "off");
+          <ValidatedForm
+            defaultValues={{
+              active: routeData?.partSummary?.active ?? undefined
             }}
-          />
-        </ValidatedForm>
+            validator={z.object({
+              active: zfd.checkbox()
+            })}
+            className="w-full"
+            isReadOnly={isReadOnly}
+          >
+            <Boolean
+              label={t`Active`}
+              name="active"
+              variant="small"
+              isDisabled={!!activationLockId}
+              onChange={(value) => {
+                onUpdate("active", value ? "on" : "off");
+              }}
+            />
+          </ValidatedForm>
+        </ItemChangeNoticeLock>
       )}
       {/* Manufacturer Part Number is a purchasing attribute — hidden on the CO
           affected-item card; it stays editable on the part page (non-embedded),
