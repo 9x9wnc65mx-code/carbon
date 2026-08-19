@@ -194,6 +194,10 @@ msgstr "{name} 삭제됨"
 msgid "{noDemandItemCount} parts skipped — nothing to make"
 msgstr "{noDemandItemCount}개 부품이 건너뜀 — 만들 것이 없음"
 
+#. placeholder {0}: (routeData?.purchaseOrder?.revisionId ?? 0) + 1
+msgid "{orderLabel} will be reopened for editing as revision {0}. The document already sent to the supplier is unchanged until you finalize and resend the order."
+msgstr "{orderLabel}이(가) 리비전 {0}으로 편집을 위해 다시 열립니다. 공급자에게 이미 보낸 문서는 주문을 확정하고 재전송할 때까지 변경되지 않습니다."
+
 msgid "{remaining, plural, one {# phase left} other {# phases left}}"
 msgstr "{remaining}단계 남음"
 
@@ -1695,7 +1699,7 @@ msgstr "보관됨"
 msgid "Archived Logs"
 msgstr "보관된 로그"
 
-#. placeholder {0}: quote.quoteId
+#. placeholder {0}: getQuoteDisplayId(quote)
 #. placeholder {1}: formatter.format(total)
 msgid "Are you sure you want to accept quote {0} for {1}?"
 msgstr "{1}에 대한 견적 {0}을(를) 승인하시겠습니까?"
@@ -1714,9 +1718,8 @@ msgstr "{0}을(를) 취소하시겠습니까? 취소되면 다시 열 때까지 
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "{0}을(를) 취소하시겠습니까? 관련된 모든 공급업체 견적도 함께 취소됩니다."
 
-#. placeholder {0}: routeData?.purchaseOrder?.purchaseOrderId ?? "this purchase order"
-msgid "Are you sure you want to cancel {0}? This will close the order."
-msgstr "{0}을(를) 취소하시겠습니까? 주문이 종료됩니다."
+msgid "Are you sure you want to cancel {orderLabel}? This will close the order."
+msgstr "{orderLabel}을(를) 취소하시겠습니까? 주문이 종료됩니다."
 
 msgid "Are you sure you want to cancel this job? It will no longer be available on the shop floor."
 msgstr "이 작업을 취소하시겠습니까? 더 이상 현장에서 사용할 수 없게 됩니다."
@@ -1772,14 +1775,17 @@ msgstr "이 공정작업에서 {0}을(를) 삭제하시겠습니까? 이 작업�
 msgid "Are you sure you want to delete {0}?"
 msgstr "{0}을(를) 삭제하시겠습니까?"
 
+#. placeholder {0}: getQuoteDisplayId( routeData?.quote )
+#. placeholder {0}: getQuoteDisplayId( selectedQuotation )
 #. placeholder {0}: initialValues.memoId
-#. placeholder {0}: initialValues.paymentId
-#. placeholder {0}: pickingList.pickingListId
 msgid "Are you sure you want to delete {0}? This cannot be undone."
 msgstr "{0}을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
 
 msgid "Are you sure you want to delete {name}? This cannot be undone."
 msgstr "{name}을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+
+msgid "Are you sure you want to delete {orderLabel}? This cannot be undone."
+msgstr "{orderLabel}을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
 
 #. placeholder {0}: activeView.name
 #. placeholder {0}: viewPendingDelete.name
@@ -2921,7 +2927,7 @@ msgid "Change Notices"
 msgstr "변경 공지"
 
 msgid "Change notices could not be loaded, so new versions and revisions are blocked. Reload to try again."
-msgstr ""
+msgstr "변경 공지를 로드할 수 없어 새 버전과 개정이 차단되었습니다. 다시 로드하세요."
 
 msgid "Change order"
 msgstr "변경 주문"
@@ -3898,6 +3904,9 @@ msgstr "칸반 생성"
 
 msgid "Create new rule"
 msgstr "새 규칙 생성"
+
+msgid "Create PO Revision"
+msgstr "구매주문 리비전 생성"
 
 msgid "Create Production Event"
 msgstr "생산 이벤트 생성"
@@ -15468,6 +15477,9 @@ msgstr "이 경로는 다음에 실행할 작업만 결정합니다."
 
 msgid "This period has no journal entries posted to it and can be permanently deleted. This cannot be undone."
 msgstr "이 기간에는 게시된 분개가 없으며 영구적으로 삭제할 수 있습니다. 이는 되돌릴 수 없습니다."
+
+msgid "this purchase order"
+msgstr "이 구매주문"
 
 msgid "This Quarter"
 msgstr "이번 분기"

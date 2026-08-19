@@ -194,6 +194,10 @@ msgstr "{name} gelöscht"
 msgid "{noDemandItemCount} parts skipped — nothing to make"
 msgstr "{noDemandItemCount} Teile übersprungen — es gibt nichts zu produzieren"
 
+#. placeholder {0}: (routeData?.purchaseOrder?.revisionId ?? 0) + 1
+msgid "{orderLabel} will be reopened for editing as revision {0}. The document already sent to the supplier is unchanged until you finalize and resend the order."
+msgstr "{orderLabel} wird zur Bearbeitung als Überarbeitung {0} erneut geöffnet. Das bereits an den Lieferanten gesendete Dokument bleibt unverändert, bis Sie die Bestellung abschließen und erneut senden."
+
 msgid "{remaining, plural, one {# phase left} other {# phases left}}"
 msgstr "{remaining, plural, one {# Phase verbleibend} other {# Phasen verbleibend}}"
 
@@ -1695,7 +1699,7 @@ msgstr "Archiviert"
 msgid "Archived Logs"
 msgstr "Archivierte Protokolle"
 
-#. placeholder {0}: quote.quoteId
+#. placeholder {0}: getQuoteDisplayId(quote)
 #. placeholder {1}: formatter.format(total)
 msgid "Are you sure you want to accept quote {0} for {1}?"
 msgstr "Sind Sie sicher, dass Sie das Angebot {0} für {1} akzeptieren möchten?"
@@ -1714,9 +1718,8 @@ msgstr "Sind Sie sicher, dass Sie {0} stornieren möchten? Es wird geschlossen u
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "Sind Sie sicher, dass Sie {0} stornieren möchten? Dies storniert auch alle zugehörigen Lieferantenofferten."
 
-#. placeholder {0}: routeData?.purchaseOrder?.purchaseOrderId ?? "this purchase order"
-msgid "Are you sure you want to cancel {0}? This will close the order."
-msgstr "Sind Sie sicher, dass Sie {0} stornieren möchten? Dadurch wird die Bestellung geschlossen."
+msgid "Are you sure you want to cancel {orderLabel}? This will close the order."
+msgstr "Sind Sie sicher, dass Sie {orderLabel} stornieren möchten? Dies wird die Bestellung schließen."
 
 msgid "Are you sure you want to cancel this job? It will no longer be available on the shop floor."
 msgstr "Sind Sie sicher, dass Sie diesen Auftrag stornieren möchten? Er ist dann nicht mehr auf der Werkstatt verfügbar."
@@ -1772,14 +1775,17 @@ msgstr "Sind Sie sicher, dass Sie {0} aus diesem Vorgang löschen möchten? Dies
 msgid "Are you sure you want to delete {0}?"
 msgstr "Sind Sie sicher, dass Sie {0} löschen möchten?"
 
+#. placeholder {0}: getQuoteDisplayId( routeData?.quote )
+#. placeholder {0}: getQuoteDisplayId( selectedQuotation )
 #. placeholder {0}: initialValues.memoId
-#. placeholder {0}: initialValues.paymentId
-#. placeholder {0}: pickingList.pickingListId
 msgid "Are you sure you want to delete {0}? This cannot be undone."
 msgstr "Sind Sie sicher, dass Sie {0} löschen möchten? Dies kann nicht rückgängig gemacht werden."
 
 msgid "Are you sure you want to delete {name}? This cannot be undone."
 msgstr "Sind Sie sicher, dass Sie {name} löschen möchten? Dies kann nicht rückgängig gemacht werden."
+
+msgid "Are you sure you want to delete {orderLabel}? This cannot be undone."
+msgstr "Sind Sie sicher, dass Sie {orderLabel} löschen möchten? Dies kann nicht rückgängig gemacht werden."
 
 #. placeholder {0}: activeView.name
 #. placeholder {0}: viewPendingDelete.name
@@ -2921,7 +2927,7 @@ msgid "Change Notices"
 msgstr "Änderungsmitteilungen"
 
 msgid "Change notices could not be loaded, so new versions and revisions are blocked. Reload to try again."
-msgstr ""
+msgstr "Änderungsmitteilungen konnten nicht geladen werden, daher sind neue Versionen und Überarbeitungen blockiert. Laden Sie neu, um es erneut zu versuchen."
 
 msgid "Change order"
 msgstr "Änderungsbestellung"
@@ -3898,6 +3904,9 @@ msgstr "Kanban erstellen"
 
 msgid "Create new rule"
 msgstr "Neue Regel erstellen"
+
+msgid "Create PO Revision"
+msgstr "Bestellungsrevision erstellen"
 
 msgid "Create Production Event"
 msgstr "Produktionsereignis erstellen"
@@ -15468,6 +15477,9 @@ msgstr "Dieser Pfad entscheidet nur darüber, was als nächstes ausgeführt wird
 
 msgid "This period has no journal entries posted to it and can be permanently deleted. This cannot be undone."
 msgstr "Diese Periode hat keine Journaleinträge und kann dauerhaft gelöscht werden. Dies kann nicht rückgängig gemacht werden."
+
+msgid "this purchase order"
+msgstr "diese Bestellung"
 
 msgid "This Quarter"
 msgstr "Dieses Quartal"

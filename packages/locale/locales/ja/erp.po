@@ -194,6 +194,10 @@ msgstr "{name}が削除されました"
 msgid "{noDemandItemCount} parts skipped — nothing to make"
 msgstr "{noDemandItemCount}件のパーツをスキップしました — 製造する必要がありません"
 
+#. placeholder {0}: (routeData?.purchaseOrder?.revisionId ?? 0) + 1
+msgid "{orderLabel} will be reopened for editing as revision {0}. The document already sent to the supplier is unchanged until you finalize and resend the order."
+msgstr "{orderLabel}はリビジョン{0}として編集のために再度開かれます。既にサプライヤーに送信したドキュメントは、確定して注文を再度送信するまで変更されません。"
+
 msgid "{remaining, plural, one {# phase left} other {# phases left}}"
 msgstr "{remaining, plural, one {# フェーズ残り} other {# フェーズ残り}}"
 
@@ -1695,7 +1699,7 @@ msgstr "アーカイブ済み"
 msgid "Archived Logs"
 msgstr "アーカイブされたログ"
 
-#. placeholder {0}: quote.quoteId
+#. placeholder {0}: getQuoteDisplayId(quote)
 #. placeholder {1}: formatter.format(total)
 msgid "Are you sure you want to accept quote {0} for {1}?"
 msgstr "本当に見積書 {0} を {1} で受け入れてもよろしいですか？"
@@ -1714,9 +1718,8 @@ msgstr "{0}をキャンセルしてもよろしいですか？閉じられて、
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "{0}をキャンセルしてもよろしいですか？これにより、関連するすべてのサプライヤー見積もりもキャンセルされます。"
 
-#. placeholder {0}: routeData?.purchaseOrder?.purchaseOrderId ?? "this purchase order"
-msgid "Are you sure you want to cancel {0}? This will close the order."
-msgstr "{0}をキャンセルしてもよろしいですか？注文が閉じられます。"
+msgid "Are you sure you want to cancel {orderLabel}? This will close the order."
+msgstr "{orderLabel}をキャンセルしてもよろしいですか？これにより注文が閉じられます。"
 
 msgid "Are you sure you want to cancel this job? It will no longer be available on the shop floor."
 msgstr "このジョブをキャンセルしてもよろしいですか？ショップフロアで利用できなくなります。"
@@ -1772,14 +1775,17 @@ msgstr "{0}をこの操作から削除してもよろしいですか?これは�
 msgid "Are you sure you want to delete {0}?"
 msgstr "{0}を削除してもよろしいですか？"
 
+#. placeholder {0}: getQuoteDisplayId( routeData?.quote )
+#. placeholder {0}: getQuoteDisplayId( selectedQuotation )
 #. placeholder {0}: initialValues.memoId
-#. placeholder {0}: initialValues.paymentId
-#. placeholder {0}: pickingList.pickingListId
 msgid "Are you sure you want to delete {0}? This cannot be undone."
 msgstr "本当に{0}を削除してもよろしいですか？この操作は取り消せません。"
 
 msgid "Are you sure you want to delete {name}? This cannot be undone."
 msgstr "本当に{name}を削除してもよろしいですか？この操作は取り消せません。"
+
+msgid "Are you sure you want to delete {orderLabel}? This cannot be undone."
+msgstr "本当に{orderLabel}を削除してもよろしいですか？この操作は取り消せません。"
 
 #. placeholder {0}: activeView.name
 #. placeholder {0}: viewPendingDelete.name
@@ -2921,7 +2927,7 @@ msgid "Change Notices"
 msgstr "変更通知"
 
 msgid "Change notices could not be loaded, so new versions and revisions are blocked. Reload to try again."
-msgstr ""
+msgstr "変更通知を読み込めませんでした。新しいバージョンとリビジョンはブロックされています。再度読み込んでください。"
 
 msgid "Change order"
 msgstr "変更注文"
@@ -3898,6 +3904,9 @@ msgstr "カンバンを作成"
 
 msgid "Create new rule"
 msgstr "新しいルールを作成"
+
+msgid "Create PO Revision"
+msgstr "発注書リビジョンを作成"
 
 msgid "Create Production Event"
 msgstr "生産イベントを作成"
@@ -15468,6 +15477,9 @@ msgstr "このパスは次に何が実行されるかだけを決定します"
 
 msgid "This period has no journal entries posted to it and can be permanently deleted. This cannot be undone."
 msgstr "この期間には転記された仕訳がなく、永久に削除できます。この処理は取り消せません。"
+
+msgid "this purchase order"
+msgstr "この発注書"
 
 msgid "This Quarter"
 msgstr "今四半期"

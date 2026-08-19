@@ -194,6 +194,10 @@ msgstr "{name} silindi"
 msgid "{noDemandItemCount} parts skipped — nothing to make"
 msgstr "{noDemandItemCount} parça atlandı — yapılacak bir şey yok"
 
+#. placeholder {0}: (routeData?.purchaseOrder?.revisionId ?? 0) + 1
+msgid "{orderLabel} will be reopened for editing as revision {0}. The document already sent to the supplier is unchanged until you finalize and resend the order."
+msgstr "{orderLabel} revizyon {0} olarak düzenlenmek üzere yeniden açılacaktır. Tedarikçiye gönderilen belge, siparişi sonlandırıp yeniden gönderene kadar değişmez."
+
 msgid "{remaining, plural, one {# phase left} other {# phases left}}"
 msgstr "{remaining, plural, one {# aşama kaldı} other {# aşama kaldı}}"
 
@@ -1695,7 +1699,7 @@ msgstr "Arşivlenmiş"
 msgid "Archived Logs"
 msgstr "Arşivlenmiş Kayıtlar"
 
-#. placeholder {0}: quote.quoteId
+#. placeholder {0}: getQuoteDisplayId(quote)
 #. placeholder {1}: formatter.format(total)
 msgid "Are you sure you want to accept quote {0} for {1}?"
 msgstr "Teklif {0}'ı {1} için kabul etmek istediğinizden emin misiniz?"
@@ -1714,9 +1718,8 @@ msgstr "{0} öğesini iptal etmek istediğinizden emin misiniz? Yeniden açana k
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "{0}'yi iptal etmek istediğinizden emin misiniz? Bu aynı zamanda tüm ilgili tedarikçi tekliflerini de iptal edecektir."
 
-#. placeholder {0}: routeData?.purchaseOrder?.purchaseOrderId ?? "this purchase order"
-msgid "Are you sure you want to cancel {0}? This will close the order."
-msgstr "{0} siparişini iptal etmek istediğinizden emin misiniz? Bu siparişi kapatacaktır."
+msgid "Are you sure you want to cancel {orderLabel}? This will close the order."
+msgstr "{orderLabel}'yi iptal etmek istediğinizden emin misiniz? Bu siparişi kapatacaktır."
 
 msgid "Are you sure you want to cancel this job? It will no longer be available on the shop floor."
 msgstr "Bu işi iptal etmek istediğinizden emin misiniz? Artık atölyede kullanılamayacak."
@@ -1772,14 +1775,17 @@ msgstr "Bu işlemden {0}'ı silmek istediğinizden emin misiniz? Bu geri alınam
 msgid "Are you sure you want to delete {0}?"
 msgstr "{0} öğesini silmek istediğinizden emin misiniz?"
 
+#. placeholder {0}: getQuoteDisplayId( routeData?.quote )
+#. placeholder {0}: getQuoteDisplayId( selectedQuotation )
 #. placeholder {0}: initialValues.memoId
-#. placeholder {0}: initialValues.paymentId
-#. placeholder {0}: pickingList.pickingListId
 msgid "Are you sure you want to delete {0}? This cannot be undone."
 msgstr "Emin misiniz ki {0}'ı silmek istiyorsunuz? Bu geri alınamaz."
 
 msgid "Are you sure you want to delete {name}? This cannot be undone."
 msgstr "{name} adlı yedeği silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+
+msgid "Are you sure you want to delete {orderLabel}? This cannot be undone."
+msgstr "{orderLabel}'yi silmek istediğinizden emin misiniz? Bu geri alınamaz."
 
 #. placeholder {0}: activeView.name
 #. placeholder {0}: viewPendingDelete.name
@@ -2921,7 +2927,7 @@ msgid "Change Notices"
 msgstr "Değişiklik Bildirimleri"
 
 msgid "Change notices could not be loaded, so new versions and revisions are blocked. Reload to try again."
-msgstr ""
+msgstr "Değişiklik Bildirimleri yüklenemedi, bu nedenle yeni sürümler ve revizyonlar engellendi. Tekrar denemek için sayfayı yeniden yükleyin."
 
 msgid "Change order"
 msgstr "Değişim emri"
@@ -3898,6 +3904,9 @@ msgstr "Kanban Oluştur"
 
 msgid "Create new rule"
 msgstr "Yeni kural oluştur"
+
+msgid "Create PO Revision"
+msgstr "PO Revizyonu Oluştur"
 
 msgid "Create Production Event"
 msgstr "Üretim Etkinliği Oluştur"
@@ -10658,7 +10667,7 @@ msgid "Packing Slip"
 msgstr "Paketleme Fişi"
 
 msgid "Pad amounts to their currency's decimal places, so 300 appears as 300.00 and columns of figures stay aligned. Turn this off to show only the digits that carry value. Printed documents and stored amounts are unaffected either way."
-msgstr "Miktarları para biriminin ondalık basamaklarına göre doldur, böylece 300, 300.00 olarak görünür ve sayı sütunları hizalı kalır. Yalnızca değer taşıyan rakamları göstermek için bunu kapatın. Yazdırılan belgeler ve depolanan miktarlar her iki durumda da etkilenmez."
+msgstr "Miktarları para biriminin ondalık basamaklarına göre doldur, böylece 300, 300,00 olarak görünür ve sayı sütunları hizalı kalır. Yalnızca değer taşıyan rakamları göstermek için bunu kapatın. Yazdırılan belgeler ve depolanan miktarlar her iki durumda da etkilenmez."
 
 msgid "Page"
 msgstr "Sayfa"
@@ -15468,6 +15477,9 @@ msgstr "Bu yol yalnızca sonra ne çalışacağını belirler"
 
 msgid "This period has no journal entries posted to it and can be permanently deleted. This cannot be undone."
 msgstr "Bu döneme nakledilen günlük girişi yoktur ve kalıcı olarak silinebilir. Bu geri alınamaz."
+
+msgid "this purchase order"
+msgstr "bu satın alma siparişi"
 
 msgid "This Quarter"
 msgstr "Bu Çeyrek"

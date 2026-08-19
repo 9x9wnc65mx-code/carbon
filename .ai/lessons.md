@@ -1073,3 +1073,22 @@ canvas hosting Radix popovers/selects.
 **Rule:** In edge functions, batch reads keyed by a large id list go through the Kysely `db` handle (bind parameters, no URL cap) whenever no PostgREST embed is needed. If an embed forces PostgREST, chunk conservatively (≤50 ids) and include `res.error.message` in the thrown error so the failure names its cause. Never swallow a prefetch error into a bare string with no detail.
 
 **Applies to:** `packages/database/supabase/functions/**` batch reads; any `.in(...)` over tree-collected or list-collected ids.
+## Browser code must import `@carbon/documents/utils`, never `@carbon/documents/pdf`
+
+**Context:** Adding a shared `getQuoteDisplayId` / `getPurchaseOrderDisplayId` helper for showing the revision suffix on documents. The natural home looked like the `./pdf` barrel, which already re-exported it for the server-side PDF routes.
+
+**Problem:** `./pdf` is a barrel over every `@react-pdf/renderer` document component. A route `loader`/`action` can import from it safely — React Router strips server-only exports and tree-shakes the rest — but a **client-rendered component** cannot: the `/share/**` quote page and the ERP UI would pull the entire react-pdf graph into the browser bundle for a five-line string helper. The existing convention confirms this: ERP client components only ever import `@carbon/documents/template`, never `/pdf`.
+
+**Rule:** Pure display helpers shared by server and browser belong in `packages/documents/src/utils/` and are exposed through the `./utils` export (type-only deps). Import them from `@carbon/documents/utils` in any component that renders in the browser. `src/utils/index.ts` is an explicit re-export list, not `export *` — the per-document util files each define their own `getLineDescription`, so a wildcard barrel collides.
+
+**Applies to:** `packages/documents/package.json` exports, `packages/documents/src/utils/index.ts`, any `@carbon/documents` import inside `apps/erp/app/modules/**/ui/**` or `apps/erp/app/routes/share+/**`.
+
+## A new row reusing a readable id must qualify it — `externalLink` is UNIQUE per document
+
+**Context:** "Create Quote Revision" failed with a generic "Failed to duplicate quote". The real error was only in the edge-runtime log: `duplicate key value violates unique constraint "externalLink_documentId_documentType_unique"`.
+
+**Problem:** `externalLink` is `UNIQUE (documentId, documentType, companyId)` (`20250711000000_customer-portal-links.sql`). A quote revision deliberately keeps the same readable `quoteId` as its source, and `get-method`'s `quoteToQuote` branch inserted a share-link row keyed on that bare id — so every revision collided with the original's link and rolled back the whole copy transaction. Worse, `deleteQuote` deletes only the `quote` row (the FK points quote→link, so nothing cascades), leaving orphan link rows that re-collide when the same revision number is issued again.
+
+**Rule:** Any new row that reuses an existing readable id must qualify it (`Q000001-1`), and any insert into a table whose unique key can be orphaned by a delete needs `onConflict(...).doUpdateSet(...)` rather than a bare insert. When a user-facing action reports a generic failure, read the edge-runtime container log before theorising — the route's flash message hides the Postgres error code.
+
+**Applies to:** `packages/database/supabase/functions/get-method/index.ts` (`quoteToQuote`), `apps/erp/app/modules/sales/sales.service.ts` (`deleteQuote`), any insert into `externalLink`.
