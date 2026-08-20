@@ -59,6 +59,8 @@ type ToolPropertiesProps = {
     pickMethods: PickMethod[];
     makeMethods: Promise<PostgrestResponse<MakeMethod>>;
     tags: { name: string }[];
+    // Set while the change notice that minted this item is still open.
+    unreleasedChangeOrder?: UnreleasedChangeOrderItem | null;
   };
 };
 
@@ -193,9 +195,9 @@ const ToolProperties = ({ data }: ToolPropertiesProps) => {
   // the toggle is locked: an unreleased revision switched Active by hand reaches
   // the item pickers, MRP and job creation carrying the notice's draft BOM.
   // An already-active tool is left alone so it can still be switched off.
-  const activationLockId = routeDataFromRoute?.toolSummary?.active
+  const activationLockId = routeData?.toolSummary?.active
     ? undefined
-    : routeDataFromRoute?.unreleasedChangeOrder?.changeOrderReadableId;
+    : routeData?.unreleasedChangeOrder?.changeOrderReadableId;
 
   const [suppliers] = useSuppliers();
 

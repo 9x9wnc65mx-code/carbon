@@ -15464,7 +15464,7 @@ msgid "This part has {quantityOnHand} on hand at this location. No Stock means i
 msgstr "Questo pezzo ha {quantityOnHand} disponibile in questa ubicazione. No Stock significa che non sarà né pianificato né consumato."
 
 msgid "This part is activated when change notice {activationLockId} is released."
-msgstr ""
+msgstr "Questa parte viene attivata quando l'avviso di modifica {activationLockId} viene rilasciato."
 
 msgid "This part is being phased out."
 msgstr "Questa parte è in fase di eliminazione."
@@ -15516,7 +15516,7 @@ msgid "this supplier"
 msgstr "questo fornitore"
 
 msgid "This tool is activated when change notice {activationLockId} is released."
-msgstr ""
+msgstr "Questo attrezzo viene attivato quando l'avviso di modifica {activationLockId} viene rilasciato."
 
 msgid "This updates the theme for all users of the application"
 msgstr "Questo aggiorna il tema per tutti gli utenti dell'applicazione"

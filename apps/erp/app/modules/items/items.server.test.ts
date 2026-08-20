@@ -61,8 +61,14 @@ describe("getLockVerdict", () => {
 
 type Row = Record<string, unknown> | null;
 
+// PostgREST's `max_rows`, mirrored so a read that asks for too much silently
+// comes back short — exactly the failure the batching exists to avoid.
+const MAX_ROWS = 1000;
+
 // Stands in for the two list reads the batch guard makes. Supabase builders are
-// thenables, so the chain resolves on await without a terminal method.
+// thenables, so the chain resolves on await without a terminal method. Each
+// read is answered from the ids its own `in` filter carries and truncated at
+// MAX_ROWS, so a guard that stopped batching visibly drops rows.
 function fakeListClient(
   rows: { item?: Row[]; changeOrder?: Row[] },
   errors: { item?: boolean; changeOrder?: boolean } = {}
@@ -70,15 +76,31 @@ function fakeListClient(
   return {
     from(table: string) {
       const failed = errors[table as keyof typeof errors] === true;
-      const result = {
-        data: failed ? null : (rows[table as keyof typeof rows] ?? []),
-        error: failed ? { message: `failed to read ${table}` } : null
-      };
+      const all = rows[table as keyof typeof rows] ?? [];
+      let requested: string[] | null = null;
       const builder = {
         select: () => builder,
-        in: () => builder,
+        in: (_column: string, ids: string[]) => {
+          requested = ids;
+          return builder;
+        },
         eq: () => builder,
-        then: (resolve: (value: typeof result) => unknown) => resolve(result)
+        then: (
+          resolve: (value: {
+            data: Row[] | null;
+            error: { message: string } | null;
+          }) => unknown
+        ) =>
+          resolve({
+            data: failed
+              ? null
+              : all
+                  .filter(
+                    (row) => !requested || requested.includes(row?.id as string)
+                  )
+                  .slice(0, MAX_ROWS),
+            error: failed ? { message: `failed to read ${table}` } : null
+          })
       };
       return builder;
     }
@@ -152,6 +174,35 @@ describe("getUnreleasedChangeOrderItems", () => {
         {
           itemId: "item_1",
           itemName: "P000001.A",
+          changeOrderReadableId: "ECO-000001"
+        }
+      ],
+      error: null
+    });
+  });
+
+  // PostgREST caps a response at 1000 rows, so the guard walks the ids in
+  // batches. Without that, an item past the cap reads as unowned and activates.
+  it("finds an offending item past the response cap", async () => {
+    const itemIds = Array.from({ length: 1200 }, (_, i) => `item_${i}`);
+    const client = fakeListClient({
+      item: itemIds.map((id) => ({
+        id,
+        readableIdWithRevision: id,
+        changeOrderId: id === "item_1100" ? "co_open" : null
+      })),
+      changeOrder: [
+        { id: "co_open", changeOrderId: "ECO-000001", status: "Draft" }
+      ]
+    });
+
+    expect(
+      await getUnreleasedChangeOrderItems(client, { itemIds, companyId })
+    ).toEqual({
+      data: [
+        {
+          itemId: "item_1100",
+          itemName: "item_1100",
           changeOrderReadableId: "ECO-000001"
         }
       ],

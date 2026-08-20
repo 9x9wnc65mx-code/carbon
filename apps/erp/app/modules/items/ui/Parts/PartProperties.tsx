@@ -66,6 +66,10 @@ export type PartPropertiesData = {
   pickMethods: PickMethod[];
   makeMethods: Promise<PostgrestResponse<MakeMethod>>;
   tags: { name: string }[];
+  // Set while the change notice that minted this item is still open. Optional
+  // because the change-order card builds this object itself and never renders
+  // the Active toggle.
+  unreleasedChangeOrder?: UnreleasedChangeOrderItem | null;
 };
 
 type PartPropertiesProps = {
@@ -236,9 +240,9 @@ const PartProperties = ({
   // the toggle is locked: an unreleased revision switched Active by hand reaches
   // the item pickers, MRP and job creation carrying the notice's draft BOM.
   // An already-active part is left alone so it can still be switched off.
-  const activationLockId = routeDataFromRoute?.partSummary?.active
+  const activationLockId = routeData?.partSummary?.active
     ? undefined
-    : routeDataFromRoute?.unreleasedChangeOrder?.changeOrderReadableId;
+    : routeData?.unreleasedChangeOrder?.changeOrderReadableId;
 
   const [suppliers] = useSuppliers();
 
