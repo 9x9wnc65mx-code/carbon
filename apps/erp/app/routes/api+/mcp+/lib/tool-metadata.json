@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-18T19:07:39.197Z",
-  "totalTools": 1444,
+  "generated": "2026-08-21T06:15:16.289Z",
+  "totalTools": 1443,
   "modules": 15,
   "tools": [
     {
@@ -42128,37 +42128,6 @@
           "digitalQuoteEnabled",
           "digitalQuoteNotificationGroup",
           "digitalQuoteIncludesPurchaseOrders"
-        ]
-      }
-    },
-    {
-      "name": "settings_updateIntegrationMetadata",
-      "module": "settings",
-      "classification": "WRITE",
-      "description": "update integration metadata",
-      "paramCount": 2,
-      "serviceParams": [
-        "client",
-        "companyId",
-        "integrationId",
-        "metadata",
-        "updatedBy"
-      ],
-      "injectAuth": [
-        "companyId",
-        "updatedBy"
-      ],
-      "schema": {
-        "type": "object",
-        "properties": {
-          "integrationId": {
-            "type": "string"
-          },
-          "metadata": {}
-        },
-        "required": [
-          "integrationId",
-          "metadata"
         ]
       }
     },
