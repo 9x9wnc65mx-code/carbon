@@ -456,7 +456,7 @@ msgstr "Bir işin durumu değiştirildi"
 msgid "A list is wired into {0}, so this step runs once for each item and returns a list of results."
 msgstr "Bir liste {0} öğesine bağlandı, bu nedenle bu adım her öğe için bir kez çalışır ve sonuçların listesini döndürür."
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.input), batch.input )
+#. placeholder {0}: inputLabel(batch.input)
 msgid "A list is wired into {0}, so this step runs once for each item in it — up to {MAX_LIST_ITEMS}."
 msgstr "Bir liste {0} öğesine bağlandı, bu nedenle bu adım içindeki her öğe için bir kez çalışır — en fazla {MAX_LIST_ITEMS}."
 
@@ -1371,6 +1371,9 @@ msgstr "Alfa"
 
 msgid "Always"
 msgstr "Her zaman"
+
+msgid "Always sent — every notification shows in the bell menu."
+msgstr "Her zaman gönderilir — her bildirim çan menüsünde gösterilir."
 
 msgid "Always taken"
 msgstr "Her zaman alındı"
@@ -3399,6 +3402,9 @@ msgstr "Jira sorununu bağla"
 msgid "Connect Linear issue"
 msgstr "Linear sorununu bağla"
 
+msgid "Connect Slack under Settings → Integrations first."
+msgstr "Slack'i önce Ayarlar → İntegrasyonlar altında bağlayın."
+
 msgid "Connect the Otherwise handle to a node to run when no condition matches."
 msgstr "Hiçbir koşul eşleşmediğinde çalıştırılacak bir düğüme Aksi takdirde işlecini bağlayın."
 
@@ -4189,6 +4195,9 @@ msgstr "Özel Alan"
 
 msgid "Custom Fields"
 msgstr "Özel Alanlar"
+
+msgid "Custom fields are not available for items yet."
+msgstr "Özel alanlar henüz öğeler için kullanılabilir değildir."
 
 msgid "Custom SOW · we manage"
 msgstr "Özel SOW · biz yönetiriz"
@@ -5094,6 +5103,9 @@ msgstr "Boyutlar"
 
 msgid "Direct"
 msgstr "Doğrudan"
+
+msgid "Direct message to each recipient in your Slack workspace."
+msgstr "Slack çalışma alanınızdaki her alıcıya doğrudan mesaj."
 
 msgid "Direction"
 msgstr "Yön"
@@ -7586,6 +7598,9 @@ msgstr "Yalnızca stokta"
 msgid "In the loop together"
 msgstr "Birlikte döngüde"
 
+msgid "In-app"
+msgstr "Uygulama içi"
+
 msgid "In-app notifications are always delivered. Choose which topics also reach you by email or Slack."
 msgstr "Uygulama içi bildirimler her zaman iletilir. Hangi konuların e-posta veya Slack aracılığıyla sizi ulaştıracağını seçin."
 
@@ -8475,8 +8490,8 @@ msgstr "Liste Seçenekleri"
 msgid "List Parameters"
 msgstr "Liste Parametreleri"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.first), batch.first )
-#. placeholder {1}: label( actionInputLabelKey(actionId, batch.second), batch.second )
+#. placeholder {0}: inputLabel(batch.first)
+#. placeholder {1}: inputLabel(batch.second)
 msgid "Lists are wired into both {0} and {1}, so this step cannot tell which one to repeat over. Leave a list on only one of them."
 msgstr "Listeler hem {0} hem de {1} öğelerine bağlıdır, bu nedenle bu adım hangisinin üzerinde tekrarlanacağını belirleyemez. Listeyi yalnızca birine bırakın."
 
@@ -9267,6 +9282,9 @@ msgstr "Gerektiğinde"
 msgid "Need the right columns?"
 msgstr "Doğru sütunlara ihtiyacınız var mı?"
 
+msgid "Needs a Business or Partner plan."
+msgstr "Business veya Partner planı gereklidir."
+
 msgid "Needs fixing"
 msgstr "Onarılması gerekir"
 
@@ -9572,6 +9590,9 @@ msgstr "Yeni Transfer Satırı"
 
 msgid "New Unit of Measure"
 msgstr "Yeni Bir Ölçü Birimi"
+
+msgid "New version"
+msgstr "Yeni versiyon"
 
 msgid "New Version"
 msgstr "Yeni Sürüm"
@@ -10141,6 +10162,12 @@ msgstr "Henüz hiçbir şey yok. Bir adım yalnızca yapılandırıldıktan sonr
 
 msgid "Notification"
 msgstr "Bildirim"
+
+msgid "Notification type"
+msgstr "Bildirim türü"
+
+msgid "Notification Type"
+msgstr "Bildirim Türü"
 
 msgid "Notifications"
 msgstr "Bildirimler"
@@ -13334,6 +13361,9 @@ msgstr "Bu belge aktif hale gelmeden önce onay için gönderilir."
 msgid "Sent complete date"
 msgstr "Gönderilen tamamlama tarihi"
 
+msgid "Sent to each recipient who has email notifications turned on."
+msgstr "E-posta bildirimleri açık olan her alıcıya gönderilir."
+
 msgid "Sequences"
 msgstr "Sıralamalar"
 
@@ -15546,8 +15576,17 @@ msgstr "Bu sürüm değişiklik bildirimi <0>{0}</0> ile ilgilidir. Orada düzen
 msgid "This version cannot be opened"
 msgstr "Bu sürüm açılamıyor"
 
+msgid "This version is live"
+msgstr "Bu versiyon yayında"
+
+msgid "This version is live, so it cannot be changed. You can still move steps around to tidy the layout."
+msgstr "Bu versiyon yayında olduğundan değiştirilemez. Düzeni düzenlemek için yine de adımları hareket ettirebilirsiniz."
+
 msgid "This version is live. Create a new version to edit."
 msgstr "Bu sürüm canlı. Düzenlemek için yeni bir sürüm oluşturun."
+
+msgid "This version is live. Create a new version to make changes. You can still move steps around to tidy the layout."
+msgstr "Bu versiyon yayında. Değişiklik yapmak için yeni bir versiyon oluşturun. Düzeni düzenlemek için yine de adımları hareket ettirebilirsiniz."
 
 msgid "This version's definition could not be read."
 msgstr "Bu sürümün tanımı okunamadı."
@@ -16935,6 +16974,9 @@ msgstr "Kapsam dışında neler var"
 msgid "When"
 msgstr "Ne zaman"
 
+msgid "When {name} changes"
+msgstr "Ne zaman {name} değişir"
+
 msgid "When a finished product's shelf life is set to Calculated, pick which consumed inputs feed the calculation."
 msgstr "Bir bitmiş ürünün raf ömrü Hesaplanan olarak ayarlandığında, hesaplamaya hangi tüketilen girdilerin dahil edileceğini seçin."
 
@@ -17030,6 +17072,9 @@ msgstr "Teslim etmeyi taahhüt ettiğiniz zaman; planlama bunu karşılama için
 
 msgid "When your fiscal and tax years start"
 msgstr "Mali ve vergi yıllarınız ne zaman başlar"
+
+msgid "Where a workflow notification is delivered — in-app is always sent, while email needs a Business or Partner plan and Slack needs your Slack workspace connected."
+msgstr "İş akışı bildiriminin nereye teslim edileceği — uygulama içi her zaman gönderilir, e-posta Business veya Partner planı gerektirir ve Slack, Slack çalışma alanınızın bağlı olması gerekir."
 
 msgid "Where an operation runs; carries labor and quoting rates, with overhead the difference between them."
 msgstr "Bir operasyonun nerede çalıştırıldığı; işçilik ve teklif oranlarını taşır, genel giderler aralarındaki fark."

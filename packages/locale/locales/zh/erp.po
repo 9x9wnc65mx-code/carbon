@@ -456,7 +456,7 @@ msgstr "任务的状态已变更"
 msgid "A list is wired into {0}, so this step runs once for each item and returns a list of results."
 msgstr "列表被接入到 {0}，所以此步骤为每个项目运行一次并返回结果列表。"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.input), batch.input )
+#. placeholder {0}: inputLabel(batch.input)
 msgid "A list is wired into {0}, so this step runs once for each item in it — up to {MAX_LIST_ITEMS}."
 msgstr "列表被接入到 {0}，所以此步骤为其中每个项目运行一次 — 最多 {MAX_LIST_ITEMS} 个。"
 
@@ -1371,6 +1371,9 @@ msgstr "Alpha"
 
 msgid "Always"
 msgstr "始终"
+
+msgid "Always sent — every notification shows in the bell menu."
+msgstr "始终发送 — 每个通知都显示在铃声菜单中。"
 
 msgid "Always taken"
 msgstr "始终采取"
@@ -3399,6 +3402,9 @@ msgstr "连接 Jira 问题"
 msgid "Connect Linear issue"
 msgstr "连接 Linear 问题"
 
+msgid "Connect Slack under Settings → Integrations first."
+msgstr "先在设置 → 集成中连接 Slack。"
+
 msgid "Connect the Otherwise handle to a node to run when no condition matches."
 msgstr "将 Otherwise 句柄连接到节点，以便在没有条件匹配时运行。"
 
@@ -4189,6 +4195,9 @@ msgstr "自定义字段"
 
 msgid "Custom Fields"
 msgstr "自定义字段"
+
+msgid "Custom fields are not available for items yet."
+msgstr "自定义字段尚不适用于项目。"
 
 msgid "Custom SOW · we manage"
 msgstr "自定义 SOW · 我们管理"
@@ -5094,6 +5103,9 @@ msgstr "尺寸"
 
 msgid "Direct"
 msgstr "直接"
+
+msgid "Direct message to each recipient in your Slack workspace."
+msgstr "在您的 Slack 工作区中直接消息给每个收件人。"
 
 msgid "Direction"
 msgstr "方向"
@@ -7586,6 +7598,9 @@ msgstr "仅库存"
 msgid "In the loop together"
 msgstr "一起保持沟通"
 
+msgid "In-app"
+msgstr "应用内"
+
 msgid "In-app notifications are always delivered. Choose which topics also reach you by email or Slack."
 msgstr "应用内通知始终会被传递。选择哪些主题也通过电子邮件或 Slack 发送给您。"
 
@@ -8475,8 +8490,8 @@ msgstr "列表选项"
 msgid "List Parameters"
 msgstr "列表参数"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.first), batch.first )
-#. placeholder {1}: label( actionInputLabelKey(actionId, batch.second), batch.second )
+#. placeholder {0}: inputLabel(batch.first)
+#. placeholder {1}: inputLabel(batch.second)
 msgid "Lists are wired into both {0} and {1}, so this step cannot tell which one to repeat over. Leave a list on only one of them."
 msgstr "列表同时连接到{0}和{1}，因此此步骤无法判断要在哪一个上重复。仅在其中一个上保留列表。"
 
@@ -9267,6 +9282,9 @@ msgstr "需要日期"
 msgid "Need the right columns?"
 msgstr "需要正确的列吗？"
 
+msgid "Needs a Business or Partner plan."
+msgstr "需要业务或合作伙伴计划。"
+
 msgid "Needs fixing"
 msgstr "需要修复"
 
@@ -9572,6 +9590,9 @@ msgstr "新转移行"
 
 msgid "New Unit of Measure"
 msgstr "新计量单位"
+
+msgid "New version"
+msgstr "新版本"
 
 msgid "New Version"
 msgstr "新版本"
@@ -10141,6 +10162,12 @@ msgstr "暂无内容。步骤配置后才会提供值。"
 
 msgid "Notification"
 msgstr "通知"
+
+msgid "Notification type"
+msgstr "通知类型"
+
+msgid "Notification Type"
+msgstr "通知类型"
 
 msgid "Notifications"
 msgstr "通知"
@@ -13334,6 +13361,9 @@ msgstr "在文档激活前将其发送以供批准。"
 msgid "Sent complete date"
 msgstr "发送完成日期"
 
+msgid "Sent to each recipient who has email notifications turned on."
+msgstr "发送给打开了电子邮件通知的每个收件人。"
+
 msgid "Sequences"
 msgstr "序列"
 
@@ -15546,8 +15576,17 @@ msgstr "此版本属于变更通知<0>{0}</0>。请在那里编辑。"
 msgid "This version cannot be opened"
 msgstr "无法打开此版本"
 
+msgid "This version is live"
+msgstr "此版本已上线"
+
+msgid "This version is live, so it cannot be changed. You can still move steps around to tidy the layout."
+msgstr "此版本已上线，因此无法更改。您仍然可以移动步骤来整理布局。"
+
 msgid "This version is live. Create a new version to edit."
 msgstr "此版本处于实时状态。创建新版本进行编辑。"
+
+msgid "This version is live. Create a new version to make changes. You can still move steps around to tidy the layout."
+msgstr "此版本已上线。创建新版本以进行更改。您仍然可以移动步骤来整理布局。"
 
 msgid "This version's definition could not be read."
 msgstr "无法读取此版本的定义。"
@@ -16935,6 +16974,9 @@ msgstr "超出范围的内容"
 msgid "When"
 msgstr "何时"
 
+msgid "When {name} changes"
+msgstr "当 {name} 更改时"
+
 msgid "When a finished product's shelf life is set to Calculated, pick which consumed inputs feed the calculation."
 msgstr "当成品的保质期设置为\"计算\"时，选择哪些消耗的投入物料用于计算。"
 
@@ -17030,6 +17072,9 @@ msgstr "当您承诺交货时;计划将其视为履行的需求到期日期。"
 
 msgid "When your fiscal and tax years start"
 msgstr "您的会计年度和税务年度的开始时间"
+
+msgid "Where a workflow notification is delivered — in-app is always sent, while email needs a Business or Partner plan and Slack needs your Slack workspace connected."
+msgstr "工作流通知的传送位置 — 应用内始终发送，电子邮件需要业务或合作伙伴计划，Slack 需要连接您的 Slack 工作区。"
 
 msgid "Where an operation runs; carries labor and quoting rates, with overhead the difference between them."
 msgstr "操作执行的位置。carries劳动和报价费率,开销是它们之间的差异。"

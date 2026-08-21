@@ -456,7 +456,7 @@ msgstr "Статус работы изменяется"
 msgid "A list is wired into {0}, so this step runs once for each item and returns a list of results."
 msgstr "Список подключен к {0}, поэтому этот шаг выполняется один раз для каждого элемента и возвращает список результатов."
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.input), batch.input )
+#. placeholder {0}: inputLabel(batch.input)
 msgid "A list is wired into {0}, so this step runs once for each item in it — up to {MAX_LIST_ITEMS}."
 msgstr "Список подключен к {0}, поэтому этот шаг выполняется один раз для каждого элемента в нем — до {MAX_LIST_ITEMS}."
 
@@ -1371,6 +1371,9 @@ msgstr "Альфа"
 
 msgid "Always"
 msgstr "Всегда"
+
+msgid "Always sent — every notification shows in the bell menu."
+msgstr "Всегда отправляется — каждое уведомление отображается в меню уведомлений."
 
 msgid "Always taken"
 msgstr "Всегда выбирается"
@@ -3399,6 +3402,9 @@ msgstr "Подключить проблему Jira"
 msgid "Connect Linear issue"
 msgstr "Подключить Linear issue"
 
+msgid "Connect Slack under Settings → Integrations first."
+msgstr "Сначала подключите Slack в разделе Настройки → Интеграции."
+
 msgid "Connect the Otherwise handle to a node to run when no condition matches."
 msgstr "Подключите обработчик Otherwise к узлу для запуска, когда ни одно условие не совпадает."
 
@@ -4189,6 +4195,9 @@ msgstr "Пользовательское поле"
 
 msgid "Custom Fields"
 msgstr "Пользовательские поля"
+
+msgid "Custom fields are not available for items yet."
+msgstr "Пользовательские поля пока недоступны для элементов."
 
 msgid "Custom SOW · we manage"
 msgstr "Пользовательское SOW · мы управляем"
@@ -5094,6 +5103,9 @@ msgstr "Размеры"
 
 msgid "Direct"
 msgstr "Прямой"
+
+msgid "Direct message to each recipient in your Slack workspace."
+msgstr "Прямое сообщение каждому получателю в вашем рабочем пространстве Slack."
 
 msgid "Direction"
 msgstr "Направление"
@@ -7586,6 +7598,9 @@ msgstr "Только в наличии"
 msgid "In the loop together"
 msgstr "В курсе дела вместе"
 
+msgid "In-app"
+msgstr "В приложении"
+
 msgid "In-app notifications are always delivered. Choose which topics also reach you by email or Slack."
 msgstr "Уведомления в приложении всегда доставляются. Выберите, какие темы также будут доходить до вас по электронной почте или Slack."
 
@@ -8475,8 +8490,8 @@ msgstr "Параметры списка"
 msgid "List Parameters"
 msgstr "Параметры списка"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.first), batch.first )
-#. placeholder {1}: label( actionInputLabelKey(actionId, batch.second), batch.second )
+#. placeholder {0}: inputLabel(batch.first)
+#. placeholder {1}: inputLabel(batch.second)
 msgid "Lists are wired into both {0} and {1}, so this step cannot tell which one to repeat over. Leave a list on only one of them."
 msgstr "Списки привязаны к обоим {0} и {1}, поэтому этот шаг не может определить, какой из них повторить. Оставьте список только в одном из них."
 
@@ -9267,6 +9282,9 @@ msgstr "Требуется к"
 msgid "Need the right columns?"
 msgstr "Нужны правильные столбцы?"
 
+msgid "Needs a Business or Partner plan."
+msgstr "Требуется план Business или Partner."
+
 msgid "Needs fixing"
 msgstr "Требуется исправление"
 
@@ -9572,6 +9590,9 @@ msgstr "Новая строка передачи"
 
 msgid "New Unit of Measure"
 msgstr "Новая единица измерения"
+
+msgid "New version"
+msgstr "Новая версия"
 
 msgid "New Version"
 msgstr "Новая версия"
@@ -10141,6 +10162,12 @@ msgstr "Пока ничего. Шаг предоставляет значени�
 
 msgid "Notification"
 msgstr "Уведомление"
+
+msgid "Notification type"
+msgstr "Тип уведомления"
+
+msgid "Notification Type"
+msgstr "Тип уведомления"
 
 msgid "Notifications"
 msgstr "Уведомления"
@@ -13334,6 +13361,9 @@ msgstr "Отправляет этот документ на утверждени
 msgid "Sent complete date"
 msgstr "Дата отправки выполнена"
 
+msgid "Sent to each recipient who has email notifications turned on."
+msgstr "Отправляется каждому получателю, у которого включены email-уведомления."
+
 msgid "Sequences"
 msgstr "Последовательности"
 
@@ -15546,8 +15576,17 @@ msgstr "Эта версия принадлежит уведомлению об �
 msgid "This version cannot be opened"
 msgstr "Эта версия не может быть открыта"
 
+msgid "This version is live"
+msgstr "Эта версия активна"
+
+msgid "This version is live, so it cannot be changed. You can still move steps around to tidy the layout."
+msgstr "Эта версия активна, поэтому её нельзя изменить. Вы по-прежнему можете перемещать шаги для упорядочивания макета."
+
 msgid "This version is live. Create a new version to edit."
 msgstr "Эта версия активна. Создайте новую версию для редактирования."
+
+msgid "This version is live. Create a new version to make changes. You can still move steps around to tidy the layout."
+msgstr "Эта версия активна. Создайте новую версию для внесения изменений. Вы по-прежнему можете перемещать шаги для упорядочивания макета."
 
 msgid "This version's definition could not be read."
 msgstr "Определение этой версии не удалось прочитать."
@@ -16935,6 +16974,9 @@ msgstr "Что выходит за рамки"
 msgid "When"
 msgstr "Когда"
 
+msgid "When {name} changes"
+msgstr "Когда {name} изменяется"
+
 msgid "When a finished product's shelf life is set to Calculated, pick which consumed inputs feed the calculation."
 msgstr "Когда срок хранения готового продукта установлен на Рассчитанный, выберите, какие потребленные входные данные питают расчет."
 
@@ -17030,6 +17072,9 @@ msgstr "Когда вы обязались доставить; планиров�
 
 msgid "When your fiscal and tax years start"
 msgstr "Когда начинаются ваши финансовый и налоговый годы"
+
+msgid "Where a workflow notification is delivered — in-app is always sent, while email needs a Business or Partner plan and Slack needs your Slack workspace connected."
+msgstr "Где доставляется уведомление рабочего процесса — в приложении всегда отправляется, email требует план Business или Partner, а Slack требует подключённого рабочего пространства Slack."
 
 msgid "Where an operation runs; carries labor and quoting rates, with overhead the difference between them."
 msgstr "Где работает операция; несет ставки труда и предложения, накладные расходы - разница между ними."

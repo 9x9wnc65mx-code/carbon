@@ -456,7 +456,7 @@ msgstr "किसी नौकरी की स्थिति में पर�
 msgid "A list is wired into {0}, so this step runs once for each item and returns a list of results."
 msgstr "एक सूची {0} में जुड़ी हुई है, इसलिए यह चरण प्रत्येक आइटम के लिए एक बार चलता है और परिणामों की एक सूची लौटाता है।"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.input), batch.input )
+#. placeholder {0}: inputLabel(batch.input)
 msgid "A list is wired into {0}, so this step runs once for each item in it — up to {MAX_LIST_ITEMS}."
 msgstr "एक सूची {0} में जुड़ी हुई है, इसलिए यह चरण इसमें प्रत्येक आइटम के लिए एक बार चलता है — {MAX_LIST_ITEMS} तक।"
 
@@ -1371,6 +1371,9 @@ msgstr "अल्फा"
 
 msgid "Always"
 msgstr "हमेशा"
+
+msgid "Always sent — every notification shows in the bell menu."
+msgstr "हमेशा भेजा जाता है — हर सूचना घंटी मेनू में दिखाई देती है।"
 
 msgid "Always taken"
 msgstr "हमेशा लिया जाता है"
@@ -3399,6 +3402,9 @@ msgstr "Jira समस्या से कनेक्ट करें"
 msgid "Connect Linear issue"
 msgstr "Linear समस्या से कनेक्ट करें"
 
+msgid "Connect Slack under Settings → Integrations first."
+msgstr "पहले सेटिंग्स → इंटीग्रेशन के तहत Slack को जोड़ें।"
+
 msgid "Connect the Otherwise handle to a node to run when no condition matches."
 msgstr "कोई शर्त मेल नहीं खाने पर चलाने के लिए हैंडल को एक नोड से कनेक्ट करें।"
 
@@ -4189,6 +4195,9 @@ msgstr "कस्टम फील्ड"
 
 msgid "Custom Fields"
 msgstr "कस्टम फील्ड्स"
+
+msgid "Custom fields are not available for items yet."
+msgstr "कस्टम फील्ड अभी आइटम के लिए उपलब्ध नहीं हैं।"
 
 msgid "Custom SOW · we manage"
 msgstr "कस्टम SOW · हम प्रबंधित करते हैं"
@@ -5094,6 +5103,9 @@ msgstr "आयाम"
 
 msgid "Direct"
 msgstr "सीधा"
+
+msgid "Direct message to each recipient in your Slack workspace."
+msgstr "आपके Slack वर्कस्पेस में प्रत्येक प्राप्तकर्ता को सीधा संदेश।"
 
 msgid "Direction"
 msgstr "दिशा"
@@ -7586,6 +7598,9 @@ msgstr "केवल स्टॉक में"
 msgid "In the loop together"
 msgstr "एक साथ लूप में"
 
+msgid "In-app"
+msgstr "ऐप में"
+
 msgid "In-app notifications are always delivered. Choose which topics also reach you by email or Slack."
 msgstr "इन-ऐप नोटिफिकेशन हमेशा डिलीवर किए जाते हैं। चुनें कि कौन से विषय आपको ईमेल या Slack के माध्यम से भी पहुंचते हैं।"
 
@@ -8475,8 +8490,8 @@ msgstr "सूची विकल्प"
 msgid "List Parameters"
 msgstr "सूची पैरामीटर"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.first), batch.first )
-#. placeholder {1}: label( actionInputLabelKey(actionId, batch.second), batch.second )
+#. placeholder {0}: inputLabel(batch.first)
+#. placeholder {1}: inputLabel(batch.second)
 msgid "Lists are wired into both {0} and {1}, so this step cannot tell which one to repeat over. Leave a list on only one of them."
 msgstr "सूचियां दोनों {0} और {1} में वायर्ड हैं, इसलिए यह चरण नहीं बता सकता कि किस पर दोहराना है। एक सूची को केवल एक पर छोड़ें।"
 
@@ -9267,6 +9282,9 @@ msgstr "आवश्यकता की तारीख"
 msgid "Need the right columns?"
 msgstr "क्या आपको सही कॉलम चाहिए?"
 
+msgid "Needs a Business or Partner plan."
+msgstr "एक बिजनेस या पार्टनर प्लान की आवश्यकता है।"
+
 msgid "Needs fixing"
 msgstr "मरम्मत की आवश्यकता है"
 
@@ -9572,6 +9590,9 @@ msgstr "नई ट्रांसफर लाइन"
 
 msgid "New Unit of Measure"
 msgstr "नई माप की इकाई"
+
+msgid "New version"
+msgstr "नया संस्करण"
 
 msgid "New Version"
 msgstr "नया संस्करण"
@@ -10141,6 +10162,12 @@ msgstr "अभी कुछ नहीं। एक स्टेप केवल 
 
 msgid "Notification"
 msgstr "सूचना"
+
+msgid "Notification type"
+msgstr "सूचना प्रकार"
+
+msgid "Notification Type"
+msgstr "सूचना प्रकार"
 
 msgid "Notifications"
 msgstr "सूचनाएं"
@@ -13334,6 +13361,9 @@ msgstr "यह दस्तावेज़ सक्रिय होने स�
 msgid "Sent complete date"
 msgstr "भेजे गए पूर्ण दिनांक"
 
+msgid "Sent to each recipient who has email notifications turned on."
+msgstr "प्रत्येक प्राप्तकर्ता को भेजा जाता है जिसके पास ईमेल सूचनाएं चालू हैं।"
+
 msgid "Sequences"
 msgstr "अनुक्रम"
 
@@ -15546,8 +15576,17 @@ msgstr "यह संस्करण परिवर्तन सूचना <0
 msgid "This version cannot be opened"
 msgstr "यह version खोला नहीं जा सकता"
 
+msgid "This version is live"
+msgstr "यह संस्करण लाइव है"
+
+msgid "This version is live, so it cannot be changed. You can still move steps around to tidy the layout."
+msgstr "यह संस्करण लाइव है, इसलिए इसे बदला नहीं जा सकता। आप अभी भी लेआउट को सुव्यवस्थित करने के लिए चरणों को स्थानांतरित कर सकते हैं।"
+
 msgid "This version is live. Create a new version to edit."
 msgstr "यह version live है। संपादित करने के लिए एक नया version बनाएं।"
+
+msgid "This version is live. Create a new version to make changes. You can still move steps around to tidy the layout."
+msgstr "यह संस्करण लाइव है। परिवर्तन करने के लिए एक नया संस्करण बनाएं। आप अभी भी लेआउट को सुव्यवस्थित करने के लिए चरणों को स्थानांतरित कर सकते हैं।"
 
 msgid "This version's definition could not be read."
 msgstr "इस version की परिभाषा को पढ़ा नहीं जा सका।"
@@ -16935,6 +16974,9 @@ msgstr "स्कोप से बाहर क्या है"
 msgid "When"
 msgstr "कब"
 
+msgid "When {name} changes"
+msgstr "जब {name} परिवर्तन होता है"
+
 msgid "When a finished product's shelf life is set to Calculated, pick which consumed inputs feed the calculation."
 msgstr "जब किसी तैयार उत्पाद का शेल्फ जीवन Calculated पर सेट किया जाता है, तो चुनें कि कौन से उपभोग किए गए इनपुट गणना को खिलाते हैं।"
 
@@ -17030,6 +17072,9 @@ msgstr "जब आप डिलीवरी के लिए प्रतिब�
 
 msgid "When your fiscal and tax years start"
 msgstr "जब आपका वित्तीय और कर वर्ष शुरू होता है"
+
+msgid "Where a workflow notification is delivered — in-app is always sent, while email needs a Business or Partner plan and Slack needs your Slack workspace connected."
+msgstr "वह जगह जहां वर्कफ़्लो सूचना दी जाती है — ऐप में हमेशा भेजा जाता है, जबकि ईमेल को एक बिजनेस या पार्टनर प्लान की आवश्यकता है और Slack को आपके Slack वर्कस्पेस को जोड़ने की आवश्यकता है।"
 
 msgid "Where an operation runs; carries labor and quoting rates, with overhead the difference between them."
 msgstr "जहां एक ऑपरेशन चलता है; श्रम और उद्धरण दरें ले जाता है, ओवरहेड उनके बीच अंतर के साथ।"

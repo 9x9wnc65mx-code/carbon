@@ -456,7 +456,7 @@ msgstr "Status zadania zmienia się"
 msgid "A list is wired into {0}, so this step runs once for each item and returns a list of results."
 msgstr "Lista jest podłączona do {0}, więc ten krok uruchamia się raz dla każdego elementu i zwraca listę wyników."
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.input), batch.input )
+#. placeholder {0}: inputLabel(batch.input)
 msgid "A list is wired into {0}, so this step runs once for each item in it — up to {MAX_LIST_ITEMS}."
 msgstr "Lista jest podłączona do {0}, więc ten krok uruchamia się raz dla każdego elementu w niej — do {MAX_LIST_ITEMS}."
 
@@ -1371,6 +1371,9 @@ msgstr "Alfa"
 
 msgid "Always"
 msgstr "Zawsze"
+
+msgid "Always sent — every notification shows in the bell menu."
+msgstr "Zawsze wysyłane — każde powiadomienie pojawia się w menu dzwonka."
 
 msgid "Always taken"
 msgstr "Zawsze podjęty"
@@ -3399,6 +3402,9 @@ msgstr "Połącz problem Jiry"
 msgid "Connect Linear issue"
 msgstr "Połącz problem Linear"
 
+msgid "Connect Slack under Settings → Integrations first."
+msgstr "Najpierw połącz Slack w Ustawienia → Integracje."
+
 msgid "Connect the Otherwise handle to a node to run when no condition matches."
 msgstr "Połącz uchwyt Otherwise z węzłem do uruchomienia, gdy żaden warunek się nie zmieni."
 
@@ -4189,6 +4195,9 @@ msgstr "Pole niestandardowe"
 
 msgid "Custom Fields"
 msgstr "Pola niestandardowe"
+
+msgid "Custom fields are not available for items yet."
+msgstr "Pola niestandardowe nie są jeszcze dostępne dla artykułów."
 
 msgid "Custom SOW · we manage"
 msgstr "Niestandardowy SOW · zarządzamy"
@@ -5094,6 +5103,9 @@ msgstr "Wymiary"
 
 msgid "Direct"
 msgstr "Bezpośredni"
+
+msgid "Direct message to each recipient in your Slack workspace."
+msgstr "Bezpośrednia wiadomość do każdego odbiorcy w Twojej przestrzeni roboczej Slack."
 
 msgid "Direction"
 msgstr "Kierunek"
@@ -7586,6 +7598,9 @@ msgstr "Tylko w magazynie"
 msgid "In the loop together"
 msgstr "W pętli razem"
 
+msgid "In-app"
+msgstr "W aplikacji"
+
 msgid "In-app notifications are always delivered. Choose which topics also reach you by email or Slack."
 msgstr "Powiadomienia w aplikacji są zawsze dostarczane. Wybierz, które tematy mają do Ciebie dotrzeć również pocztą e-mail lub Slack."
 
@@ -8475,8 +8490,8 @@ msgstr "Opcje listy"
 msgid "List Parameters"
 msgstr "Parametry listy"
 
-#. placeholder {0}: label( actionInputLabelKey(actionId, batch.first), batch.first )
-#. placeholder {1}: label( actionInputLabelKey(actionId, batch.second), batch.second )
+#. placeholder {0}: inputLabel(batch.first)
+#. placeholder {1}: inputLabel(batch.second)
 msgid "Lists are wired into both {0} and {1}, so this step cannot tell which one to repeat over. Leave a list on only one of them."
 msgstr "Listy są podłączone do obu {0} i {1}, więc ten krok nie może określić, którą z nich powtarzać. Pozostaw listę tylko w jednej z nich."
 
@@ -9267,6 +9282,9 @@ msgstr "Potrzebne do"
 msgid "Need the right columns?"
 msgstr "Potrzebujesz odpowiednich kolumn?"
 
+msgid "Needs a Business or Partner plan."
+msgstr "Wymaga planu Business lub Partner."
+
 msgid "Needs fixing"
 msgstr "Wymaga naprawy"
 
@@ -9572,6 +9590,9 @@ msgstr "Nowa linia transferu"
 
 msgid "New Unit of Measure"
 msgstr "Nowa jednostka miary"
+
+msgid "New version"
+msgstr "Nowa wersja"
 
 msgid "New Version"
 msgstr "Nowa wersja"
@@ -10141,6 +10162,12 @@ msgstr "Nic jeszcze. Krok oferuje wartości dopiero po skonfigurowaniu."
 
 msgid "Notification"
 msgstr "Powiadomienie"
+
+msgid "Notification type"
+msgstr "Typ powiadomienia"
+
+msgid "Notification Type"
+msgstr "Typ powiadomienia"
 
 msgid "Notifications"
 msgstr "Powiadomienia"
@@ -13334,6 +13361,9 @@ msgstr "Wysyła ten dokument do zatwierdzenia, zanim będzie mógł zostać akty
 msgid "Sent complete date"
 msgstr "Data wysłania ukończenia"
 
+msgid "Sent to each recipient who has email notifications turned on."
+msgstr "Wysłane do każdego odbiorcy, który ma włączone powiadomienia e-mail."
+
 msgid "Sequences"
 msgstr "Sekwencje"
 
@@ -15546,8 +15576,17 @@ msgstr "Ta wersja należy do zmiany powiadomienia <0>{0}</0>. Edytuj tam."
 msgid "This version cannot be opened"
 msgstr "Ta wersja nie może być otwarta"
 
+msgid "This version is live"
+msgstr "Ta wersja jest na żywo"
+
+msgid "This version is live, so it cannot be changed. You can still move steps around to tidy the layout."
+msgstr "Ta wersja jest na żywo, dlatego nie można jej zmienić. Możesz nadal przenosić kroki, aby uporządkować układ."
+
 msgid "This version is live. Create a new version to edit."
 msgstr "Ta wersja jest aktywna. Utwórz nową wersję do edycji."
+
+msgid "This version is live. Create a new version to make changes. You can still move steps around to tidy the layout."
+msgstr "Ta wersja jest na żywo. Utwórz nową wersję, aby wprowadzić zmiany. Możesz nadal przenosić kroki, aby uporządkować układ."
 
 msgid "This version's definition could not be read."
 msgstr "Definicję tej wersji nie można było odczytać."
@@ -16935,6 +16974,9 @@ msgstr "Co jest poza zakresem"
 msgid "When"
 msgstr "Kiedy"
 
+msgid "When {name} changes"
+msgstr "Gdy zmieni się {name}"
+
 msgid "When a finished product's shelf life is set to Calculated, pick which consumed inputs feed the calculation."
 msgstr "Gdy okres przydatności gotowego produktu jest ustawiony na Obliczony, wybierz, które zużyte materiały wejściowe zasilają obliczenie."
 
@@ -17030,6 +17072,9 @@ msgstr "Kiedy zobowiązałeś się do dostawy; planowanie traktuje to jako datę
 
 msgid "When your fiscal and tax years start"
 msgstr "Kiedy rozpoczynają się Twoje lata obrachunkowe i podatkowe"
+
+msgid "Where a workflow notification is delivered — in-app is always sent, while email needs a Business or Partner plan and Slack needs your Slack workspace connected."
+msgstr "Gdzie jest dostarczane powiadomienie przepływu pracy — w aplikacji jest zawsze wysyłane, podczas gdy wiadomość e-mail wymaga planu Business lub Partner, a Slack wymaga połączonej przestrzeni roboczej Slack."
 
 msgid "Where an operation runs; carries labor and quoting rates, with overhead the difference between them."
 msgstr "Gdzie operacja przebiega; nosi stawki pracy i notowań, z ogólnymi kosztem różnicę między nimi."
