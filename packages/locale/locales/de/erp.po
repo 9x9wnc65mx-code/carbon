@@ -1239,6 +1239,9 @@ msgstr "Hinzugefügt"
 msgid "Added for this customer"
 msgstr "Für diesen Kunden hinzugefügt"
 
+msgid "Adding demo records"
+msgstr ""
+
 msgid "Adding..."
 msgstr "Wird hinzugefügt..."
 
@@ -1612,6 +1615,9 @@ msgstr "Gilt für Funktionen ohne eigene Regel und für die Charge, wenn dieser 
 msgid "Apply"
 msgstr "Anwenden"
 
+msgid "Apply a demo template"
+msgstr ""
+
 msgid "Apply available credits"
 msgstr "Verfügbare Gutschriften anwenden"
 
@@ -1638,6 +1644,12 @@ msgstr "Auf Rechnung anwenden"
 
 msgid "Apply to invoices"
 msgstr "Auf Rechnungen anwenden"
+
+msgid "Applying"
+msgstr ""
+
+msgid "Applying demo data"
+msgstr ""
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "Nähert sich dem Limit von {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB."
@@ -3054,6 +3066,9 @@ msgstr "Verrechnungskonto zwischen Wareneingang und Lieferantenrechnung; wird au
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "Verrechnungskonto für Wareneingang / Rechnungseingang Abgleich"
+
+msgid "Clearing demo data"
+msgstr ""
 
 msgid "Click again to disconnect"
 msgstr "Klicken Sie erneut, um die Verbindung zu trennen"
@@ -5005,6 +5020,18 @@ msgstr "Nachfrageprojektionen"
 msgid "Demand-Based"
 msgstr "Nachfragebasiert"
 
+msgid "Demo data"
+msgstr ""
+
+msgid "Demo Data"
+msgstr ""
+
+msgid "Demo data applied"
+msgstr ""
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr ""
+
 msgid "department"
 msgstr "Abteilung"
 
@@ -6765,6 +6792,9 @@ msgstr "Hier angehängte Dateien werden standardmäßig mit jeder Bestellanfrage
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "Hier angehängte Dateien werden mit jeder Bestellanfrage-E-Mail an diesen Lieferanten versendet (zusätzlich zu unternehmensweiten Standardeinstellungen)."
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr ""
+
 msgid "Filter"
 msgstr "Filter"
 
@@ -8210,6 +8240,9 @@ msgstr "Kanban-Ausgabe"
 
 msgid "Kanbans"
 msgstr "Kanbans"
+
+msgid "Keep"
+msgstr ""
 
 msgid "Keep Current"
 msgstr "Aktuell behalten"
@@ -11679,6 +11712,9 @@ msgstr "Publizieren Sie das Journal ohne die Dimension"
 msgid "Push to accounting"
 msgstr "Zur Buchhaltung senden"
 
+msgid "Putting your data back"
+msgstr ""
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "QR-Code zum Erstellen eines {0} für diesen Kanban"
@@ -11920,6 +11956,9 @@ msgstr "Bereit"
 
 msgid "Ready for Quote"
 msgstr "Bereit für Angebot"
+
+msgid "ready to keep or revert"
+msgstr ""
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "Echtzeit-Bestandsverwaltung und Shopfloor-Sichtbarkeit"
@@ -12320,6 +12359,9 @@ msgstr "Ersetzen Sie vorhandene Preise durch Quellwerte"
 msgid "Replace PDF"
 msgstr "PDF ersetzen"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr ""
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "Das Ersetzen der PDF entfernt alle Ballonplatzierungen in diesem Dokument. Funktionszeilen und ihre Werte bleiben erhalten; Sie können Ballons auf der neuen Zeichnung erneut platzieren."
 
@@ -12474,6 +12516,9 @@ msgstr "Diese Entität zum verfügbaren Bestand in dem Behälter und den Kosten 
 msgid "Restore tracked entities to available"
 msgstr "Nachverfolgter Entitäten als verfügbar wiederherstellen"
 
+msgid "Restoring files"
+msgstr ""
+
 msgid "Result"
 msgstr "Ergebnis"
 
@@ -12500,6 +12545,9 @@ msgstr "Erneut versuchen"
 
 msgid "Retry all"
 msgstr "Alle erneut versuchen"
+
+msgid "Retry revert"
+msgstr ""
 
 msgid "Return Home"
 msgstr "Zur Startseite zurück"
@@ -12542,6 +12590,12 @@ msgstr "Kehren Sie die zugehörigen Journaleinträge um"
 
 msgid "Reversed"
 msgstr "Rückgängig gemacht"
+
+msgid "Revert"
+msgstr ""
+
+msgid "Reverting"
+msgstr ""
 
 msgid "Review"
 msgstr "Überprüfung"
@@ -12920,6 +12974,9 @@ msgstr "Gespeichert"
 
 msgid "Saved Views"
 msgstr "Gespeicherte Ansichten"
+
+msgid "Saving a copy of your current data"
+msgstr ""
 
 msgid "Saving..."
 msgstr "Wird gespeichert..."
@@ -14026,6 +14083,9 @@ msgstr "Beginnen Sie mit"
 
 msgid "Started"
 msgstr "Gestartet"
+
+msgid "Starting…"
+msgstr ""
 
 msgid "State / Province"
 msgstr "Bundesland / Provinz"
@@ -15475,6 +15535,9 @@ msgstr "Dies ist eine eindeutige Kennung für den Webhook"
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "Dies ist eine ITAR-kontrollierte Umgebung. Der Zugriff ist auf U.S. Personen beschränkt."
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr ""
+
 msgid "This is the month your fiscal year starts."
 msgstr "Dies ist der Monat, in dem Ihr Geschäftsjahr beginnt."
 
@@ -15577,6 +15640,9 @@ msgstr "Dies aktualisiert das Design für alle Benutzer der Anwendung"
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "Dieser Benutzer hat keine Zwei-Faktor-Authentifizierung aktiviert."
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr ""
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "Diese Version gehört zu einer offenen <0>Änderungsmitteilung</0>. Bearbeiten Sie sie dort."
@@ -16127,6 +16193,9 @@ msgstr "Einheiten, die bei einer Operation mit einem Grund als nicht behebbar ge
 
 msgid "Unknown"
 msgstr "Unbekannt"
+
+msgid "unknown error"
+msgstr ""
 
 msgid "unknown location"
 msgstr "unbekannter Ort"

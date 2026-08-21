@@ -1239,6 +1239,9 @@ msgstr "추가됨"
 msgid "Added for this customer"
 msgstr "이 고객을 위해 추가됨"
 
+msgid "Adding demo records"
+msgstr ""
+
 msgid "Adding..."
 msgstr "추가 중..."
 
@@ -1612,6 +1615,9 @@ msgstr "자신의 규칙이 없는 기능과 이 계획이 검사를 실행할 �
 msgid "Apply"
 msgstr "적용"
 
+msgid "Apply a demo template"
+msgstr ""
+
 msgid "Apply available credits"
 msgstr "사용 가능한 크레딧 적용"
 
@@ -1638,6 +1644,12 @@ msgstr "인보이스에 적용"
 
 msgid "Apply to invoices"
 msgstr "인보이스에 적용"
+
+msgid "Applying"
+msgstr ""
+
+msgid "Applying demo data"
+msgstr ""
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "{PO_EMAIL_ATTACHMENT_LIMIT_MB}MB 한도에 근접했습니다."
@@ -3054,6 +3066,9 @@ msgstr "입고와 공급업체 인보이스 사이의 경과 계정으로, 둘 �
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "입고/인보이스 수취 매칭을 위한 경과 계정"
+
+msgid "Clearing demo data"
+msgstr ""
 
 msgid "Click again to disconnect"
 msgstr "다시 클릭하여 연결 해제"
@@ -5005,6 +5020,18 @@ msgstr "수요 예측치"
 msgid "Demand-Based"
 msgstr "수요 기반"
 
+msgid "Demo data"
+msgstr ""
+
+msgid "Demo Data"
+msgstr ""
+
+msgid "Demo data applied"
+msgstr ""
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr ""
+
 msgid "department"
 msgstr "부서"
 
@@ -6765,6 +6792,9 @@ msgstr "여기에 첨부한 파일은 기본적으로 모든 구매주문 이메
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "여기에 첨부한 파일은 이 공급업체에 전송되는 모든 구매주문 이메일에 함께 전송됩니다(회사 전체 기본 첨부파일에 추가로)."
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr ""
+
 msgid "Filter"
 msgstr "필터"
 
@@ -8210,6 +8240,9 @@ msgstr "칸반 산출물"
 
 msgid "Kanbans"
 msgstr "칸반"
+
+msgid "Keep"
+msgstr ""
 
 msgid "Keep Current"
 msgstr "현재 값 유지"
@@ -11679,6 +11712,9 @@ msgstr "차원 없이 저널을 푸시합니다"
 msgid "Push to accounting"
 msgstr "회계로 푸시"
 
+msgid "Putting your data back"
+msgstr ""
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "이 칸반에 대한 {0}을(를) 생성하는 QR 코드"
@@ -11920,6 +11956,9 @@ msgstr "준비됨"
 
 msgid "Ready for Quote"
 msgstr "견적 준비 완료"
+
+msgid "ready to keep or revert"
+msgstr ""
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "실시간 재고 및 현장 가시성"
@@ -12320,6 +12359,9 @@ msgstr "기존 가격을 원본 값으로 교체"
 msgid "Replace PDF"
 msgstr "PDF 교체"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr ""
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "PDF를 교체하면 이 문서의 모든 풍선 표시가 제거됩니다. 기능 행과 값은 유지되며, 새 도면에 풍선을 다시 배치할 수 있습니다."
 
@@ -12474,6 +12516,9 @@ msgstr "이 항목을 폐기 전 보관 위치 및 원가의 사용 가능한 �
 msgid "Restore tracked entities to available"
 msgstr "추적 개체를 사용 가능 상태로 복원"
 
+msgid "Restoring files"
+msgstr ""
+
 msgid "Result"
 msgstr "결과"
 
@@ -12500,6 +12545,9 @@ msgstr "재시도"
 
 msgid "Retry all"
 msgstr "모두 다시 시도"
+
+msgid "Retry revert"
+msgstr ""
 
 msgid "Return Home"
 msgstr "홈으로 돌아가기"
@@ -12542,6 +12590,12 @@ msgstr "관련 분개 취소"
 
 msgid "Reversed"
 msgstr "역순됨"
+
+msgid "Revert"
+msgstr ""
+
+msgid "Reverting"
+msgstr ""
 
 msgid "Review"
 msgstr "검토"
@@ -12920,6 +12974,9 @@ msgstr "저장됨"
 
 msgid "Saved Views"
 msgstr "저장된 보기"
+
+msgid "Saving a copy of your current data"
+msgstr ""
 
 msgid "Saving..."
 msgstr "저장 중..."
@@ -14026,6 +14083,9 @@ msgstr "…부터 시작"
 
 msgid "Started"
 msgstr "시작됨"
+
+msgid "Starting…"
+msgstr ""
 
 msgid "State / Province"
 msgstr "주/도"
@@ -15475,6 +15535,9 @@ msgstr "웹훅의 고유 식별자입니다"
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "이것은 ITAR 통제 환경입니다. 접근은 미국인에게만 제한됩니다."
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr ""
+
 msgid "This is the month your fiscal year starts."
 msgstr "회계연도가 시작되는 월입니다."
 
@@ -15577,6 +15640,9 @@ msgstr "이 설정은 애플리케이션의 모든 사용자에 대한 테마를
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "이 사용자는 2단계 인증이 활성화되지 않았습니다."
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr ""
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "이 버전은 열려 있는 <0>변경 공지</0>에 속합니다. 거기서 편집하세요."
@@ -16127,6 +16193,9 @@ msgstr "공정작업에서 사유와 함께 회복 불가로 보고된 수량으
 
 msgid "Unknown"
 msgstr "알 수 없음"
+
+msgid "unknown error"
+msgstr ""
 
 msgid "unknown location"
 msgstr "알 수 없는 위치"

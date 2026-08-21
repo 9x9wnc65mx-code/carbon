@@ -411,7 +411,7 @@ export default function PartDetailsRoute() {
           <CadModel
             isReadOnly={!permissions.can("update", "parts") || !!draftLock}
             metadata={{ itemId }}
-            modelPath={partData?.partSummary?.modelPath ?? null}
+            modelUpload={partData?.partSummary ?? null}
             title={t`CAD Model`}
             titleExtras={lockHint}
           />

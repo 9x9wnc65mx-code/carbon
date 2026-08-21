@@ -1239,6 +1239,9 @@ msgstr "Добавлено"
 msgid "Added for this customer"
 msgstr "Добавлено для этого клиента"
 
+msgid "Adding demo records"
+msgstr ""
+
 msgid "Adding..."
 msgstr "Добавление..."
 
@@ -1612,6 +1615,9 @@ msgstr "Применяется к функциям без собственног
 msgid "Apply"
 msgstr "Применить"
 
+msgid "Apply a demo template"
+msgstr ""
+
 msgid "Apply available credits"
 msgstr "Применить доступные кредиты"
 
@@ -1638,6 +1644,12 @@ msgstr "Применить к счету"
 
 msgid "Apply to invoices"
 msgstr "Применить к счетам"
+
+msgid "Applying"
+msgstr ""
+
+msgid "Applying demo data"
+msgstr ""
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "Приближение к лимиту {PO_EMAIL_ATTACHMENT_LIMIT_MB} МБ."
@@ -3054,6 +3066,9 @@ msgstr "Транзитный счет между поступлением тов
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "Счет взаимного зачета для поступления товаров / сопоставления поступления счета"
+
+msgid "Clearing demo data"
+msgstr ""
 
 msgid "Click again to disconnect"
 msgstr "Нажмите еще раз, чтобы отключить"
@@ -5005,6 +5020,18 @@ msgstr "Прогнозы спроса"
 msgid "Demand-Based"
 msgstr "На основе спроса"
 
+msgid "Demo data"
+msgstr ""
+
+msgid "Demo Data"
+msgstr ""
+
+msgid "Demo data applied"
+msgstr ""
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr ""
+
 msgid "department"
 msgstr "отдел"
 
@@ -6765,6 +6792,9 @@ msgstr "Файлы, прикрепленные здесь, автоматиче�
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "Файлы, прикрепленные здесь, отправляются вместе с каждым письмом заказа на покупку, отправленным этому поставщику (в дополнение к общекорпоративным значениям по умолчанию)."
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr ""
+
 msgid "Filter"
 msgstr "Фильтр"
 
@@ -8210,6 +8240,9 @@ msgstr "Вывод Kanban"
 
 msgid "Kanbans"
 msgstr "Канбаны"
+
+msgid "Keep"
+msgstr ""
 
 msgid "Keep Current"
 msgstr "Сохранить текущие"
@@ -11679,6 +11712,9 @@ msgstr "Отправить журнал без размерности"
 msgid "Push to accounting"
 msgstr "Отправить в учет"
 
+msgid "Putting your data back"
+msgstr ""
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "QR-код для создания {0} для этого канбана"
@@ -11920,6 +11956,9 @@ msgstr "Готово"
 
 msgid "Ready for Quote"
 msgstr "Готово к предложению"
+
+msgid "ready to keep or revert"
+msgstr ""
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "Видимость запасов и производства в реальном времени"
@@ -12320,6 +12359,9 @@ msgstr "Заменить существующие цены на значения
 msgid "Replace PDF"
 msgstr "Заменить PDF"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr ""
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "Замена PDF удаляет все размещения выносок в этом документе. Строки функций и их значения остаются; вы можете снова разместить выноски на новом чертеже."
 
@@ -12474,6 +12516,9 @@ msgstr "Восстановить эту сущность в доступный �
 msgid "Restore tracked entities to available"
 msgstr "Восстановить отслеживаемые объекты в доступные"
 
+msgid "Restoring files"
+msgstr ""
+
 msgid "Result"
 msgstr "Результат"
 
@@ -12500,6 +12545,9 @@ msgstr "Повторить"
 
 msgid "Retry all"
 msgstr "Повторить все"
+
+msgid "Retry revert"
+msgstr ""
 
 msgid "Return Home"
 msgstr "Вернуться на главную"
@@ -12542,6 +12590,12 @@ msgstr "Отменить связанные записи в журнале"
 
 msgid "Reversed"
 msgstr "Сторнировано"
+
+msgid "Revert"
+msgstr ""
+
+msgid "Reverting"
+msgstr ""
 
 msgid "Review"
 msgstr "Обзор"
@@ -12920,6 +12974,9 @@ msgstr "Сохранено"
 
 msgid "Saved Views"
 msgstr "Сохраненные представления"
+
+msgid "Saving a copy of your current data"
+msgstr ""
 
 msgid "Saving..."
 msgstr "Сохранение..."
@@ -14026,6 +14083,9 @@ msgstr "Начните с"
 
 msgid "Started"
 msgstr "Начал"
+
+msgid "Starting…"
+msgstr ""
 
 msgid "State / Province"
 msgstr "Штат / Провинция"
@@ -15475,6 +15535,9 @@ msgstr "Это уникальный идентификатор для вебху
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "Это среда, контролируемая ITAR. Доступ ограничен для лиц США."
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr ""
+
 msgid "This is the month your fiscal year starts."
 msgstr "Это месяц, когда начинается ваш финансовый год."
 
@@ -15577,6 +15640,9 @@ msgstr "Это обновляет тему для всех пользовате�
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "Этот пользователь не имеет включенную двухфакторную аутентификацию."
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr ""
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "Эта версия принадлежит открытому <0>уведомлению об изменении</0>. Отредактируйте его там."
@@ -16127,6 +16193,9 @@ msgstr "Единицы, указанные как невозвратные пр�
 
 msgid "Unknown"
 msgstr "Неизвестно"
+
+msgid "unknown error"
+msgstr ""
 
 msgid "unknown location"
 msgstr "неизвестное местоположение"

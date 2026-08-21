@@ -1239,6 +1239,9 @@ msgstr "Ajouté"
 msgid "Added for this customer"
 msgstr "Ajouté pour ce client"
 
+msgid "Adding demo records"
+msgstr ""
+
 msgid "Adding..."
 msgstr "Ajout en cours..."
 
@@ -1612,6 +1615,9 @@ msgstr "S'applique aux fonctionnalités sans leur propre règle, et au lot lorsq
 msgid "Apply"
 msgstr "Appliquer"
 
+msgid "Apply a demo template"
+msgstr ""
+
 msgid "Apply available credits"
 msgstr "Appliquer les crédits disponibles"
 
@@ -1638,6 +1644,12 @@ msgstr "Appliquer à la facture"
 
 msgid "Apply to invoices"
 msgstr "Appliquer aux factures"
+
+msgid "Applying"
+msgstr ""
+
+msgid "Applying demo data"
+msgstr ""
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "Approche de la limite de {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB."
@@ -3054,6 +3066,9 @@ msgstr "Compte de compensation entre la réception de marchandises et la facture
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "Compte de compensation pour réception de marchandises / correspondance de réception de facture"
+
+msgid "Clearing demo data"
+msgstr ""
 
 msgid "Click again to disconnect"
 msgstr "Cliquez à nouveau pour vous déconnecter"
@@ -5005,6 +5020,18 @@ msgstr "Projections de la demande"
 msgid "Demand-Based"
 msgstr "Basée sur la demande"
 
+msgid "Demo data"
+msgstr ""
+
+msgid "Demo Data"
+msgstr ""
+
+msgid "Demo data applied"
+msgstr ""
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr ""
+
 msgid "department"
 msgstr "département"
 
@@ -6765,6 +6792,9 @@ msgstr "Les fichiers joints ici sont automatiquement envoyés avec chaque email 
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "Les fichiers joints ici sont inclus dans chaque email de bon de commande envoyé à ce fournisseur (en plus des paramètres par défaut à l'échelle de l'entreprise)."
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr ""
+
 msgid "Filter"
 msgstr "Filtre"
 
@@ -8210,6 +8240,9 @@ msgstr "Sortie Kanban"
 
 msgid "Kanbans"
 msgstr "Kanbans"
+
+msgid "Keep"
+msgstr ""
 
 msgid "Keep Current"
 msgstr "Conserver les paramètres actuels"
@@ -11679,6 +11712,9 @@ msgstr "Pousser le journal sans la dimension"
 msgid "Push to accounting"
 msgstr "Envoyer vers la comptabilité"
 
+msgid "Putting your data back"
+msgstr ""
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "Code QR pour créer un {0} pour ce kanban"
@@ -11920,6 +11956,9 @@ msgstr "Prêt"
 
 msgid "Ready for Quote"
 msgstr "Prêt pour devis"
+
+msgid "ready to keep or revert"
+msgstr ""
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "Visibilité en temps réel de l'inventaire et de l'atelier"
@@ -12320,6 +12359,9 @@ msgstr "Remplacer les tarifs existants par les valeurs source"
 msgid "Replace PDF"
 msgstr "Remplacer le PDF"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr ""
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "Le remplacement du PDF supprime tous les placements de bulles sur ce document. Les lignes de fonctionnalités et leurs valeurs restent ; vous pouvez placer à nouveau des bulles sur le nouveau dessin."
 
@@ -12474,6 +12516,9 @@ msgstr "Restaurer cette entité au stock disponible dans le bac et au coût d'o�
 msgid "Restore tracked entities to available"
 msgstr "Restaurer les entités suivies en disponibles"
 
+msgid "Restoring files"
+msgstr ""
+
 msgid "Result"
 msgstr "Résultat"
 
@@ -12500,6 +12545,9 @@ msgstr "Réessayer"
 
 msgid "Retry all"
 msgstr "Réessayer tous"
+
+msgid "Retry revert"
+msgstr ""
 
 msgid "Return Home"
 msgstr "Retour à l'accueil"
@@ -12542,6 +12590,12 @@ msgstr "Inverser les écritures comptables associées"
 
 msgid "Reversed"
 msgstr "Contrepassé"
+
+msgid "Revert"
+msgstr ""
+
+msgid "Reverting"
+msgstr ""
 
 msgid "Review"
 msgstr "Examiner"
@@ -12920,6 +12974,9 @@ msgstr "Enregistré"
 
 msgid "Saved Views"
 msgstr "Vues enregistrées"
+
+msgid "Saving a copy of your current data"
+msgstr ""
 
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -14026,6 +14083,9 @@ msgstr "Commencez par"
 
 msgid "Started"
 msgstr "Commencé"
+
+msgid "Starting…"
+msgstr ""
 
 msgid "State / Province"
 msgstr "État / Province"
@@ -15475,6 +15535,9 @@ msgstr "Ceci est un identifiant unique pour le webhook"
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "Ceci est un environnement contrôlé par l'ITAR. L'accès est restreint aux personnes des États-Unis."
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr ""
+
 msgid "This is the month your fiscal year starts."
 msgstr "C'est le mois où votre exercice fiscal commence."
 
@@ -15577,6 +15640,9 @@ msgstr "Cela met à jour le thème pour tous les utilisateurs de l'application"
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "Cet utilisateur n'a pas l'authentification à deux facteurs activée."
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr ""
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "Cette version appartient à un <0>change notice</0> ouvert. Modifiez-le là."
@@ -16127,6 +16193,9 @@ msgstr "Unités signalées comme irrécupérables à une opération, avec une ra
 
 msgid "Unknown"
 msgstr "Inconnu"
+
+msgid "unknown error"
+msgstr ""
 
 msgid "unknown location"
 msgstr "localisation inconnue"

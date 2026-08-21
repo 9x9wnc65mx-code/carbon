@@ -1239,6 +1239,9 @@ msgstr "Added"
 msgid "Added for this customer"
 msgstr "Added for this customer"
 
+msgid "Adding demo records"
+msgstr "Adding demo records"
+
 msgid "Adding..."
 msgstr "Adding..."
 
@@ -1612,6 +1615,9 @@ msgstr "Applies to features without their own rule, and to the lot when this pla
 msgid "Apply"
 msgstr "Apply"
 
+msgid "Apply a demo template"
+msgstr "Apply a demo template"
+
 msgid "Apply available credits"
 msgstr "Apply available credits"
 
@@ -1638,6 +1644,12 @@ msgstr "Apply to invoice"
 
 msgid "Apply to invoices"
 msgstr "Apply to invoices"
+
+msgid "Applying"
+msgstr "Applying"
+
+msgid "Applying demo data"
+msgstr "Applying demo data"
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
@@ -3054,6 +3066,9 @@ msgstr "Clearing account between goods receipt and supplier invoice; balances wh
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "Clearing account for goods received / invoice received matching"
+
+msgid "Clearing demo data"
+msgstr "Clearing demo data"
 
 msgid "Click again to disconnect"
 msgstr "Click again to disconnect"
@@ -5005,6 +5020,18 @@ msgstr "Demand Projections"
 msgid "Demand-Based"
 msgstr "Demand-Based"
 
+msgid "Demo data"
+msgstr "Demo data"
+
+msgid "Demo Data"
+msgstr "Demo Data"
+
+msgid "Demo data applied"
+msgstr "Demo data applied"
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+
 msgid "department"
 msgstr "department"
 
@@ -6765,6 +6792,9 @@ msgstr "Files attached here ride along on every purchase order email by default.
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+
 msgid "Filter"
 msgstr "Filter"
 
@@ -8210,6 +8240,9 @@ msgstr "Kanban Output"
 
 msgid "Kanbans"
 msgstr "Kanbans"
+
+msgid "Keep"
+msgstr "Keep"
 
 msgid "Keep Current"
 msgstr "Keep Current"
@@ -11679,6 +11712,9 @@ msgstr "Push the journal without the dimension"
 msgid "Push to accounting"
 msgstr "Push to accounting"
 
+msgid "Putting your data back"
+msgstr "Putting your data back"
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "QR Code to create a {0} for this kanban"
@@ -11920,6 +11956,9 @@ msgstr "Ready"
 
 msgid "Ready for Quote"
 msgstr "Ready for Quote"
+
+msgid "ready to keep or revert"
+msgstr "ready to keep or revert"
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "Real-time inventory and shop-floor visibility"
@@ -12320,6 +12359,9 @@ msgstr "Replace existing pricing with source values"
 msgid "Replace PDF"
 msgstr "Replace PDF"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 
@@ -12474,6 +12516,9 @@ msgstr "Restore this entity to available stock at the bin and cost it was scrapp
 msgid "Restore tracked entities to available"
 msgstr "Restore tracked entities to available"
 
+msgid "Restoring files"
+msgstr "Restoring files"
+
 msgid "Result"
 msgstr "Result"
 
@@ -12500,6 +12545,9 @@ msgstr "Retry"
 
 msgid "Retry all"
 msgstr "Retry all"
+
+msgid "Retry revert"
+msgstr "Retry revert"
 
 msgid "Return Home"
 msgstr "Return Home"
@@ -12542,6 +12590,12 @@ msgstr "Reverse the related journal entries"
 
 msgid "Reversed"
 msgstr "Reversed"
+
+msgid "Revert"
+msgstr "Revert"
+
+msgid "Reverting"
+msgstr "Reverting"
 
 msgid "Review"
 msgstr "Review"
@@ -12920,6 +12974,9 @@ msgstr "Saved"
 
 msgid "Saved Views"
 msgstr "Saved Views"
+
+msgid "Saving a copy of your current data"
+msgstr "Saving a copy of your current data"
 
 msgid "Saving..."
 msgstr "Saving..."
@@ -14026,6 +14083,9 @@ msgstr "Start with"
 
 msgid "Started"
 msgstr "Started"
+
+msgid "Starting…"
+msgstr "Starting…"
 
 msgid "State / Province"
 msgstr "State / Province"
@@ -15475,6 +15535,9 @@ msgstr "This is a unique identifier for the webhook"
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+
 msgid "This is the month your fiscal year starts."
 msgstr "This is the month your fiscal year starts."
 
@@ -15577,6 +15640,9 @@ msgstr "This updates the theme for all users of the application"
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "This user does not have two-factor authentication enabled."
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr "This usually takes a few seconds. You can leave the page — it keeps running."
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "This version belongs to an open <0>change notice</0>. Edit it there."
@@ -16127,6 +16193,9 @@ msgstr "Units reported as unrecoverable at an operation, with a reason — the a
 
 msgid "Unknown"
 msgstr "Unknown"
+
+msgid "unknown error"
+msgstr "unknown error"
 
 msgid "unknown location"
 msgstr "unknown location"

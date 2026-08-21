@@ -1239,6 +1239,9 @@ msgstr "追加済み"
 msgid "Added for this customer"
 msgstr "このカスタマー向けに追加"
 
+msgid "Adding demo records"
+msgstr ""
+
 msgid "Adding..."
 msgstr "追加中..."
 
@@ -1612,6 +1615,9 @@ msgstr "独自のルールがない機能に適用され、このプランが検
 msgid "Apply"
 msgstr "適用"
 
+msgid "Apply a demo template"
+msgstr ""
+
 msgid "Apply available credits"
 msgstr "利用可能なクレジットを適用"
 
@@ -1638,6 +1644,12 @@ msgstr "請求書に適用"
 
 msgid "Apply to invoices"
 msgstr "請求書に適用"
+
+msgid "Applying"
+msgstr ""
+
+msgid "Applying demo data"
+msgstr ""
 
 msgid "Approaching {PO_EMAIL_ATTACHMENT_LIMIT_MB} MB cap."
 msgstr "{PO_EMAIL_ATTACHMENT_LIMIT_MB} MBの上限に近づいています。"
@@ -3054,6 +3066,9 @@ msgstr "商品受領と仕入先請求書間の相殺勘定; 両方が転記さ�
 
 msgid "Clearing account for goods received / invoice received matching"
 msgstr "商品受領/請求書受領照合用相殺勘定"
+
+msgid "Clearing demo data"
+msgstr ""
 
 msgid "Click again to disconnect"
 msgstr "再度クリックして切断"
@@ -5005,6 +5020,18 @@ msgstr "需要予測"
 msgid "Demand-Based"
 msgstr "需要ベース"
 
+msgid "Demo data"
+msgstr ""
+
+msgid "Demo Data"
+msgstr ""
+
+msgid "Demo data applied"
+msgstr ""
+
+msgid "Demo data was applied to this company. Keep it, or revert to put back exactly what was here before."
+msgstr ""
+
 msgid "department"
 msgstr "部門"
 
@@ -6765,6 +6792,9 @@ msgstr "ここに添付されたファイルは、デフォルトではすべて
 msgid "Files attached here ride along on every purchase order email sent to this supplier (in addition to company-wide defaults)."
 msgstr "ここに添付されたファイルは、このサプライヤーに送信されるすべての発注メールに含まれます（会社全体のデフォルトに加えて）。"
 
+msgid "Fill this company with a realistic industry story so every screen has something in it. You can put back what was here before."
+msgstr ""
+
 msgid "Filter"
 msgstr "フィルター"
 
@@ -8210,6 +8240,9 @@ msgstr "カンバン出力"
 
 msgid "Kanbans"
 msgstr "カンバン"
+
+msgid "Keep"
+msgstr ""
 
 msgid "Keep Current"
 msgstr "現在の設定を保持"
@@ -11679,6 +11712,9 @@ msgstr "ディメンションなしでジャーナルをプッシュ"
 msgid "Push to accounting"
 msgstr "会計にプッシュ"
 
+msgid "Putting your data back"
+msgstr ""
+
 #. placeholder {0}: row.original.replenishmentSystem === "Make" ? "Job" : "Order"
 msgid "QR Code to create a {0} for this kanban"
 msgstr "このカンバンの{0}を作成するためのQRコード"
@@ -11920,6 +11956,9 @@ msgstr "準備完了"
 
 msgid "Ready for Quote"
 msgstr "見積もり準備完了"
+
+msgid "ready to keep or revert"
+msgstr ""
 
 msgid "Real-time inventory and shop-floor visibility"
 msgstr "リアルタイム在庫と工場フロアの可視性"
@@ -12320,6 +12359,9 @@ msgstr "既存の価格を元の値に置き換える"
 msgid "Replace PDF"
 msgstr "PDFを置き換える"
 
+msgid "Replace this company's data with a demo dataset — snapshotted first, so you can revert."
+msgstr ""
+
 msgid "Replacing the PDF removes all balloon placements on this document. Feature rows and their values stay; you can place balloons again on the new drawing."
 msgstr "PDFを置き換えると、このドキュメント上のすべてのバルーン配置が削除されます。機能行とその値は保持されます。新しい図面上に再度バルーンを配置できます。"
 
@@ -12474,6 +12516,9 @@ msgstr "このエンティティを、スクラップされた元のビンと原
 msgid "Restore tracked entities to available"
 msgstr "追跡対象エンティティを利用可能に復元"
 
+msgid "Restoring files"
+msgstr ""
+
 msgid "Result"
 msgstr "結果"
 
@@ -12500,6 +12545,9 @@ msgstr "再試行"
 
 msgid "Retry all"
 msgstr "すべてを再試行"
+
+msgid "Retry revert"
+msgstr ""
 
 msgid "Return Home"
 msgstr "ホームに戻る"
@@ -12542,6 +12590,12 @@ msgstr "関連する仕訳エントリを取り消す"
 
 msgid "Reversed"
 msgstr "反転"
+
+msgid "Revert"
+msgstr ""
+
+msgid "Reverting"
+msgstr ""
 
 msgid "Review"
 msgstr "確認"
@@ -12920,6 +12974,9 @@ msgstr "保存済み"
 
 msgid "Saved Views"
 msgstr "保存済みビュー"
+
+msgid "Saving a copy of your current data"
+msgstr ""
 
 msgid "Saving..."
 msgstr "保存中..."
@@ -14026,6 +14083,9 @@ msgstr "まず"
 
 msgid "Started"
 msgstr "開始"
+
+msgid "Starting…"
+msgstr ""
 
 msgid "State / Province"
 msgstr "都道府県"
@@ -15475,6 +15535,9 @@ msgstr "これはウェブフックの一意の識別子です"
 msgid "This is an ITAR-controlled environment. Access is restricted to U.S. Persons."
 msgstr "これはITAR管理環境です。アクセスは米国人に限定されています。"
 
+msgid "This is taking longer than expected. It may still finish — if it doesn't, retry the revert to put your data back."
+msgstr ""
+
 msgid "This is the month your fiscal year starts."
 msgstr "これはあなたの会計年度が始まる月です。"
 
@@ -15577,6 +15640,9 @@ msgstr "これはアプリケーションのすべてのユーザーのテーマ
 
 msgid "This user does not have two-factor authentication enabled."
 msgstr "このユーザーは2要素認証が有効になっていません。"
+
+msgid "This usually takes a few seconds. You can leave the page — it keeps running."
+msgstr ""
 
 msgid "This version belongs to an open <0>change notice</0>. Edit it there."
 msgstr "このバージョンはオープンな<0>変更通知</0>に属しています。そこで編集してください。"
@@ -16127,6 +16193,9 @@ msgstr "操作で回復不可能として報告される単位(理由付き) —
 
 msgid "Unknown"
 msgstr "不明"
+
+msgid "unknown error"
+msgstr ""
 
 msgid "unknown location"
 msgstr "不明な場所"
