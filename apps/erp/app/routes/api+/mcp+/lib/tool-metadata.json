@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-21T16:20:10.204Z",
+  "generated": "2026-08-22T01:32:58.017Z",
   "totalTools": 1443,
   "modules": 15,
   "tools": [
@@ -35302,7 +35302,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35327,7 +35328,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerContactId"
+        "customerContactId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35352,7 +35354,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35415,7 +35418,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerLocationId"
+        "customerLocationId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35440,7 +35444,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35465,7 +35470,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35490,7 +35496,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
@@ -35515,7 +35522,8 @@
       "paramCount": 1,
       "serviceParams": [
         "client",
-        "customerId"
+        "customerId",
+        "companyId"
       ],
       "injectAuth": [
         "companyId"
