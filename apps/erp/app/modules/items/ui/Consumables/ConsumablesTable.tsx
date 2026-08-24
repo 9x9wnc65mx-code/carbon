@@ -609,7 +609,6 @@ const ConsumablesTable = memo(
           }}
           defaultColumnVisibility={{
             description: false,
-            suppliers: false,
             active: false,
             createdBy: false,
             createdAt: false,

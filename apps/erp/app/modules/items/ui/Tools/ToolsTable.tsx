@@ -677,7 +677,6 @@ const ToolsTable = memo(({ data, tags, count }: ToolsTableProps) => {
         }}
         defaultColumnVisibility={{
           description: false,
-          suppliers: false,
           active: false,
           createdBy: false,
           createdAt: false,

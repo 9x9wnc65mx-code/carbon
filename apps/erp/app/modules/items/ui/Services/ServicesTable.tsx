@@ -571,7 +571,6 @@ const ServicesTable = memo(({ data, tags, count }: ServicesTableProps) => {
         }}
         defaultColumnVisibility={{
           description: false,
-          suppliers: false,
           active: false,
           createdBy: false,
           createdAt: false,

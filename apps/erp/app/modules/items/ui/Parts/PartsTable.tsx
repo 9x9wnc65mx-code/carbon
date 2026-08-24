@@ -701,7 +701,6 @@ const PartsTable = memo(({ data, tags, count }: PartsTableProps) => {
         }}
         defaultColumnVisibility={{
           description: false,
-          suppliers: false,
           active: false,
           createdBy: false,
           createdAt: false,
