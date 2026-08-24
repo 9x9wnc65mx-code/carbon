@@ -15,9 +15,6 @@ import {
   HStack,
   MenuIcon,
   MenuItem,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
   toast,
   useDisclosure,
   VStack
@@ -51,6 +48,7 @@ import {
   ItemThumbnail,
   MethodIcon,
   New,
+  SupplierAvatar,
   Table,
   TrackingTypeIcon
 } from "~/components";
@@ -312,34 +310,16 @@ const ConsumablesTable = memo(
           accessorKey: "suppliers",
           header: t`Supplier`,
           cell: ({ row }) => {
-            const names = (row.original.suppliers ?? [])
-              .map((supplierId) => supplierMap.get(supplierId))
-              .filter((name): name is string => Boolean(name));
-            if (names.length === 0) return null;
-            const extra = names.length - 2;
-            const hidden = names.slice(2).join(", ");
+            const supplierIds = (row.original.suppliers ?? []).filter((id) =>
+              supplierMap.has(id)
+            );
+            if (supplierIds.length === 0) return null;
             return (
-              <div className="flex items-center gap-1 py-1">
-                {names.slice(0, 2).map((name) => (
-                  <Enumerable key={name} value={name} className="shrink-0" />
+              <VStack spacing={1} className="py-1">
+                {supplierIds.map((supplierId) => (
+                  <SupplierAvatar key={supplierId} supplierId={supplierId} />
                 ))}
-                {extra > 0 && (
-                  <Tooltip>
-                    <TooltipTrigger
-                      type="button"
-                      aria-label={t`${extra} more: ${hidden}`}
-                      className="shrink-0 cursor-default rounded-full p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                    >
-                      <Badge variant="secondary">+{extra}</Badge>
-                    </TooltipTrigger>
-                    <TooltipContent className="flex flex-col gap-1 max-w-[240px]">
-                      {names.map((name) => (
-                        <span key={name}>{name}</span>
-                      ))}
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
+              </VStack>
             );
           },
           meta: {
@@ -347,7 +327,7 @@ const ConsumablesTable = memo(
               type: "static",
               options: suppliers.map((supplier) => ({
                 value: supplier.id,
-                label: <Enumerable value={supplier.name} />
+                label: supplier.name
               })),
               isArray: true
             },
