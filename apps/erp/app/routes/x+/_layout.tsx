@@ -17,6 +17,7 @@ import {
   updateCompanySession
 } from "@carbon/auth/session.server";
 import { isAuditLogEnabled } from "@carbon/database/audit";
+import { getPlan } from "@carbon/ee/plan.server";
 import {
   detectImplementationSignals,
   getImplementationCheckStates,
@@ -159,6 +160,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     companies,
     employeeCompaniesResult,
     stripeCustomer,
+    plan,
     customFields,
     integrations,
     companySettings,
@@ -178,6 +180,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getCompanies(client, userId),
     getEmployeeCompanies(client, userId),
     getStripeCustomerByCompanyId(companyId, userId),
+    getPlan(client, companyId),
     getCustomFieldsSchemas(client, { companyId }),
     getCompanyIntegrations(client, companyId),
     getCompanySettings(client, companyId),
@@ -186,8 +189,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     getUserClaims(userId, companyId),
     getUserGroups(client, userId),
     getUserDefaults(client, userId, companyId),
-    // Throws, unlike the {data, error} services around it — unguarded, a
-    // transient timeout on this flag 500s every page under /x.
     isAuditLogEnabled(client, companyId).catch(() => false),
     getModulePreferences(client, userId, companyId),
     getPrinterRoutes(client, companyId),
@@ -275,7 +276,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     integrations: integrations.data ?? [],
     groups: groups.data,
     permissions: claims?.permissions,
-    plan: stripeCustomer?.planId,
+    plan,
     role: claims?.role,
     user: user.data,
     modulePreferences: modulePreferences.data ?? [],
