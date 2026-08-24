@@ -446,22 +446,23 @@ const MaterialsTable = memo(({ data, tags, count }: MaterialsTableProps) => {
         accessorKey: "suppliers",
         header: t`Supplier`,
         cell: ({ row }) => (
-          <HStack spacing={0} className="gap-1">
+          <span className="flex gap-2 items-center flex-wrap py-2">
             {row.original.suppliers
               ?.filter((supplierId) => supplierMap.has(supplierId))
               .map((supplierId) => (
-                <Badge key={supplierId} variant="secondary">
-                  {supplierMap.get(supplierId)}
-                </Badge>
+                <Enumerable
+                  key={supplierId}
+                  value={supplierMap.get(supplierId) ?? null}
+                />
               ))}
-          </HStack>
+          </span>
         ),
         meta: {
           filter: {
             type: "static",
             options: suppliers.map((supplier) => ({
               value: supplier.id,
-              label: supplier.name
+              label: <Enumerable value={supplier.name} />
             })),
             isArray: true
           },
