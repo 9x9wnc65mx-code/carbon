@@ -15,6 +15,9 @@ import {
   HStack,
   MenuIcon,
   MenuItem,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   toast,
   useDisclosure,
   VStack
@@ -315,17 +318,25 @@ const ConsumablesTable = memo(
             if (names.length === 0) return null;
             const extra = names.length - 2;
             return (
-              <div
-                className="flex items-center gap-1 py-1"
-                title={names.join(", ")}
-              >
+              <div className="flex items-center gap-1 py-1">
                 {names.slice(0, 2).map((name) => (
                   <Enumerable key={name} value={name} className="shrink-0" />
                 ))}
                 {extra > 0 && (
-                  <Badge variant="secondary" className="shrink-0">
-                    +{extra}
-                  </Badge>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="shrink-0">
+                        <Badge variant="secondary" className="cursor-default">
+                          +{extra}
+                        </Badge>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="flex flex-col gap-1 max-w-[240px]">
+                      {names.map((name) => (
+                        <span key={name}>{name}</span>
+                      ))}
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             );
