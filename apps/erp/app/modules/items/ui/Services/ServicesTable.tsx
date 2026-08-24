@@ -60,7 +60,7 @@ import { usePermissions } from "~/hooks";
 import { useCustomColumns } from "~/hooks/useCustomColumns";
 import { methodType } from "~/modules/shared";
 import type { action } from "~/routes/x+/items+/update";
-import { usePeople } from "~/stores";
+import { usePeople, useSuppliers } from "~/stores";
 import { path } from "~/utils/path";
 import { serviceReplenishmentSystems } from "../../items.models";
 import type { ServiceListItem } from "../../types";
@@ -97,6 +97,11 @@ const ServicesTable = memo(({ data, tags, count }: ServicesTableProps) => {
   );
 
   const [people] = usePeople();
+  const [suppliers] = useSuppliers();
+  const supplierMap = useMemo(
+    () => new Map(suppliers.map((supplier) => [supplier.id, supplier.name])),
+    [suppliers]
+  );
   const itemPostingGroups = useItemPostingGroups();
   const customColumns = useCustomColumns<ServiceListItem>("service");
 
@@ -282,6 +287,37 @@ const ServicesTable = memo(({ data, tags, count }: ServicesTableProps) => {
         }
       },
       {
+        accessorKey: "suppliers",
+        header: t`Supplier`,
+        cell: ({ row }) => (
+          <HStack spacing={0} className="gap-1">
+            {row.original.suppliers
+              ?.filter((supplierId) => supplierMap.has(supplierId))
+              .map((supplierId) => (
+                <Badge key={supplierId} variant="secondary">
+                  {supplierMap.get(supplierId)}
+                </Badge>
+              ))}
+          </HStack>
+        ),
+        meta: {
+          filter: {
+            type: "static",
+            options: suppliers.map((supplier) => ({
+              value: supplier.id,
+              label: supplier.name
+            })),
+            isArray: true
+          },
+          icon: <LuTruck />,
+          exportValue: (row) =>
+            row.suppliers
+              ?.map((supplierId) => supplierMap.get(supplierId))
+              .filter(Boolean)
+              .join(", ") ?? null
+        }
+      },
+      {
         accessorKey: "active",
         header: t`Active`,
         cell: (item) => <Checkbox isChecked={item.getValue<boolean>()} />,
@@ -356,6 +392,8 @@ const ServicesTable = memo(({ data, tags, count }: ServicesTableProps) => {
   }, [
     customColumns,
     people,
+    supplierMap,
+    suppliers,
     tags,
     itemPostingGroups,
     t,
@@ -510,6 +548,7 @@ const ServicesTable = memo(({ data, tags, count }: ServicesTableProps) => {
         }}
         defaultColumnVisibility={{
           description: false,
+          suppliers: false,
           active: false,
           createdBy: false,
           createdAt: false,
