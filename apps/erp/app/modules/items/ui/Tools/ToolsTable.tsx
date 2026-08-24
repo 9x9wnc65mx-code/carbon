@@ -357,6 +357,7 @@ const ToolsTable = memo(({ data, tags, count }: ToolsTableProps) => {
             .filter((name): name is string => Boolean(name));
           if (names.length === 0) return null;
           const extra = names.length - 2;
+          const hidden = names.slice(2).join(", ");
           return (
             <div className="flex items-center gap-1 py-1">
               {names.slice(0, 2).map((name) => (
@@ -364,12 +365,12 @@ const ToolsTable = memo(({ data, tags, count }: ToolsTableProps) => {
               ))}
               {extra > 0 && (
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="shrink-0">
-                      <Badge variant="secondary" className="cursor-default">
-                        +{extra}
-                      </Badge>
-                    </span>
+                  <TooltipTrigger
+                    type="button"
+                    aria-label={t`${extra} more: ${hidden}`}
+                    className="shrink-0 cursor-default rounded-full p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                  >
+                    <Badge variant="secondary">+{extra}</Badge>
                   </TooltipTrigger>
                   <TooltipContent className="flex flex-col gap-1 max-w-[240px]">
                     {names.map((name) => (
