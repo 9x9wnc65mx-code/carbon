@@ -308,18 +308,28 @@ const ConsumablesTable = memo(
         {
           accessorKey: "suppliers",
           header: t`Supplier`,
-          cell: ({ row }) => (
-            <span className="flex gap-2 items-center flex-wrap py-2">
-              {row.original.suppliers
-                ?.filter((supplierId) => supplierMap.has(supplierId))
-                .map((supplierId) => (
-                  <Enumerable
-                    key={supplierId}
-                    value={supplierMap.get(supplierId) ?? null}
-                  />
+          cell: ({ row }) => {
+            const names = (row.original.suppliers ?? [])
+              .map((supplierId) => supplierMap.get(supplierId))
+              .filter((name): name is string => Boolean(name));
+            if (names.length === 0) return null;
+            const extra = names.length - 2;
+            return (
+              <div
+                className="flex items-center gap-1 py-1"
+                title={names.join(", ")}
+              >
+                {names.slice(0, 2).map((name) => (
+                  <Enumerable key={name} value={name} className="shrink-0" />
                 ))}
-            </span>
-          ),
+                {extra > 0 && (
+                  <Badge variant="secondary" className="shrink-0">
+                    +{extra}
+                  </Badge>
+                )}
+              </div>
+            );
+          },
           meta: {
             filter: {
               type: "static",
