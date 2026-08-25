@@ -8,6 +8,7 @@ import {
   TooltipTrigger
 } from "@carbon/react";
 import { getFaviconUrl } from "@carbon/utils";
+import { useLingui } from "@lingui/react/macro";
 import { useSuppliers } from "~/stores";
 import Avatar from "./Avatar";
 
@@ -22,6 +23,7 @@ const SupplierAvatarGroup = ({
   limit = 3,
   ...props
 }: SupplierAvatarGroupProps) => {
+  const { t } = useLingui();
   const [suppliers] = useSuppliers();
 
   const matched = suppliers.filter((supplier) =>
@@ -31,6 +33,13 @@ const SupplierAvatarGroup = ({
   if (matched.length === 0) {
     return null;
   }
+
+  const hidden = matched.slice(limit);
+  const hiddenCount = hidden.length;
+  const hiddenNames = hidden
+    .map((supplier) => supplier.name)
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <AvatarGroup size={size ?? "xs"} limit={limit}>
@@ -51,7 +60,20 @@ const SupplierAvatarGroup = ({
           </Tooltip>
         ))}
       </AvatarGroupList>
-      <AvatarOverflowIndicator />
+      {hiddenCount > 0 && (
+        <Tooltip>
+          <TooltipTrigger>
+            <AvatarOverflowIndicator
+              aria-label={t`${hiddenCount} more: ${hiddenNames}`}
+            />
+          </TooltipTrigger>
+          <TooltipContent className="flex flex-col gap-1">
+            {hidden.map((supplier) => (
+              <span key={supplier.id}>{supplier.name}</span>
+            ))}
+          </TooltipContent>
+        </Tooltip>
+      )}
     </AvatarGroup>
   );
 };
