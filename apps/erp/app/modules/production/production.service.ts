@@ -1,6 +1,11 @@
+import { getUserClaims } from "@carbon/auth/users.server";
 import type { Database, Json } from "@carbon/database";
 import { fetchAllFromTable } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
+import {
+  evaluateLinesForSurface,
+  isBlocked
+} from "@carbon/ee/storage-rules.server";
 import { ASSEMBLER_SERVICE_API_KEY, ASSEMBLER_SERVICE_URL } from "@carbon/env";
 import type { JobSource } from "@carbon/lib/telemetry";
 import { asJobSource, trackWorkEvent } from "@carbon/lib/telemetry";
@@ -7718,4 +7723,345 @@ export async function saveInspectionDocumentAtomic(
     p_features: args.features,
     p_balloons: args.balloons
   });
+}
+
+// ---------------------------------------------------------------------------
+// MES-core write entry points exposed to MCP (gatekeeper-carbon asks #1–#4).
+//
+// Each wraps the SAME edge function / RPC the MES/ERP UI uses, so an MCP caller drives
+// production as the connected user — companyId/userId come from the OAuth token (injected by the
+// MCP executor), not from caller-supplied (falsifiable) fields. Exposed automatically by
+// scripts/generate-mcp.ts as production_issueMaterial / _completeJob / _scheduleJob.
+
+/**
+ * Issue material to a job operation. Wraps the `issue` edge function (partToOperation) — the same
+ * transactional entry point the MES material-issue screen uses (inventory draw-down + WIP posting).
+ * Issuing requires only an authenticated company user (matching the MES route), so no extra
+ * permission gate is applied here.
+ *
+ * Mirrors the MES screen's work-center blocking-rule pre-check: if the operation's work center has
+ * a `materialIssue` rule that blocks (any error-severity violation, or any violation when not
+ * acknowledged), the issue is refused rather than performed. Pass `acknowledged: true` to override
+ * non-error (warning) violations, as the MES screen's acknowledge step does.
+ */
+export async function issueMaterial(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  userId: string,
+  args: {
+    operationId: string;
+    itemId: string;
+    quantity: number;
+    materialId?: string;
+    jobOperationStepId?: string;
+    adjustmentType?: string;
+    acknowledged?: boolean;
+  }
+) {
+  const { data: jobOp, error: jobOpError } = await client
+    .from("jobOperation")
+    .select("workCenterId")
+    .eq("id", args.operationId)
+    .eq("companyId", companyId)
+    .maybeSingle();
+  // Fail closed: a failed or empty lookup must not silently skip the work-center
+  // material-issue rule and let the `issue` edge function run unchecked.
+  if (jobOpError || !jobOp) {
+    throw new Error(`Job operation ${args.operationId} was not found.`);
+  }
+  const workCenterId = jobOp.workCenterId;
+  if (workCenterId) {
+    const ruleEval = await evaluateLinesForSurface({
+      client,
+      companyId,
+      userId,
+      targetType: "workCenter",
+      surface: "materialIssue",
+      lines: [
+        {
+          lineId: args.operationId,
+          itemId: args.itemId,
+          workCenterId,
+          operation: {
+            id: args.operationId,
+            itemId: args.itemId,
+            quantity: args.quantity,
+            workInstructionId: null
+          },
+          quantity: args.quantity
+        }
+      ]
+    });
+    if (
+      ruleEval.violations.length > 0 &&
+      isBlocked(ruleEval.violations, args.acknowledged ?? false)
+    ) {
+      throw new Error(
+        `Material issue blocked by a work-center rule: ${ruleEval.violations
+          .map((v) => v.message)
+          .join("; ")}`
+      );
+    }
+  }
+
+  return client.functions.invoke("issue", {
+    body: {
+      id: args.operationId,
+      type: "partToOperation",
+      itemId: args.itemId,
+      materialId: args.materialId,
+      jobOperationStepId: args.jobOperationStepId,
+      quantity: args.quantity,
+      adjustmentType: args.adjustmentType,
+      companyId,
+      userId
+    }
+  });
+}
+
+/**
+ * Complete a job to inventory (finished goods, backflush, cost rollup). Wraps the
+ * `complete_job_to_inventory` RPC — the same entry point the ERP job-complete route uses.
+ *
+ * The RPC is SECURITY DEFINER (bypasses RLS) and the MCP endpoint does not enforce per-tool
+ * claims, so the ERP route's `{ update: "production" }` gate is re-applied here to prevent an
+ * unprivileged MCP caller from completing jobs.
+ */
+export async function completeJob(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  userId: string,
+  args: {
+    jobId: string;
+    quantity: number;
+    storageUnitId?: string;
+    locationId?: string;
+  }
+) {
+  const claims = await getUserClaims(userId, companyId);
+  if (!claims?.permissions?.production?.update?.includes(companyId)) {
+    throw new Error(
+      "You do not have permission to complete jobs to inventory (production update)."
+    );
+  }
+  return client.rpc("complete_job_to_inventory", {
+    p_job_id: args.jobId,
+    p_quantity_complete: args.quantity,
+    p_storage_unit_id: args.storageUnitId ?? undefined,
+    p_location_id: args.locationId ?? undefined,
+    p_company_id: companyId,
+    p_user_id: userId
+  });
+}
+
+/**
+ * Schedule or reschedule a job's operations. Routes through `triggerJobSchedule` (the Inngest
+ * scheduling path) rather than invoking the `schedule` edge function directly, so the MCP entry
+ * point uses the same validated dispatch the rest of the app does. Invalid `mode`/`direction`
+ * strings are rejected here rather than only at the edge function.
+ */
+export async function scheduleJob(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  userId: string,
+  args: {
+    jobId: string;
+    mode?: "initial" | "reschedule";
+    direction?: "backward" | "forward";
+  }
+) {
+  const mode = args.mode ?? "reschedule";
+  const direction = args.direction ?? "backward";
+  if (mode !== "initial" && mode !== "reschedule") {
+    throw new Error(
+      `Invalid schedule mode "${mode}". Expected "initial" or "reschedule".`
+    );
+  }
+  if (direction !== "backward" && direction !== "forward") {
+    throw new Error(
+      `Invalid schedule direction "${direction}". Expected "backward" or "forward".`
+    );
+  }
+  return triggerJobSchedule(args.jobId, companyId, userId, mode, direction);
+}
+
+/**
+ * Complete a job operation by reporting produced quantity (non-tracked items). Re-orchestrates the
+ * MES material-complete flow's non-tracked path against the same entry points, so an MCP caller
+ * drives it as the connected user:
+ *   1. record the produced quantity (productionQuantity insert),
+ *   2. backflush consumed material (`issue` edge fn, type "jobOperation"),
+ *   3. when good + reworked quantity reaches the operation's target, mark it Done — the
+ *      sync_finish_job_operation DB trigger then completes the job to inventory if this was the
+ *      last operation — post any ended-but-unposted production events for GL, and return picked
+ *      remainders.
+ *
+ * Serial/batch-tracked operations are refused: they require per-entity completion with a
+ * trackedEntityId (use the MES station). Authenticated-only, matching the MES complete route.
+ *
+ * NOTE: mirrors apps/mes complete.tsx (non-tracked branch) + finishJobOperation; these should share
+ * a service function eventually rather than duplicate the orchestration.
+ */
+export async function completeOperation(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  userId: string,
+  args: {
+    operationId: string;
+    quantity: number;
+  }
+) {
+  const operation = await client
+    .from("jobOperation")
+    .select(
+      "jobId, jobMakeMethodId, quantityComplete, quantityReworked, targetQuantity, operationQuantity"
+    )
+    .eq("id", args.operationId)
+    .eq("companyId", companyId)
+    .maybeSingle();
+  if (operation.error || !operation.data) {
+    throw new Error(`Job operation ${args.operationId} was not found.`);
+  }
+
+  // Serial/batch-tracked operations need per-entity completion (a trackedEntityId) — refuse here.
+  if (operation.data.jobMakeMethodId) {
+    const method = await client
+      .from("jobMakeMethod")
+      .select("requiresSerialTracking, requiresBatchTracking")
+      .eq("id", operation.data.jobMakeMethodId)
+      .maybeSingle();
+    if (
+      method.data?.requiresSerialTracking ||
+      method.data?.requiresBatchTracking
+    ) {
+      throw new Error(
+        "This operation's item is serial/batch tracked and must be completed per tracked entity at the MES station."
+      );
+    }
+  }
+
+  // 1. Record produced quantity.
+  const insertProduction = await client
+    .from("productionQuantity")
+    .insert(
+      sanitize({
+        jobOperationId: args.operationId,
+        quantity: args.quantity,
+        type: "Production",
+        companyId,
+        createdBy: userId
+      })
+    )
+    .select("id")
+    .single();
+  if (insertProduction.error) return insertProduction;
+  if (insertProduction.data?.id) {
+    trackWorkEvent("production_quantity_reported", {
+      companyId,
+      userId,
+      productionQuantityId: insertProduction.data.id,
+      jobOperationId: args.operationId,
+      quantity: args.quantity,
+      source: "api"
+    });
+  }
+
+  // 2. Backflush consumed material.
+  const issue = await client.functions.invoke("issue", {
+    body: {
+      id: args.operationId,
+      type: "jobOperation",
+      quantity: args.quantity,
+      companyId,
+      userId
+    }
+  });
+  if (issue.error) return { data: null, error: issue.error };
+
+  // 3. Finish when good + reworked quantity reaches target (scrap excluded, mirroring the
+  //    sync_update_job_operation_quantities DB predicate).
+  const totalAccounted =
+    (operation.data.quantityComplete ?? 0) +
+    (operation.data.quantityReworked ?? 0) +
+    args.quantity;
+  const target =
+    operation.data.targetQuantity ?? operation.data.operationQuantity ?? 0;
+  if (totalAccounted >= target) {
+    const finished = await client
+      .from("jobOperation")
+      .update({ status: "Done", updatedBy: userId })
+      .eq("id", args.operationId)
+      .eq("companyId", companyId);
+    if (finished.error) return { data: null, error: finished.error };
+
+    // Post ended-but-unposted production events for GL absorption.
+    const unposted = await client
+      .from("productionEvent")
+      .select("id")
+      .eq("jobOperationId", args.operationId)
+      .eq("companyId", companyId)
+      .not("endTime", "is", null)
+      .eq("postedToGL", false);
+    if (unposted.data?.length) {
+      await Promise.all(
+        unposted.data.map((event) =>
+          client.functions.invoke("post-production-event", {
+            body: { productionEventId: event.id, userId, companyId }
+          })
+        )
+      );
+    }
+
+    // Return picked-but-unconsumed stock (the SQL trigger can't call edge functions).
+    const jobId = operation.data.jobId;
+    if (jobId) {
+      const job = await client
+        .from("job")
+        .select("status")
+        .eq("id", jobId)
+        .eq("companyId", companyId)
+        .maybeSingle();
+      const returnBody =
+        job.data?.status === "Completed"
+          ? { type: "returnJobRemainders" as const, jobId, userId, companyId }
+          : {
+              type: "returnOperationRemainders" as const,
+              jobOperationId: args.operationId,
+              userId,
+              companyId
+            };
+      const { error: returnError } = await client.functions.invoke(
+        "post-picking",
+        {
+          body: returnBody
+        }
+      );
+      if (returnError) {
+        logger.error("picked-material return sweep failed", {
+          error: returnError,
+          jobId,
+          scope: returnBody.type,
+          companyId
+        });
+      }
+
+      await raiseMoment("production.jobOperationCompleted", {
+        outputs: {
+          job: { id: jobId },
+          jobOperation: { id: args.operationId },
+          completedBy: { id: userId }
+        },
+        companyId,
+        actorId: userId
+      });
+      trackWorkEvent("job_operation_finished", {
+        companyId,
+        userId,
+        jobOperationId: args.operationId,
+        jobId
+      });
+    }
+  }
+
+  return issue;
 }
