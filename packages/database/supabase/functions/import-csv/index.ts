@@ -2527,6 +2527,22 @@ serve(async (req: Request) => {
         // that index and roll back the whole import).
         const alreadyMappedEntityIds = new Set(externalIdMap.values());
 
+        // Stored location of each already-mapped entity. A csv-id match that
+        // resolves to a unit in a DIFFERENT location than the row states is a
+        // conflict, not a move — used below to reject it instead of silently
+        // renaming the wrong unit or crashing on storageUnit_name_locationId_key.
+        const mappedEntityIds = Array.from(alreadyMappedEntityIds);
+        const entityLocation = new Map<string, string>(
+          (mappedEntityIds.length > 0
+            ? await db
+                .selectFrom("storageUnit")
+                .select(["id", "locationId"])
+                .where("id", "in", mappedEntityIds)
+                .execute()
+            : []
+          ).map((r) => [r.id, r.locationId])
+        );
+
         // Storage unit names are unique per location
         // (storageUnit_name_locationId_key), so the natural key for both in-file
         // dedup and match-existing-to-update is (locationId + lowercased name).
@@ -2667,6 +2683,48 @@ serve(async (req: Request) => {
               });
               continue;
             }
+            // Resolve the row to an existing unit. A csv-id match is honored only
+            // when it is in the SAME location the row states — a storage unit's
+            // location is immutable via import. Updates never touch locationId, so
+            // a cross-location id match would otherwise silently rename the unit in
+            // its old location (ignoring the CSV Location) or crash the whole
+            // import on storageUnit_name_locationId_key.
+            const matchedByCsvId = id ? externalIdMap.get(id) : undefined;
+            const csvIdLocation =
+              matchedByCsvId !== undefined
+                ? entityLocation.get(matchedByCsvId)
+                : undefined;
+            if (
+              matchedByCsvId !== undefined &&
+              csvIdLocation !== undefined &&
+              csvIdLocation !== locationId
+            ) {
+              summary.errors.push({
+                row: rowIndex,
+                reason: `Unique ID "${id}" already belongs to a storage unit in a different location; import cannot move a storage unit between locations`,
+              });
+              continue;
+            }
+            const matchedByName =
+              matchedByCsvId === undefined ? naturalKeyMap.get(key) : undefined;
+            // An id-matched update renames the unit to `name`. If a DIFFERENT unit
+            // in this location already owns that name, the rename would violate
+            // storageUnit_name_locationId_key — report it instead of crashing.
+            if (matchedByCsvId !== undefined) {
+              const nameOwner = naturalKeyMap.get(key);
+              if (nameOwner !== undefined && nameOwner !== matchedByCsvId) {
+                summary.errors.push({
+                  row: rowIndex,
+                  reason: `A different storage unit named "${name}" already exists in this location`,
+                });
+                continue;
+              }
+            }
+            const existingEntityId = matchedByCsvId ?? matchedByName;
+
+            // Row is valid — claim its dedup slots now (after the guards, so a
+            // rejected row never blocks a later legitimate row with the same
+            // name/id from being processed).
             seenNaturalKeys.add(key);
             if (id) seenCsvIds.add(id);
 
@@ -2683,11 +2741,6 @@ serve(async (req: Request) => {
                 rowIndex,
               });
             }
-
-            const matchedByCsvId = id ? externalIdMap.get(id) : undefined;
-            const matchedByName =
-              matchedByCsvId === undefined ? naturalKeyMap.get(key) : undefined;
-            const existingEntityId = matchedByCsvId ?? matchedByName;
 
             if (existingEntityId !== undefined) {
               // Deliberately does not touch locationId (the match/natural key)

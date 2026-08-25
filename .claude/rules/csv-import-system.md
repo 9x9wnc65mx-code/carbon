@@ -83,7 +83,11 @@ unique **per location** (`storageUnit_name_locationId_key`), both in-file dedup 
 match-existing-to-update key on `(locationId, lower(name))` — NOT `classifyImportRow`'s
 name-only dedup. A csv `id` still writes an `externalIntegrationMapping` for id-based
 re-import. Updates deliberately never change `locationId` (avoids the "cannot move a
-unit with children" interceptor). `storageTypeNames` resolve case-insensitively against
+unit with children" interceptor); a unit's location is **immutable via import**, so a row
+whose csv id resolves to a unit in a DIFFERENT location than the row states is reported as
+a row error (not a silent move), and an id-matched rename onto a name another unit already
+owns in that location is likewise reported rather than crashing the batch on
+`storageUnit_name_locationId_key`. `storageTypeNames` resolve case-insensitively against
 existing company `storageType` rows, **creating** any missing ones (mirrors the creatable
 StorageTypes combobox). `parentName` is applied in a **second pass** after all inserts —
 individual `UPDATE`s outside the insert transaction — so a parent defined later in the
