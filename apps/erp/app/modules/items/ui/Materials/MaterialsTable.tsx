@@ -18,9 +18,6 @@ import {
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
   toast,
   useDisclosure,
   VStack
@@ -62,7 +59,7 @@ import {
   ItemThumbnail,
   MethodIcon,
   New,
-  SupplierAvatar,
+  SupplierAvatarGroup,
   Table,
   TrackingTypeIcon
 } from "~/components";
@@ -449,44 +446,9 @@ const MaterialsTable = memo(({ data, tags, count }: MaterialsTableProps) => {
       {
         accessorKey: "suppliers",
         header: t`Supplier`,
-        cell: ({ row }) => {
-          const supplierIds = (row.original.suppliers ?? []).filter((id) =>
-            supplierMap.has(id)
-          );
-          if (supplierIds.length === 0) return null;
-          const rest = supplierIds.slice(3);
-          const restCount = rest.length;
-          const restNames = rest
-            .map((id) => supplierMap.get(id))
-            .filter(Boolean)
-            .join(", ");
-          return (
-            <VStack spacing={1} className="py-1">
-              {supplierIds.slice(0, 3).map((supplierId) => (
-                <SupplierAvatar key={supplierId} supplierId={supplierId} />
-              ))}
-              {restCount > 0 && (
-                <Tooltip>
-                  <TooltipTrigger
-                    type="button"
-                    aria-label={t`${restCount} more: ${restNames}`}
-                    className="rounded-sm text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                  >
-                    {t`+${restCount} more`}
-                  </TooltipTrigger>
-                  <TooltipContent className="flex flex-col gap-1">
-                    {rest.map((supplierId) => (
-                      <SupplierAvatar
-                        key={supplierId}
-                        supplierId={supplierId}
-                      />
-                    ))}
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </VStack>
-          );
-        },
+        cell: ({ row }) => (
+          <SupplierAvatarGroup supplierIds={row.original.suppliers ?? []} />
+        ),
         meta: {
           filter: {
             type: "static",
