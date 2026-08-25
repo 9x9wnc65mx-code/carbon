@@ -2520,6 +2520,12 @@ serve(async (req: Request) => {
           "storageUnit",
           companyId
         );
+        // Entities that already carry a csv mapping. externalIntegrationMapping
+        // is unique on (entityType, entityId, integration, companyId) — ONE
+        // external id per entity — so a name-matched update must NOT attach a
+        // second external id to an entity that already has one (it would violate
+        // that index and roll back the whole import).
+        const alreadyMappedEntityIds = new Set(externalIdMap.values());
 
         // Storage unit names are unique per location
         // (storageUnit_name_locationId_key), so the natural key for both in-file
@@ -2696,11 +2702,19 @@ serve(async (req: Request) => {
                   updatedBy: userId,
                 },
               });
-              if (matchedByCsvId === undefined && id) {
+              if (
+                matchedByCsvId === undefined &&
+                id &&
+                !alreadyMappedEntityIds.has(existingEntityId)
+              ) {
                 csvIdsForNameMatchedUpdates.push({
                   entityId: existingEntityId,
                   externalId: id,
                 });
+                // Guard against two name-matched rows in the same file both
+                // trying to first-map the same entity (they can't share a
+                // natural key, but belt-and-braces for the unique index).
+                alreadyMappedEntityIds.add(existingEntityId);
               }
               naturalKeyMap.set(key, existingEntityId);
             } else {
