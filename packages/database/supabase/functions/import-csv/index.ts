@@ -31,6 +31,7 @@ const importCsvValidator = z.object({
     "tool",
     "workCenter",
     "process",
+    "storageUnit",
     "materialSubstance",
     "materialForm",
     "materialFinish",
@@ -113,7 +114,8 @@ type CsvEntityType =
   | "item"
   | "contact"
   | "workCenter"
-  | "process";
+  | "process"
+  | "storageUnit";
 
 /**
  * Look up the ids that still exist in the entity table. Done as a typed
@@ -165,6 +167,13 @@ async function fetchLiveEntityIds(
     case "process":
       rows = await db
         .selectFrom("process")
+        .select(["id"])
+        .where("id", "in", ids)
+        .execute();
+      break;
+    case "storageUnit":
+      rows = await db
+        .selectFrom("storageUnit")
         .select(["id"])
         .where("id", "in", ids)
         .execute();
@@ -2504,6 +2513,300 @@ serve(async (req: Request) => {
             }
           }
         });
+        break;
+      }
+      case "storageUnit": {
+        const externalIdMap = await getCsvExternalIdMap(
+          "storageUnit",
+          companyId
+        );
+
+        // Storage unit names are unique per location
+        // (storageUnit_name_locationId_key), so the natural key for both in-file
+        // dedup and match-existing-to-update is (locationId + lowercased name).
+        const naturalKey = (locationId: string, name: string) =>
+          `${locationId}::${name.trim().toLowerCase()}`;
+
+        // Preload existing units for the referenced locations so a name that
+        // already exists updates instead of tripping the unique constraint, and
+        // so parent references can resolve against pre-existing units.
+        const referencedLocationIds = Array.from(
+          new Set(
+            mappedRecords
+              .map((r) => r.locationId)
+              .filter(
+                (l): l is string => typeof l === "string" && l.trim() !== ""
+              )
+          )
+        );
+        const existingUnits =
+          referencedLocationIds.length > 0
+            ? await db
+                .selectFrom("storageUnit")
+                .select(["id", "name", "locationId"])
+                .where("companyId", "=", companyId)
+                .where("locationId", "in", referencedLocationIds)
+                .execute()
+            : [];
+        // (locationId + lowercased name) -> storageUnit id. Grows as we insert,
+        // so a child whose parent is defined later in the same file resolves.
+        const naturalKeyMap = new Map<string, string>();
+        for (const u of existingUnits) {
+          naturalKeyMap.set(naturalKey(u.locationId, u.name), u.id);
+        }
+
+        // Preload existing storage types (lowercased name -> id). Unmatched
+        // names create a company-scoped storageType, mirroring the creatable
+        // StorageTypes combobox on the storage-unit form.
+        const existingTypes = await db
+          .selectFrom("storageType")
+          .select(["id", "name"])
+          .where("companyId", "=", companyId)
+          .execute();
+        const storageTypeByName = new Map<string, string>();
+        for (const st of existingTypes) {
+          storageTypeByName.set(st.name.trim().toLowerCase(), st.id);
+        }
+
+        const parseActive = (value: string | undefined): boolean => {
+          const v = (value ?? "").trim().toLowerCase();
+          // Default active; only explicit falsey values deactivate.
+          return !["false", "no", "0", "inactive", "n"].includes(v);
+        };
+        const parseTypeNames = (value: string | undefined): string[] =>
+          (value ?? "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => s !== "");
+
+        const seenNaturalKeys = new Set<string>();
+        const seenCsvIds = new Set<string>();
+        // Parent links are applied in a second pass (after all inserts) so a
+        // parent defined later in the same file resolves and a bad parent
+        // reports a row error instead of rolling back the whole import.
+        const parentIntents: Array<{
+          locationId: string;
+          childKey: string;
+          parentName: string;
+          rowIndex: number;
+        }> = [];
+
+        await db.transaction().execute(async (trx) => {
+          const inserts: Database["public"]["Tables"]["storageUnit"]["Insert"][] =
+            [];
+          const csvIdsForInserts: string[] = [];
+          const updates: {
+            id: string;
+            data: Database["public"]["Tables"]["storageUnit"]["Update"];
+          }[] = [];
+          const csvIdsForNameMatchedUpdates: Array<{
+            entityId: string;
+            externalId: string;
+          }> = [];
+
+          // Resolve storage type names to ids, creating any that don't exist.
+          const resolveTypeIds = async (names: string[]): Promise<string[]> => {
+            const ids: string[] = [];
+            for (const name of names) {
+              const key = name.toLowerCase();
+              let id = storageTypeByName.get(key);
+              if (!id) {
+                const created = await trx
+                  .insertInto("storageType")
+                  .values({
+                    id: nanoid(),
+                    name,
+                    companyId,
+                    createdBy: userId,
+                    createdAt: new Date().toISOString(),
+                  } as never)
+                  .returning(["id"])
+                  .execute();
+                id = created[0]?.id ?? undefined;
+                if (id) storageTypeByName.set(key, id);
+              }
+              if (id && !ids.includes(id)) ids.push(id);
+            }
+            return ids;
+          };
+
+          for (const [rowIndex, record] of mappedRecords.entries()) {
+            const id = record.id ?? "";
+            const name = (record.name ?? "").trim();
+            const locationId = (record.locationId ?? "").trim();
+            const parentName = (record.parentName ?? "").trim();
+
+            if (name === "" || locationId === "") {
+              summary.errors.push({
+                row: rowIndex,
+                reason:
+                  name === ""
+                    ? "Missing required Name"
+                    : "Missing required Location",
+              });
+              continue;
+            }
+            if (id && seenCsvIds.has(id)) {
+              summary.skipped.push({
+                row: rowIndex,
+                reason: `Duplicate ID "${id}" in file`,
+              });
+              continue;
+            }
+            const key = naturalKey(locationId, name);
+            if (seenNaturalKeys.has(key)) {
+              summary.skipped.push({
+                row: rowIndex,
+                reason: `Duplicate storage unit "${name}" for this location in file`,
+              });
+              continue;
+            }
+            seenNaturalKeys.add(key);
+            if (id) seenCsvIds.add(id);
+
+            const storageTypeIds = await resolveTypeIds(
+              parseTypeNames(record.storageTypeNames)
+            );
+            const active = parseActive(record.active);
+
+            if (parentName) {
+              parentIntents.push({
+                locationId,
+                childKey: key,
+                parentName,
+                rowIndex,
+              });
+            }
+
+            const matchedByCsvId = id ? externalIdMap.get(id) : undefined;
+            const matchedByName =
+              matchedByCsvId === undefined ? naturalKeyMap.get(key) : undefined;
+            const existingEntityId = matchedByCsvId ?? matchedByName;
+
+            if (existingEntityId !== undefined) {
+              // Deliberately does not touch locationId (the match/natural key)
+              // to avoid the "cannot move a unit with children" interceptor.
+              updates.push({
+                id: existingEntityId,
+                data: {
+                  name,
+                  storageTypeIds,
+                  active,
+                  updatedAt: new Date().toISOString(),
+                  updatedBy: userId,
+                },
+              });
+              if (matchedByCsvId === undefined && id) {
+                csvIdsForNameMatchedUpdates.push({
+                  entityId: existingEntityId,
+                  externalId: id,
+                });
+              }
+              naturalKeyMap.set(key, existingEntityId);
+            } else {
+              const newId = nanoid();
+              inserts.push({
+                id: newId,
+                name,
+                locationId,
+                storageTypeIds,
+                active,
+                companyId,
+                createdBy: userId,
+                createdAt: new Date().toISOString(),
+              } as never);
+              csvIdsForInserts.push(id);
+              naturalKeyMap.set(key, newId);
+            }
+          }
+
+          console.log({
+            totalRecords: mappedRecords.length,
+            storageUnitInserts: inserts.length,
+            storageUnitUpdates: updates.length,
+          });
+          summary.inserted += inserts.length;
+          summary.updated += updates.length;
+
+          if (inserts.length > 0) {
+            const inserted = await trx
+              .insertInto("storageUnit")
+              .values(inserts)
+              .returning(["id"])
+              .execute();
+            await upsertCsvMappings(
+              trx,
+              "storageUnit",
+              inserted.map((row, i) => ({
+                entityId: row.id!,
+                externalId: csvIdsForInserts[i],
+              })),
+              companyId,
+              userId
+            );
+          }
+          for (const update of updates) {
+            await trx
+              .updateTable("storageUnit")
+              .set(update.data)
+              .where("id", "=", update.id)
+              .execute();
+          }
+          if (csvIdsForNameMatchedUpdates.length > 0) {
+            await upsertCsvMappings(
+              trx,
+              "storageUnit",
+              csvIdsForNameMatchedUpdates,
+              companyId,
+              userId
+            );
+          }
+        });
+
+        // Second pass: link parents by (locationId + name) now that every unit
+        // in the file exists. Individual UPDATEs (outside the insert txn) so an
+        // unresolved or cyclic parent reports a row error without discarding the
+        // successful imports. The DB same-location / no-cycle interceptors are
+        // the final guard; their exceptions are caught per-row.
+        for (const intent of parentIntents) {
+          const childId = naturalKeyMap.get(intent.childKey);
+          const parentId = naturalKeyMap.get(
+            naturalKey(intent.locationId, intent.parentName)
+          );
+          if (!childId) continue;
+          if (!parentId) {
+            summary.errors.push({
+              row: intent.rowIndex,
+              reason: `Parent storage unit "${intent.parentName}" not found in the same location`,
+            });
+            continue;
+          }
+          if (parentId === childId) {
+            summary.errors.push({
+              row: intent.rowIndex,
+              reason: `Storage unit cannot be its own parent`,
+            });
+            continue;
+          }
+          try {
+            await db
+              .updateTable("storageUnit")
+              .set({
+                parentId,
+                updatedAt: new Date().toISOString(),
+                updatedBy: userId,
+              })
+              .where("id", "=", childId)
+              .execute();
+          } catch (parentErr) {
+            summary.errors.push({
+              row: intent.rowIndex,
+              reason: `Could not set parent "${intent.parentName}": ${
+                (parentErr as Error).message
+              }`,
+            });
+          }
+        }
         break;
       }
       case "bom":
