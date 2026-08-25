@@ -61153,6 +61153,7 @@ export type Database = {
             | Database["public"]["Enums"]["supersessionMode"]
             | null
           supplierIds: string | null
+          suppliers: string[] | null
           tags: string[] | null
           thumbnailPath: string | null
           unitOfMeasure: string | null
@@ -66057,6 +66058,7 @@ export type Database = {
             | Database["public"]["Enums"]["supersessionMode"]
             | null
           supplierIds: string | null
+          suppliers: string[] | null
           tags: string[] | null
           thumbnailPath: string | null
           unitOfMeasure: string | null
@@ -66949,6 +66951,7 @@ export type Database = {
             | Database["public"]["Enums"]["supersessionMode"]
             | null
           supplierIds: string | null
+          suppliers: string[] | null
           tags: string[] | null
           thumbnailPath: string | null
           unitOfMeasure: string | null
@@ -73317,6 +73320,7 @@ export type Database = {
           revision: string | null
           revisions: Json | null
           supplierIds: string | null
+          suppliers: string[] | null
           tags: string[] | null
           thumbnailPath: string | null
           unitOfMeasure: string | null
@@ -75198,6 +75202,7 @@ export type Database = {
             | Database["public"]["Enums"]["supersessionMode"]
             | null
           supplierIds: string | null
+          suppliers: string[] | null
           tags: string[] | null
           thumbnailPath: string | null
           unitOfMeasure: string | null
