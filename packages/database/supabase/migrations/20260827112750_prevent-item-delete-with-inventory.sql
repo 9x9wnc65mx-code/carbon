@@ -47,14 +47,23 @@
 
 -- 1. itemLedger.itemId: CASCADE -> NO ACTION. Re-created under the same name so
 --    the app's error mapper keeps matching "itemLedger_itemId_fkey".
---    Added NOT VALID then VALIDATEd separately (repo convention, see
---    20260703143904_composite-tenant-fks.sql): the NOT VALID add enforces the
---    ON DELETE NO ACTION action and checks new/changed rows immediately while
---    holding the write-blocking ShareRowExclusive lock only momentarily; the
---    separate VALIDATE scans existing rows under the lighter ShareUpdateExclusive
---    lock, which does not block reads or writes. Every itemLedger row already
---    references a live item (the dropped constraint was ON DELETE CASCADE, so
---    orphans were structurally impossible), so this VALIDATE is expected to pass.
+--
+--    The DROP + ADD run together in this migration's transaction (the Supabase
+--    CLI wraps each migration file in one txn -- which is why enum ADD VALUE
+--    cannot share a file with statements that use it), so there is never a
+--    window where itemLedger has no FK to item.
+--
+--    Added NOT VALID here, and VALIDATEd in a SEPARATE later migration
+--    (20260827115500_validate-item-ledger-item-fk). Splitting the validation
+--    into its own transaction is what makes it cheap: the NOT VALID add takes
+--    the write-blocking ShareRowExclusive lock only momentarily (no scan) and
+--    already enforces ON DELETE NO ACTION plus the check on new/changed rows;
+--    the follow-up VALIDATE scans existing rows under the lighter
+--    ShareUpdateExclusive lock, which does not block reads or writes. In the
+--    same file the ShareRowExclusive lock would be held until COMMIT, so the
+--    scan would still block writes -- the split is pointless unless VALIDATE
+--    runs after this migration commits. (Repo convention, cf.
+--    20260703143904_composite-tenant-fks.sql.)
 ALTER TABLE "itemLedger"
   DROP CONSTRAINT "itemLedger_itemId_fkey";
 
@@ -63,9 +72,6 @@ ALTER TABLE "itemLedger"
     FOREIGN KEY ("itemId") REFERENCES "item"("id")
     ON DELETE NO ACTION ON UPDATE CASCADE
     NOT VALID;
-
-ALTER TABLE "itemLedger"
-  VALIDATE CONSTRAINT "itemLedger_itemId_fkey";
 
 -- 2. costLedger.itemId: add the missing FK. NOT VALID skips the scan of
 --    existing rows (past deletions left orphans with itemId pointing at a
