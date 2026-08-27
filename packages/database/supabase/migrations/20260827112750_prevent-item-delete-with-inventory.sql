@@ -47,13 +47,25 @@
 
 -- 1. itemLedger.itemId: CASCADE -> NO ACTION. Re-created under the same name so
 --    the app's error mapper keeps matching "itemLedger_itemId_fkey".
+--    Added NOT VALID then VALIDATEd separately (repo convention, see
+--    20260703143904_composite-tenant-fks.sql): the NOT VALID add enforces the
+--    ON DELETE NO ACTION action and checks new/changed rows immediately while
+--    holding the write-blocking ShareRowExclusive lock only momentarily; the
+--    separate VALIDATE scans existing rows under the lighter ShareUpdateExclusive
+--    lock, which does not block reads or writes. Every itemLedger row already
+--    references a live item (the dropped constraint was ON DELETE CASCADE, so
+--    orphans were structurally impossible), so this VALIDATE is expected to pass.
 ALTER TABLE "itemLedger"
   DROP CONSTRAINT "itemLedger_itemId_fkey";
 
 ALTER TABLE "itemLedger"
   ADD CONSTRAINT "itemLedger_itemId_fkey"
     FOREIGN KEY ("itemId") REFERENCES "item"("id")
-    ON DELETE NO ACTION ON UPDATE CASCADE;
+    ON DELETE NO ACTION ON UPDATE CASCADE
+    NOT VALID;
+
+ALTER TABLE "itemLedger"
+  VALIDATE CONSTRAINT "itemLedger_itemId_fkey";
 
 -- 2. costLedger.itemId: add the missing FK. NOT VALID skips the scan of
 --    existing rows (past deletions left orphans with itemId pointing at a
