@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@carbon/react";
 import { Trans } from "@lingui/react/macro";
+import type { ReactNode } from "react";
 import { formatFarmDateTime } from "../health.time";
 import TechnicalText from "./TechnicalText";
 import {
@@ -21,11 +22,24 @@ type FlockHealthCardProps = {
   drugs: Record<string, any>[];
 };
 
-function HoldBadge({ label, until, timeZone }: { label: string; until?: string | null; timeZone: string }) {
+function WithdrawalBadge({
+  label,
+  until,
+  unknown,
+  notStarted,
+  timeZone
+}: {
+  label: ReactNode;
+  until?: string | null;
+  unknown?: boolean;
+  notStarted?: boolean;
+  timeZone: string;
+}) {
   const active = Boolean(until && new Date(until).getTime() > Date.now());
+  const warning = Boolean(unknown || active);
   return (
-    <span className={`rounded-md border px-2 py-1 text-xs ${active ? "border-amber-500/50 bg-amber-500/10 text-amber-700" : "text-muted-foreground"}`}>
-      {label}: {active ? formatFarmDateTime(until, timeZone) : "Clear"}
+    <span className={`rounded-md border px-2 py-1 text-xs ${warning ? "border-amber-500/50 bg-amber-500/10 text-amber-700" : "text-muted-foreground"}`}>
+      {label}: {unknown ? <Trans>Unknown</Trans> : active ? formatFarmDateTime(until, timeZone) : notStarted ? <Trans>Not started</Trans> : <Trans>Clear</Trans>}
     </span>
   );
 }
@@ -50,16 +64,10 @@ export default function FlockHealthCard({
     return map;
   }, {});
 
-  const activeMeatHold = treatments
-    .map((course) => course.meatWithdrawalUntil)
-    .filter(Boolean)
-    .sort()
-    .at(-1);
-  const activeEggHold = treatments
-    .map((course) => course.eggWithdrawalUntil)
-    .filter(Boolean)
-    .sort()
-    .at(-1);
+  const activeMeatHold = treatments.map((course) => course.meatWithdrawalUntil).filter(Boolean).sort().at(-1);
+  const activeEggHold = treatments.map((course) => course.eggWithdrawalUntil).filter(Boolean).sort().at(-1);
+  const unknownMeatWithdrawal = treatments.some((course) => course.lastAdministrationAt && course.meatWithdrawalDaysSnapshot == null);
+  const unknownEggWithdrawal = treatments.some((course) => course.lastAdministrationAt && course.eggWithdrawalDaysSnapshot == null);
 
   return (
     <Card className="w-full">
@@ -67,8 +75,8 @@ export default function FlockHealthCard({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle><Trans>Clinical health & treatments</Trans></CardTitle>
           <div className="flex flex-wrap gap-2">
-            <HoldBadge label="Meat withdrawal" until={activeMeatHold} timeZone={timeZone} />
-            <HoldBadge label="Egg withdrawal" until={activeEggHold} timeZone={timeZone} />
+            <WithdrawalBadge label={<Trans>Meat withdrawal</Trans>} until={activeMeatHold} unknown={unknownMeatWithdrawal} timeZone={timeZone} />
+            <WithdrawalBadge label={<Trans>Egg withdrawal</Trans>} until={activeEggHold} unknown={unknownEggWithdrawal} timeZone={timeZone} />
           </div>
         </div>
         <p className="text-xs text-muted-foreground"><Trans>All operational times are interpreted using the farm timezone and persisted as UTC.</Trans> <TechnicalText>{timeZone}</TechnicalText></p>
@@ -119,6 +127,7 @@ export default function FlockHealthCard({
             <div className="flex items-center justify-between"><h3 className="font-medium"><Trans>Treatment courses</Trans></h3><span className="text-xs text-muted-foreground">{treatments.length}</span></div>
             {treatments.length === 0 ? <p className="text-sm text-muted-foreground"><Trans>No treatment courses recorded for this flock.</Trans></p> : treatments.map((course) => {
               const courseAdministrations = administrationsByCourse[course.id] ?? [];
+              const hasAdministration = courseAdministrations.length > 0;
               return (
                 <details key={course.id} className="rounded-lg border p-3 open:bg-muted/20">
                   <summary className="cursor-pointer list-none">
@@ -133,8 +142,8 @@ export default function FlockHealthCard({
                   </summary>
                   <div className="mt-3 grid gap-3">
                     <div className="flex flex-wrap gap-2">
-                      <HoldBadge label="Meat" until={course.meatWithdrawalUntil} timeZone={timeZone} />
-                      <HoldBadge label="Egg" until={course.eggWithdrawalUntil} timeZone={timeZone} />
+                      <WithdrawalBadge label={<Trans>Meat</Trans>} until={course.meatWithdrawalUntil} unknown={hasAdministration && course.meatWithdrawalDaysSnapshot == null} notStarted={!hasAdministration} timeZone={timeZone} />
+                      <WithdrawalBadge label={<Trans>Egg</Trans>} until={course.eggWithdrawalUntil} unknown={hasAdministration && course.eggWithdrawalDaysSnapshot == null} notStarted={!hasAdministration} timeZone={timeZone} />
                       <span className="rounded border px-2 py-1 text-xs"><Trans>Administrations</Trans>: {courseAdministrations.length}</span>
                       {course.lastAdministrationAt ? <span className="rounded border px-2 py-1 text-xs"><Trans>Last administration</Trans>: {formatFarmDateTime(course.lastAdministrationAt, timeZone)}</span> : null}
                     </div>
