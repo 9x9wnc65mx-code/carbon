@@ -17,8 +17,11 @@ import { now, parseAbsolute } from "@internationalized/date";
 // per-request memoization.
 export { getUserClaims } from "@carbon/auth/users.server";
 
+import {
+  getSsoConnection,
+  uncoveredSsoDomainError
+} from "@carbon/ee/sso.server";
 import { getLogger } from "@carbon/logger";
-
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { redirect } from "react-router";
 import { getSupplierContact } from "~/modules/purchasing";
@@ -52,6 +55,35 @@ export function isControlledInviteExpired(createdAt: string): boolean {
     days: INVITE_EXPIRY_DAYS
   });
   return expiresAt.compare(now("UTC")) < 0;
+}
+
+/**
+ * Once a company has an active SSO connection, employee invites must stay on
+ * its covered domains — an uncovered invite would silently bypass the IdP via
+ * magic-link auth. Customer/supplier invites are external by nature and are
+ * not constrained. Scoped to THIS company's connection: a domain covered by
+ * another company's connection is neither required nor blocked here.
+ * Returns the refusal message for the email field, or null when the invite
+ * may proceed. A failed connection read refuses (fail closed) rather than
+ * guessing.
+ */
+export async function getSsoInviteDomainError(
+  serviceRole: SupabaseClient<Database>,
+  companyId: string,
+  email: string
+): Promise<string | null> {
+  const connection = await getSsoConnection(serviceRole, companyId);
+  if (connection.error) {
+    logger.error("Failed to read SSO connection for invite check", {
+      companyId,
+      error: connection.error
+    });
+    return "Could not verify the company's single sign-on configuration. Try again.";
+  }
+  if (!connection.data) {
+    return null;
+  }
+  return uncoveredSsoDomainError(connection.data.domains ?? [], email);
 }
 
 export async function acceptInvite(

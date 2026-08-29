@@ -280,6 +280,9 @@ msgstr "Использовано"
 msgid "Consumed expired"
 msgstr "Израсходовано - истек срок"
 
+msgid "Continue"
+msgstr "Продолжить"
+
 #. placeholder {0}: board.unplannedCost.days
 msgid "Cost of unplanned maintenance, last {0} days"
 msgstr "Себестоимость внепланового техобслуживания за последние {0} дней"
@@ -1268,9 +1271,6 @@ msgstr "Недостача"
 
 msgid "Short pick {itemName}"
 msgstr "Короткий отбор {itemName}"
-
-msgid "Sign in with Email"
-msgstr "Войти по электронной почте"
 
 msgid "Sign in with Google"
 msgstr "Войти через Google"

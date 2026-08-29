@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-28T16:35:40.658Z",
+  "generated": "2026-08-28T17:37:13.495Z",
   "totalTools": 1449,
   "modules": 15,
   "tools": [
@@ -44952,7 +44952,7 @@
       "module": "settings",
       "classification": "WRITE",
       "description": "upsert api key",
-      "paramCount": 49,
+      "paramCount": 50,
       "serviceParams": [
         "client",
         "apiKey"
@@ -44965,6 +44965,9 @@
       "schema": {
         "type": "object",
         "properties": {
+          "domain": {
+            "type": "string"
+          },
           "next": {
             "type": "string"
           },
@@ -45138,6 +45141,7 @@
           }
         },
         "required": [
+          "domain",
           "next",
           "digitalQuoteEnabled",
           "digitalQuoteIncludesPurchaseOrders",
