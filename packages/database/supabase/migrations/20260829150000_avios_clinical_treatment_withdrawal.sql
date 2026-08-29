@@ -90,7 +90,7 @@ CREATE TABLE "flockTreatmentCourse" (
   PRIMARY KEY ("id", "companyId"),
   FOREIGN KEY ("companyId") REFERENCES "company"("id") ON DELETE CASCADE,
   FOREIGN KEY ("flockId", "companyId") REFERENCES "flockCycle"("id", "companyId") ON DELETE CASCADE,
-  FOREIGN KEY ("clinicalEventId", "companyId") REFERENCES "flockClinicalEvent"("id", "companyId") ON DELETE SET NULL,
+  FOREIGN KEY ("clinicalEventId", "companyId") REFERENCES "flockClinicalEvent"("id", "companyId") ON DELETE RESTRICT,
   FOREIGN KEY ("drugId", "companyId") REFERENCES "drugCatalog"("id", "companyId") ON DELETE RESTRICT,
   CONSTRAINT "flockTreatmentCourse_status_check" CHECK ("status" IN ('Planned', 'Active', 'Completed', 'Stopped', 'Cancelled')),
   CONSTRAINT "flockTreatmentCourse_dose_check" CHECK ("doseValue" IS NULL OR "doseValue" > 0),
@@ -194,8 +194,13 @@ DECLARE
   meat_days INTEGER;
   egg_days INTEGER;
 BEGIN
-  affected_course_id := COALESCE(NEW."courseId", OLD."courseId");
-  affected_company_id := COALESCE(NEW."companyId", OLD."companyId");
+  IF TG_OP = 'DELETE' THEN
+    affected_course_id := OLD."courseId";
+    affected_company_id := OLD."companyId";
+  ELSE
+    affected_course_id := NEW."courseId";
+    affected_company_id := NEW."companyId";
+  END IF;
 
   SELECT MAX("administeredAt")
     INTO latest_administration
@@ -228,7 +233,11 @@ BEGIN
   WHERE "id" = affected_course_id
     AND "companyId" = affected_company_id;
 
-  RETURN COALESCE(NEW, OLD);
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+
+  RETURN NEW;
 END;
 $$;
 
