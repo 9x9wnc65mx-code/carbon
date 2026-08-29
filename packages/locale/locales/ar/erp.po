@@ -93,6 +93,9 @@ msgstr "المزارع"
 msgid "Flocks"
 msgstr "القطعان"
 
+msgid "Vaccination"
+msgstr "التحصين"
+
 msgid "Operational Digital Thread"
 msgstr "السجل التشغيلي المترابط"
 
@@ -119,3 +122,429 @@ msgstr "لم يتم تسجيل أي مزارع دواجن بعد."
 
 msgid "No poultry flocks have been registered yet."
 msgstr "لم يتم تسجيل أي قطعان دواجن بعد."
+
+msgid "Farms & Houses"
+msgstr "المزارع والعنابر"
+
+msgid "Register the physical poultry structure inherited by flocks, samples, feed exposure and production events."
+msgstr "سجّل البنية المكانية للدواجن التي ترتبط بها القطعان والعينات والتعرض للأعلاف وأحداث الإنتاج."
+
+msgid "Register farm"
+msgstr "تسجيل مزرعة"
+
+msgid "Register house"
+msgstr "تسجيل عنبر"
+
+msgid "Farm code"
+msgstr "رمز المزرعة"
+
+msgid "Farm name"
+msgstr "اسم المزرعة"
+
+msgid "Farm type"
+msgstr "نوع المزرعة"
+
+msgid "Region"
+msgstr "المنطقة"
+
+msgid "Address"
+msgstr "العنوان"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Notes"
+msgstr "ملاحظات"
+
+msgid "Create farm"
+msgstr "إنشاء المزرعة"
+
+msgid "Farm"
+msgstr "المزرعة"
+
+msgid "Select farm"
+msgstr "اختر المزرعة"
+
+msgid "House code"
+msgstr "رمز العنبر"
+
+msgid "House name"
+msgstr "اسم العنبر"
+
+msgid "House type"
+msgstr "نوع العنبر"
+
+msgid "Capacity (birds)"
+msgstr "السعة (طائر)"
+
+msgid "Floor area (m²)"
+msgstr "مساحة الأرضية (م²)"
+
+msgid "Create house"
+msgstr "إنشاء العنبر"
+
+msgid "Create a farm before registering its poultry houses."
+msgstr "أنشئ مزرعة أولًا قبل تسجيل عنابر الدواجن التابعة لها."
+
+msgid "Code"
+msgstr "الرمز"
+
+msgid "Type"
+msgstr "النوع"
+
+msgid "Houses"
+msgstr "العنابر"
+
+msgid "Open"
+msgstr "فتح"
+
+msgid "Close"
+msgstr "إغلاق"
+
+msgid "Farm profile"
+msgstr "بيانات المزرعة"
+
+msgid "Save farm"
+msgstr "حفظ المزرعة"
+
+msgid "No houses are registered for this farm."
+msgstr "لا توجد عنابر مسجلة لهذه المزرعة."
+
+msgid "Save house"
+msgstr "حفظ العنبر"
+
+msgid "Register flock"
+msgstr "تسجيل قطيع"
+
+msgid "Each flock is the central biological identity linking origin, location, performance, feed exposure, health, laboratory results and slaughter outcomes."
+msgstr "يمثل كل قطيع الهوية البيولوجية المركزية التي تربط المصدر والموقع والأداء والتعرض للأعلاف والصحة ونتائج المختبر ومخرجات المسلخ."
+
+msgid "Create a farm and poultry house before registering a flock."
+msgstr "أنشئ مزرعة وعنبر دواجن قبل تسجيل القطيع."
+
+msgid "House"
+msgstr "العنبر"
+
+msgid "Select house"
+msgstr "اختر العنبر"
+
+msgid "Flock code"
+msgstr "رمز القطيع"
+
+msgid "Flock type"
+msgstr "نوع القطيع"
+
+msgid "Strain"
+msgstr "السلالة"
+
+msgid "Sex"
+msgstr "الجنس"
+
+msgid "Hatch date"
+msgstr "تاريخ الفقس"
+
+msgid "Placement date"
+msgstr "تاريخ التسكين"
+
+msgid "Initial birds"
+msgstr "العدد الابتدائي للطيور"
+
+msgid "Source reference"
+msgstr "مرجع المصدر"
+
+msgid "Closure date"
+msgstr "تاريخ إغلاق الدورة"
+
+msgid "Create flock"
+msgstr "إنشاء القطيع"
+
+msgid "Flock"
+msgstr "القطيع"
+
+msgid "Farm / House"
+msgstr "المزرعة / العنبر"
+
+msgid "Placement"
+msgstr "التسكين"
+
+msgid "Passport"
+msgstr "الجواز الرقمي"
+
+msgid "Flock Digital Passport"
+msgstr "الجواز الرقمي للقطيع"
+
+msgid "Identity & provenance"
+msgstr "الهوية والمصدر"
+
+msgid "Traceability identity"
+msgstr "هوية التتبع"
+
+msgid "Identity anchor active"
+msgstr "هوية التتبع مفعلة"
+
+msgid "Digital thread"
+msgstr "السجل الرقمي المترابط"
+
+msgid "Chick / hatchery origin"
+msgstr "مصدر الصوص / الفقاسة"
+
+msgid "Ready for origin lot linkage"
+msgstr "جاهز للربط مع دفعة المصدر"
+
+msgid "Feed exposure"
+msgstr "التعرض للأعلاف"
+
+msgid "Ready for feed lot genealogy"
+msgstr "جاهز للربط مع تتبع دفعات العلف"
+
+msgid "Health & vaccination"
+msgstr "الصحة والتحصين"
+
+msgid "Vaccination workflow active"
+msgstr "مسار التحصين مفعل"
+
+msgid "Slaughter & quality"
+msgstr "المسلخ والجودة"
+
+msgid "Ready for downstream outcome linkage"
+msgstr "جاهز للربط مع نتائج المراحل اللاحقة"
+
+msgid "The passport is a read model over the flock identity and linked domains; it does not duplicate genealogy data."
+msgstr "الجواز الرقمي هو عرض موحد لهوية القطيع والبيانات المرتبطة بها، ولا يكرر بيانات التتبع الأصلية."
+
+msgid "Edit flock identity"
+msgstr "تعديل هوية القطيع"
+
+msgid "Save flock"
+msgstr "حفظ القطيع"
+
+msgid "Vaccination Center"
+msgstr "مركز التحصين"
+
+msgid "Maintain health catalogs and reusable vaccination programs, then assign approved programs to individual flocks for planned-vs-actual traceability."
+msgstr "أدِر كتالوجات الصحة وبرامج التحصين القابلة لإعادة الاستخدام، ثم أسند البرامج المعتمدة للقطعان لمقارنة المخطط بالتنفيذ الفعلي وتتبع كليهما."
+
+msgid "Create vaccination program"
+msgstr "إنشاء برنامج تحصين"
+
+msgid "Vaccination programs"
+msgstr "برامج التحصين"
+
+msgid "No vaccination programs have been created yet."
+msgstr "لم يتم إنشاء أي برامج تحصين بعد."
+
+msgid "steps"
+msgstr "خطوات"
+
+msgid "Open program"
+msgstr "فتح البرنامج"
+
+msgid "Disease catalog"
+msgstr "كتالوج الأمراض"
+
+msgid "Disease code"
+msgstr "رمز المرض"
+
+msgid "Disease name"
+msgstr "اسم المرض"
+
+msgid "Scientific name"
+msgstr "الاسم العلمي"
+
+msgid "Pathogen type"
+msgstr "نوع العامل الممرض"
+
+msgid "Create disease"
+msgstr "إضافة المرض"
+
+msgid "Vaccine catalog"
+msgstr "كتالوج اللقاحات"
+
+msgid "Add at least one disease before creating vaccine products."
+msgstr "أضف مرضًا واحدًا على الأقل قبل إنشاء منتجات اللقاحات."
+
+msgid "Vaccine code"
+msgstr "رمز اللقاح"
+
+msgid "Trade name"
+msgstr "الاسم التجاري"
+
+msgid "Manufacturer"
+msgstr "الشركة المصنعة"
+
+msgid "Vaccine type"
+msgstr "نوع اللقاح"
+
+msgid "Default route"
+msgstr "طريقة الإعطاء الافتراضية"
+
+msgid "Not specified"
+msgstr "غير محدد"
+
+msgid "Primary target disease"
+msgstr "المرض المستهدف الرئيسي"
+
+msgid "Select disease"
+msgstr "اختر المرض"
+
+msgid "Create vaccine"
+msgstr "إضافة اللقاح"
+
+msgid "Add target disease"
+msgstr "إضافة مرض مستهدف"
+
+msgid "Add"
+msgstr "إضافة"
+
+msgid "Drug catalog"
+msgstr "كتالوج الأدوية"
+
+msgid "Drug code"
+msgstr "رمز الدواء"
+
+msgid "Active ingredient"
+msgstr "المادة الفعالة"
+
+msgid "Drug class"
+msgstr "الفئة الدوائية"
+
+msgid "Meat withdrawal (days)"
+msgstr "فترة سحب اللحم (أيام)"
+
+msgid "Egg withdrawal (days)"
+msgstr "فترة سحب البيض (أيام)"
+
+msgid "Create drug"
+msgstr "إضافة الدواء"
+
+msgid "Meat withdrawal"
+msgstr "سحب اللحم"
+
+msgid "Egg withdrawal"
+msgstr "سحب البيض"
+
+msgid "Program code"
+msgstr "رمز البرنامج"
+
+msgid "Program name"
+msgstr "اسم البرنامج"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Save program"
+msgstr "حفظ البرنامج"
+
+msgid "Create program"
+msgstr "إنشاء البرنامج"
+
+msgid "Sequence"
+msgstr "التسلسل"
+
+msgid "Target age (days)"
+msgstr "العمر المستهدف (أيام)"
+
+msgid "Target disease"
+msgstr "المرض المستهدف"
+
+msgid "Preferred vaccine"
+msgstr "اللقاح المفضل"
+
+msgid "Choose at administration"
+msgstr "يُحدد عند التنفيذ"
+
+msgid "Route"
+msgstr "طريقة الإعطاء"
+
+msgid "Dose value"
+msgstr "قيمة الجرعة"
+
+msgid "Dose unit"
+msgstr "وحدة الجرعة"
+
+msgid "Add schedule step"
+msgstr "إضافة خطوة للجدول"
+
+msgid "Add combined target"
+msgstr "إضافة هدف مرضي مشترك"
+
+msgid "Vaccination program"
+msgstr "برنامج التحصين"
+
+msgid "Select active program"
+msgstr "اختر برنامجًا فعالًا"
+
+msgid "Assign program"
+msgstr "إسناد البرنامج"
+
+msgid "Actual vaccine"
+msgstr "اللقاح المستخدم فعليًا"
+
+msgid "Administered at"
+msgstr "وقت إعطاء اللقاح"
+
+msgid "Select vaccine"
+msgstr "اختر اللقاح"
+
+msgid "Dose"
+msgstr "الجرعة"
+
+msgid "Product batch / lot"
+msgstr "دفعة / تشغيلة المنتج"
+
+msgid "Expiry date"
+msgstr "تاريخ الانتهاء"
+
+msgid "Performed by"
+msgstr "نُفذ بواسطة"
+
+msgid "Administration notes"
+msgstr "ملاحظات التنفيذ"
+
+msgid "Record administration"
+msgstr "تسجيل تنفيذ التحصين"
+
+msgid "Mark skipped"
+msgstr "تسجيلها كمتجاوزة"
+
+msgid "Vaccination Program"
+msgstr "برنامج التحصين"
+
+msgid "Program definition"
+msgstr "تعريف البرنامج"
+
+msgid "Add vaccination schedule step"
+msgstr "إضافة خطوة لجدول التحصين"
+
+msgid "Program schedule"
+msgstr "جدول البرنامج"
+
+msgid "No schedule steps have been added yet."
+msgstr "لم تتم إضافة خطوات للجدول بعد."
+
+msgid "Day"
+msgstr "اليوم"
+
+msgid "Product chosen at administration"
+msgstr "يُحدد المنتج عند التنفيذ"
+
+msgid "Vaccination schedule"
+msgstr "جدول التحصين"
+
+msgid "Assign an active reusable program. AVIOS snapshots its current steps into this flock so future program edits do not rewrite flock history."
+msgstr "أسند برنامجًا فعالًا للقطيع. يحفظ AVIOS نسخة من خطوات البرنامج الحالية داخل سجل القطيع حتى لا تؤثر تعديلات البرنامج اللاحقة على تاريخه."
+
+msgid "No unassigned active vaccination program matches this flock type."
+msgstr "لا يوجد برنامج تحصين فعال وغير مُسنَد يناسب نوع هذا القطيع."
+
+msgid "No vaccination schedule has been generated for this flock yet."
+msgstr "لم يتم إنشاء جدول تحصين لهذا القطيع بعد."
+
+msgid "Overdue"
+msgstr "متأخر"
+
+msgid "Administered"
+msgstr "تم إعطاؤه"
+
+msgid "Batch"
+msgstr "الدفعة"
