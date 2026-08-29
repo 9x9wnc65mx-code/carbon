@@ -78,7 +78,7 @@ const GroupedContentSidebar = ({
               key={group.name}
               className="border-b border-border p-2 pb-4 space-y-0.5"
             >
-              <h4 className="text-xxs text-foreground/70 uppercase font-light tracking-wide pl-4 py-1">
+              <h4 className="text-xxs text-foreground/70 uppercase font-light tracking-wide ps-4 py-1">
                 {group.name}
               </h4>
               {group.routes.map((route) => {
@@ -126,12 +126,16 @@ const GroupedContentSidebar = ({
                         <IconButton
                           aria-label={t`Toggle views`}
                           icon={
-                            isExpanded ? <LuChevronDown /> : <LuChevronRight />
+                            isExpanded ? (
+                              <LuChevronDown />
+                            ) : (
+                              <LuChevronRight className="rtl:rotate-180" />
+                            )
                           }
                           variant="ghost"
                           size="sm"
                           onClick={() => toggleViews(route.name)}
-                          className="absolute right-1 flex-shrink-0 text-foreground/70 hover:text-foreground"
+                          className="absolute end-1 flex-shrink-0 text-foreground/70 hover:text-foreground"
                         />
                       )}
                     </div>
@@ -239,7 +243,7 @@ const ViewsReorderGroup = ({
                 asChild
                 variant={isViewActive ? "active" : "ghost"}
                 className={cn(
-                  "justify-start text-sm pl-7 pr-7 truncate flex-grow !shadow-none",
+                  "justify-start text-sm px-7 truncate flex-grow !shadow-none",
                   isViewActive
                     ? "shadow-none border-active-foreground/30 dark:border-none dark:shadow-button-base"
                     : "hover:bg-active hover:text-active-foreground"
@@ -254,7 +258,7 @@ const ViewsReorderGroup = ({
                 icon={<LuGripVertical />}
                 variant="ghost"
                 size="sm"
-                className="flex-shrink-0 opacity-0 group-hover/view:opacity-100 absolute left-1"
+                className="flex-shrink-0 opacity-0 group-hover/view:opacity-100 absolute start-1"
               />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -263,7 +267,7 @@ const ViewsReorderGroup = ({
                     icon={<LuEllipsisVertical />}
                     variant="ghost"
                     size="sm"
-                    className="absolute right-1 flex-shrink-0 opacity-0 group-hover/view:opacity-100 data-[state=open]:opacity-100 text-foreground/70 hover:text-foreground"
+                    className="absolute end-1 flex-shrink-0 opacity-0 group-hover/view:opacity-100 data-[state=open]:opacity-100 text-foreground/70 hover:text-foreground"
                   />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
