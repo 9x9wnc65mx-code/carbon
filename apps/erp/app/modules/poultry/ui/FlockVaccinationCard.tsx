@@ -33,8 +33,11 @@ export default function FlockVaccinationCard({
     (map[item.eventId] ??= []).push(item.diseaseId);
     return map;
   }, {});
+  const assignedProgramIds = new Set(assignments.map((assignment) => assignment.programId));
   const eligiblePrograms = programs.filter(
-    (program) => program.flockType === flockType || program.flockType === "Other"
+    (program) =>
+      (program.flockType === flockType || program.flockType === "Other") &&
+      !assignedProgramIds.has(program.id)
   );
   const today = new Date().toISOString().slice(0, 10);
 
@@ -50,7 +53,7 @@ export default function FlockVaccinationCard({
             {eligiblePrograms.some((program) => program.status === "Active") ? (
               <VaccinationAssignmentForm programs={eligiblePrograms} />
             ) : (
-              <p className="rounded-lg border p-3 text-sm text-muted-foreground"><Trans>No active vaccination program matches this flock type. Create and activate one from Vaccination Center.</Trans></p>
+              <p className="rounded-lg border p-3 text-sm text-muted-foreground"><Trans>No unassigned active vaccination program matches this flock type.</Trans></p>
             )}
           </div>
 
