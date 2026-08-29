@@ -21,7 +21,8 @@ function updatedAt() {
 }
 
 function withoutId<T extends { id?: string }>(input: T) {
-  const { id: _id, ...values } = input;
+  const values = { ...input };
+  delete values.id;
   return values;
 }
 

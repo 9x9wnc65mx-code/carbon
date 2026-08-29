@@ -1,12 +1,13 @@
 import { useLingui } from "@lingui/react/macro";
-import { LuBird, LuHouse, LuLayoutDashboard } from "react-icons/lu";
+import { LuBird, LuHouse, LuLayoutDashboard, LuSyringe } from "react-icons/lu";
 import { usePermissions } from "~/hooks";
 import type { AuthenticatedRouteGroup } from "~/types";
 
 const routes = {
   overview: "/x/poultry",
   farms: "/x/poultry/farms",
-  flocks: "/x/poultry/flocks"
+  flocks: "/x/poultry/flocks",
+  vaccinations: "/x/poultry/vaccinations"
 } as const;
 
 export default function usePoultrySubmodules() {
@@ -33,6 +34,12 @@ export default function usePoultrySubmodules() {
           name: t`Flocks`,
           to: routes.flocks,
           icon: <LuBird />,
+          permission: "production"
+        },
+        {
+          name: t`Vaccination`,
+          to: routes.vaccinations,
+          icon: <LuSyringe />,
           permission: "production"
         }
       ]
