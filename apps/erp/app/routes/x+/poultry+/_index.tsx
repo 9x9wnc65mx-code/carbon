@@ -13,6 +13,7 @@ import { Trans } from "@lingui/react/macro";
 import { LuBird, LuHouse } from "react-icons/lu";
 import type { LoaderFunctionArgs } from "react-router";
 import { Link } from "react-router";
+import TechnicalText from "~/modules/poultry/ui/TechnicalText";
 import type { Handle } from "~/utils/handle";
 
 export const handle: Handle = {
@@ -63,7 +64,9 @@ export default function PoultryOverview() {
                 className="w-full rounded-xl bg-muted/50 px-4 py-3 font-mono text-sm tabular-nums overflow-x-auto"
                 dir="ltr"
               >
-                <bdi dir="ltr">B-101 → E-404 → C-711 → F-2026-001 → SL-902</bdi>
+                <TechnicalText>
+                  B-101 → E-404 → C-711 → F-2026-001 → SL-902
+                </TechnicalText>
               </div>
               <p className="text-sm text-muted-foreground text-pretty">
                 <Trans>
