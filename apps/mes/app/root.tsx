@@ -67,7 +67,7 @@ export const links: Route.LinksFunction = () => [
 export const meta: MetaFunction = () => {
   return [
     {
-      title: "Carbon | MES"
+      title: "AVIOS | Shop Floor"
     }
   ];
 };
@@ -155,7 +155,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function Document({
   children,
-  title = "Carbon",
+  title = "AVIOS",
   lang = "en",
   mode = "light",
   theme = "zinc",
@@ -171,6 +171,7 @@ function Document({
   const selectedTheme = themes.find((t) => t.name === theme) as
     | Theme
     | undefined;
+  const direction = lang === "ar" ? "rtl" : "ltr";
 
   // Create style objects for both light and dark modes
   const lightVars: Record<string, string> = {};
@@ -199,6 +200,7 @@ function Document({
   return (
     <html
       lang={lang}
+      dir={direction}
       className={`${mode} h-full overflow-x-hidden`}
       style={themeStyle}
     >
@@ -225,7 +227,10 @@ function Document({
             }}
           />
         ) : null}
-        <Toaster position="bottom-left" visibleToasts={5} />
+        <Toaster
+          position={direction === "rtl" ? "bottom-right" : "bottom-left"}
+          visibleToasts={5}
+        />
         <ScrollRestoration />
         <Scripts />
         {!CONTROLLED_ENVIRONMENT && import.meta.env.PROD && <Analytics />}
@@ -282,7 +287,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   // Supabase client throws "supabaseUrl is required" at module load and the
   // boundary never becomes interactive.
   return (
-    <Document mode="dark" title="Error" env={getBrowserEnv()}>
+    <Document mode="dark" title="AVIOS | Error" env={getBrowserEnv()}>
       <RootErrorBoundary error={error} />
     </Document>
   );
