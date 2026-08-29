@@ -95,7 +95,7 @@ const PrimaryNavigation = () => {
         data-state={isOpen ? "expanded" : "collapsed"}
         className={cn(
           "bg-background py-2 group z-10 h-full w-14 data-[state=expanded]:w-[13rem]",
-          "flex flex-col justify-between data-[state=expanded]:shadow-xl data-[state=expanded]:border-r data-[state=expanded]:border-border",
+          "flex flex-col justify-between data-[state=expanded]:shadow-xl data-[state=expanded]:border-e data-[state=expanded]:border-border",
           "transition-width duration-200",
           "hide-scrollbar overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-accent"
         )}
@@ -200,7 +200,7 @@ const PrimaryNavigation = () => {
                   "h-10 w-10 group-data-[state=expanded]:w-full",
                   "flex items-center rounded-md",
                   "group-data-[state=collapsed]:justify-center",
-                  "group-data-[state=expanded]:-space-x-2",
+                  "group-data-[state=expanded]:-space-x-2 rtl:space-x-reverse",
                   "font-medium shrink-0 inline-flex select-none",
                   "hover:bg-accent hover:text-accent-foreground",
                   "transition-[background-color,color,width] duration-100 ease-out",
@@ -209,11 +209,11 @@ const PrimaryNavigation = () => {
                   "group/item"
                 )}
               >
-                <LuSettings2 className="absolute left-3 top-3 flex items-center justify-center" />
+                <LuSettings2 className="absolute start-3 top-3 flex items-center justify-center" />
                 <span
                   className={cn(
-                    "min-w-[128px] text-sm text-left",
-                    "absolute left-7 group-data-[state=expanded]:left-12",
+                    "min-w-[128px] text-sm text-start",
+                    "absolute start-7 group-data-[state=expanded]:start-12",
                     "opacity-0 group-data-[state=expanded]:opacity-100"
                   )}
                 >
@@ -248,7 +248,7 @@ const NavigationSearchButton = ({ isOpen = false }: { isOpen?: boolean }) => {
           "h-10 w-10 group-data-[state=expanded]:w-full",
           "flex items-center rounded-md",
           "group-data-[state=collapsed]:justify-center",
-          "group-data-[state=expanded]:-space-x-2",
+          "group-data-[state=expanded]:-space-x-2 rtl:space-x-reverse",
           "font-medium shrink-0 inline-flex select-none",
           "hover:bg-accent hover:text-accent-foreground",
           "transition-[background-color,color,width] duration-100 ease-out",
@@ -257,12 +257,12 @@ const NavigationSearchButton = ({ isOpen = false }: { isOpen?: boolean }) => {
           "group/item"
         )}
       >
-        <LuSearch className="absolute left-3 top-3 flex items-center justify-center" />
+        <LuSearch className="absolute start-3 top-3 flex items-center justify-center" />
         <span
           aria-hidden={isOpen || undefined}
           className={cn(
-            "min-w-[128px] text-sm text-left",
-            "absolute left-7 group-data-[state=expanded]:left-12",
+            "min-w-[128px] text-sm text-start",
+            "absolute start-7 group-data-[state=expanded]:start-12",
             "opacity-0 group-data-[state=expanded]:opacity-100"
           )}
         >
@@ -274,7 +274,7 @@ const NavigationSearchButton = ({ isOpen = false }: { isOpen?: boolean }) => {
           shortcut={searchShortcut}
           variant="small"
           className={cn(
-            "pointer-events-none absolute right-3 top-1/2 mx-0 -translate-y-1/2",
+            "pointer-events-none absolute end-3 top-1/2 mx-0 -translate-y-1/2",
             "opacity-0 transition-opacity duration-100 group-data-[state=expanded]:opacity-100"
           )}
         />
@@ -296,7 +296,7 @@ const NavigationIconLink = forwardRef<
   NavigationIconButtonProps
 >(({ link, isActive = false, isOpen = false, onClick, ...props }, ref) => {
   const iconClasses = [
-    "absolute left-3 top-3 flex items-center items-center justify-center"
+    "absolute start-3 top-3 flex items-center items-center justify-center"
   ];
 
   const classes = [
@@ -304,7 +304,7 @@ const NavigationIconLink = forwardRef<
     "h-10 w-10 group-data-[state=expanded]:w-full",
     "flex items-center rounded-md",
     "group-data-[state=collapsed]:justify-center",
-    "group-data-[state=expanded]:-space-x-2",
+    "group-data-[state=expanded]:-space-x-2 rtl:space-x-reverse",
     "font-medium shrink-0 inline-flex items-center justify-center select-none",
     "disabled:opacity-50",
     "transition-[background-color,color,width] duration-100 ease-out",
@@ -329,7 +329,7 @@ const NavigationIconLink = forwardRef<
       <link.icon className={cn(...iconClasses)} />
 
       {link.tag ? (
-        <span className="absolute top-1 right-1 min-w-4 h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium leading-4 text-center tabular-nums">
+        <span className="absolute top-1 end-1 min-w-4 h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium leading-4 text-center tabular-nums">
           {link.tag}
         </span>
       ) : null}
@@ -337,8 +337,8 @@ const NavigationIconLink = forwardRef<
       <span
         aria-hidden={isOpen || undefined}
         className={cn(
-          "min-w-[128px] text-sm",
-          "absolute left-7 group-data-[state=expanded]:left-12",
+          "min-w-[128px] text-sm text-start",
+          "absolute start-7 group-data-[state=expanded]:start-12",
           "opacity-0 group-data-[state=expanded]:opacity-100"
         )}
       >
