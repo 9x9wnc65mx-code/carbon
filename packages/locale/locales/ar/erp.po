@@ -1,0 +1,121 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ar\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Plural-Forms: nplurals=6; plural=(n==0?0:n==1?1:n==2?2:n%100>=3 && n%100<=10?3:n%100>=11 && n%100<=99?4:5);\n"
+
+msgid "Accounting"
+msgstr "المحاسبة"
+
+msgid "Documents"
+msgstr "المستندات"
+
+msgid "Inventory"
+msgstr "المخزون"
+
+msgid "Invoicing"
+msgstr "الفوترة"
+
+msgid "Items"
+msgstr "الأصناف"
+
+msgid "People"
+msgstr "الموظفون"
+
+msgid "Poultry Operations"
+msgstr "عمليات الدواجن"
+
+msgid "Production"
+msgstr "الإنتاج"
+
+msgid "Purchasing"
+msgstr "المشتريات"
+
+msgid "Quality"
+msgstr "الجودة"
+
+msgid "Resources"
+msgstr "الموارد"
+
+msgid "Sales"
+msgstr "المبيعات"
+
+msgid "Settings"
+msgstr "الإعدادات"
+
+msgid "Shop Floor"
+msgstr "أرضية التشغيل"
+
+msgid "Users"
+msgstr "المستخدمون"
+
+msgid "Workflows"
+msgstr "سير العمل"
+
+msgid "Customize"
+msgstr "تخصيص"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Collapse sidebar"
+msgstr "طي الشريط الجانبي"
+
+msgid "Expand sidebar"
+msgstr "توسيع الشريط الجانبي"
+
+msgid "Toggle views"
+msgstr "إظهار أو إخفاء طرق العرض"
+
+msgid "Drag handle"
+msgstr "مقبض السحب"
+
+msgid "Options"
+msgstr "خيارات"
+
+msgid "Delete View"
+msgstr "حذف طريقة العرض"
+
+msgid "Overview"
+msgstr "نظرة عامة"
+
+msgid "Farms"
+msgstr "المزارع"
+
+msgid "Flocks"
+msgstr "القطعان"
+
+msgid "Operational Digital Thread"
+msgstr "السجل التشغيلي المترابط"
+
+msgid "Open Farms"
+msgstr "فتح المزارع"
+
+msgid "Open Flocks"
+msgstr "فتح القطعان"
+
+msgid "Connected AVIOS domains"
+msgstr "وحدات AVIOS المترابطة"
+
+msgid "Poultry farm registry"
+msgstr "سجل مزارع الدواجن"
+
+msgid "Flock registry"
+msgstr "سجل القطعان"
+
+msgid "Looks empty here"
+msgstr "لا توجد بيانات هنا بعد"
+
+msgid "No poultry farms have been registered yet."
+msgstr "لم يتم تسجيل أي مزارع دواجن بعد."
+
+msgid "No poultry flocks have been registered yet."
+msgstr "لم يتم تسجيل أي قطعان دواجن بعد."
