@@ -1,4 +1,5 @@
 import { cn, IconButton, useIsMobile } from "@carbon/react";
+import { useLingui } from "@lingui/react/macro";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ComponentProps, PropsWithChildren } from "react";
 import {
@@ -61,6 +62,7 @@ export const CollapsibleSidebarTrigger = forwardRef<
   HTMLButtonElement,
   Omit<ComponentProps<typeof IconButton>, "aria-label" | "icon">
 >(({ className, ...props }, ref) => {
+  const { t } = useLingui();
   const { isOpen, onToggle, hasSidebar } = useCollapsibleSidebar();
 
   if (!hasSidebar) return null;
@@ -71,9 +73,9 @@ export const CollapsibleSidebarTrigger = forwardRef<
       ref={ref}
       onClick={onToggle}
       {...props}
-      aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
-      icon={<LuPanelLeft />}
-      className={cn("-ml-1", className)}
+      aria-label={isOpen ? t`Collapse sidebar` : t`Expand sidebar`}
+      icon={<LuPanelLeft className="rtl:rotate-180" />}
+      className={cn("-ms-1", className)}
     />
   );
 });
@@ -119,7 +121,7 @@ export const CollapsibleSidebar = ({
       variants={variants}
       className="relative flex h-[calc(100dvh-49px)]"
     >
-      <div className="h-full w-full overflow-hidden bg-card border-r border-border">
+      <div className="h-full w-full overflow-hidden bg-card border-e border-border">
         {isOpen ? children : null}
       </div>
     </motion.div>
