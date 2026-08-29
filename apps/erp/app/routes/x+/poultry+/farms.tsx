@@ -29,8 +29,8 @@ export default function PoultryFarmsRoute() {
           </h1>
           <p className="mt-1 text-sm text-muted-foreground text-pretty">
             <Trans>
-              Poultry farm master data and house structure will live here and
-              become the physical location layer for flock traceability.
+              Manage poultry sites and house structure as the physical location
+              layer for flock operations and traceability.
             </Trans>
           </p>
         </div>
@@ -44,11 +44,7 @@ export default function PoultryFarmsRoute() {
           <CardContent className="h-full min-h-[240px]">
             <Empty>
               <p className="max-w-md text-center text-sm text-muted-foreground text-pretty">
-                <Trans>
-                  No poultry farms have been registered yet. The next AVIOS data
-                  slice will add company-scoped farm and house records with full
-                  create, edit and audit workflows.
-                </Trans>
+                <Trans>No poultry farms have been registered yet.</Trans>
               </p>
             </Empty>
           </CardContent>
