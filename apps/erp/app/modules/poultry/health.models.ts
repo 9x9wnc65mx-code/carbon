@@ -4,9 +4,17 @@ const optionalText = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
   z.string().trim().optional()
 );
-const optionalPositiveNumber = z.preprocess(
-  (value) => (value === "" || value == null ? undefined : Number(value)),
-  z.number().positive().optional()
+const localDateTime = z.string().regex(
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/,
+  "Enter a valid local date and time"
+);
+const optionalLocalDateTime = z.preprocess(
+  (value) => (value === "" || value == null ? undefined : value),
+  localDateTime.optional()
+);
+const requiredPositiveNumber = z.preprocess(
+  (value) => Number(value),
+  z.number().positive("Dose must be greater than zero")
 );
 const optionalPositiveInteger = z.preprocess(
   (value) => (value === "" || value == null ? undefined : Number(value)),
@@ -41,7 +49,7 @@ export const treatmentStatuses = ["Planned", "Active", "Completed", "Stopped", "
 
 export const clinicalEventValidator = z.object({
   caseReference: z.string().trim().min(1, "Case reference is required").max(80),
-  observedAtLocal: z.string().min(1, "Observation time is required"),
+  observedAtLocal: localDateTime,
   eventType: z.enum(clinicalEventTypes),
   bodySystem: z.enum(clinicalBodySystems),
   severity: z.enum(clinicalSeverities),
@@ -58,30 +66,30 @@ export const clinicalEventResolutionValidator = z.object({
   eventId: z.string().min(1),
   status: z.enum(["Monitoring", "Resolved", "Closed"]),
   resolution: optionalText,
-  resolvedAtLocal: optionalText
+  resolvedAtLocal: optionalLocalDateTime
 });
 
 export const treatmentCourseValidator = z.object({
   clinicalEventId: optionalText,
   drugId: z.string().min(1, "Drug is required"),
   indication: z.string().trim().min(1, "Indication is required").max(300),
-  prescribedAtLocal: z.string().min(1, "Prescription time is required"),
-  plannedStartAtLocal: optionalText,
-  plannedEndAtLocal: optionalText,
+  prescribedAtLocal: localDateTime,
+  plannedStartAtLocal: optionalLocalDateTime,
+  plannedEndAtLocal: optionalLocalDateTime,
   route: z.string().trim().min(1, "Route is required").max(80),
-  doseValue: optionalPositiveNumber,
-  doseUnit: optionalText,
-  frequency: optionalText,
+  doseValue: requiredPositiveNumber,
+  doseUnit: z.string().trim().min(1, "Dose unit is required").max(80),
+  frequency: z.string().trim().min(1, "Frequency is required").max(120),
   prescribedBy: optionalText,
   notes: optionalText
 });
 
 export const treatmentAdministrationValidator = z.object({
   courseId: z.string().min(1),
-  administeredAtLocal: z.string().min(1, "Administration time is required"),
+  administeredAtLocal: localDateTime,
   route: z.string().trim().min(1, "Route is required").max(80),
-  doseValue: optionalPositiveNumber,
-  doseUnit: optionalText,
+  doseValue: requiredPositiveNumber,
+  doseUnit: z.string().trim().min(1, "Dose unit is required").max(80),
   productBatch: optionalText,
   expiryDate: optionalText,
   performedBy: optionalText,
