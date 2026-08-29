@@ -72,7 +72,7 @@ export const links: LinksFunction = () => {
 export const meta: MetaFunction = ({ error }) => {
   return [
     {
-      title: error ? "Carbon | Error" : "Carbon"
+      title: error ? "AVIOS | Error" : "AVIOS"
     }
   ];
 };
@@ -190,6 +190,7 @@ export function Document({
   const selectedTheme = themes.find((t) => t.name === theme) as
     | Theme
     | undefined;
+  const direction = lang === "ar" ? "rtl" : "ltr";
 
   // Create style objects for both light and dark modes
   const lightVars: Record<string, string> = {};
@@ -218,6 +219,7 @@ export function Document({
   return (
     <html
       lang={lang}
+      dir={direction}
       className={`${mode} h-full overflow-x-hidden`}
       style={themeStyle}
     >
@@ -243,7 +245,10 @@ export function Document({
             }}
           />
         ) : null}
-        <Toaster position="bottom-right" visibleToasts={5} />
+        <Toaster
+          position={direction === "rtl" ? "bottom-left" : "bottom-right"}
+          visibleToasts={5}
+        />
         <ScrollRestoration />
         <Scripts />
         {!CONTROLLED_ENVIRONMENT && import.meta.env.PROD && <Analytics />}

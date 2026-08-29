@@ -1,6 +1,7 @@
 import { useRouteData } from "@carbon/react";
 import { useLingui } from "@lingui/react/macro";
 import {
+  LuBird,
   LuBlocks,
   LuBox,
   LuCreditCard,
@@ -88,6 +89,13 @@ function useModuleDefinitions(): ModuleDefinition[] {
       name: t`People`,
       to: path.to.people,
       icon: LuUsers
+    },
+    {
+      key: "poultry",
+      permission: "production",
+      name: t`Poultry Operations`,
+      to: "/x/poultry",
+      icon: LuBird
     },
     {
       key: "production",
