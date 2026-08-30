@@ -210,18 +210,34 @@ export function getFlockFeedExposures(
   return query;
 }
 
-export function createFlockFeedExposure(
+export async function createFlockFeedExposure(
   client: SupabaseClient<Database>,
   flockId: string,
   input: FlockFeedExposureInput,
   context: { companyId: string; userId: string; timeZone: string }
 ) {
+  const db = feedDb(client);
+  const lot = await db
+    .from("feedTrackedLotProfile")
+    .select("itemId")
+    .eq("companyId", context.companyId)
+    .eq("trackedEntityId", input.trackedEntityId)
+    .maybeSingle();
+
+  if (lot.error || !lot.data) {
+    return {
+      data: null,
+      error: lot.error ?? new Error("Feed lot profile was not found")
+    };
+  }
+
   const { startedAtLocal, endedAtLocal, ...values } = input;
-  return feedDb(client)
+  return db
     .from("flockFeedExposure")
     .insert(
       sanitize({
         ...values,
+        itemId: lot.data.itemId,
         flockId,
         companyId: context.companyId,
         startedAt: farmLocalDateTimeToUtc(startedAtLocal, context.timeZone),
