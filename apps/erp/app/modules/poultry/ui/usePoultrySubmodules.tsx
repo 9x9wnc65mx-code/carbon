@@ -4,6 +4,7 @@ import {
   LuFlaskConical,
   LuHouse,
   LuLayoutDashboard,
+  LuPackage,
   LuSyringe
 } from "react-icons/lu";
 import { usePermissions } from "~/hooks";
@@ -14,7 +15,8 @@ const routes = {
   farms: "/x/poultry/farms",
   flocks: "/x/poultry/flocks",
   vaccinations: "/x/poultry/vaccinations",
-  laboratories: "/x/poultry/laboratories"
+  laboratories: "/x/poultry/laboratories",
+  feed: "/x/poultry/feed"
 } as const;
 
 export default function usePoultrySubmodules() {
@@ -54,6 +56,12 @@ export default function usePoultrySubmodules() {
           to: routes.laboratories,
           icon: <LuFlaskConical />,
           permission: "production"
+        },
+        {
+          name: t`Feed & Feed Mill`,
+          to: routes.feed,
+          icon: <LuPackage />,
+          permission: "inventory"
         }
       ]
     }
