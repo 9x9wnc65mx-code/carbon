@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { labAccessionValidator } from "./laboratory.models";
 
 const optionalText = z.preprocess(
   (value) =>
@@ -12,10 +13,6 @@ const optionalNumber = z.preprocess(
 const optionalPositiveNumber = z.preprocess(
   (value) => (value === "" || value == null ? undefined : Number(value)),
   z.number().positive().optional()
-);
-const optionalPositiveInteger = z.preprocess(
-  (value) => (value === "" || value == null ? undefined : Number(value)),
-  z.number().int().positive().optional()
 );
 const localDateTime = z.string().regex(
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/,
@@ -162,9 +159,15 @@ export const flockFeedExposureValidator = z
     }
   });
 
+export const feedLabAccessionValidator = labAccessionValidator.extend({
+  sourceType: z.literal("Feed"),
+  trackedEntityId: z.string().min(1, "Feed lot is required")
+});
+
 export type FeedItemProfileInput = z.infer<typeof feedItemProfileValidator>;
 export type FeedSpecificationParameterInput = z.infer<
   typeof feedSpecificationParameterValidator
 >;
 export type FeedTrackedLotProfileInput = z.infer<typeof feedTrackedLotProfileValidator>;
 export type FlockFeedExposureInput = z.infer<typeof flockFeedExposureValidator>;
+export type FeedLabAccessionInput = z.infer<typeof feedLabAccessionValidator>;
