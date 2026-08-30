@@ -10,7 +10,7 @@ import {
 } from "@carbon/react";
 import { msg } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { LuBird, LuFlaskConical, LuHouse } from "react-icons/lu";
+import { LuBird, LuFlaskConical, LuHouse, LuPackage } from "react-icons/lu";
 import type { LoaderFunctionArgs } from "react-router";
 import { Link } from "react-router";
 import TechnicalText from "~/modules/poultry/ui/TechnicalText";
@@ -70,16 +70,16 @@ export default function PoultryOverview() {
               </div>
               <p className="text-sm text-muted-foreground text-pretty">
                 <Trans>
-                  The same thread will also connect feed raw-material lots,
-                  laboratory samples, diagnostics, QMS events and production
-                  outcomes to the flock digital passport.
+                  The same thread connects feed raw-material and finished-feed lots,
+                  laboratory samples, diagnostics, QMS events and production outcomes
+                  to the flock digital passport.
                 </Trans>
               </p>
             </VStack>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 w-full">
           <Card>
             <CardHeader>
               <CardTitle>
@@ -153,6 +153,33 @@ export default function PoultryOverview() {
                 <Button asChild variant="secondary">
                   <Link to="/x/poultry/laboratories">
                     <Trans>Open Laboratory Center</Trans>
+                  </Link>
+                </Button>
+              </VStack>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <HStack>
+                  <LuPackage />
+                  <Trans>Feed & Feed Mill</Trans>
+                </HStack>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <VStack spacing={3}>
+                <p className="text-sm text-muted-foreground text-pretty">
+                  <Trans>
+                    Extend Carbon batch-tracked feed inventory with specifications,
+                    COA and laboratory evidence, then connect each real feed lot to
+                    flock exposure.
+                  </Trans>
+                </p>
+                <Button asChild variant="secondary">
+                  <Link to="/x/poultry/feed">
+                    <Trans>Open Feed Center</Trans>
                   </Link>
                 </Button>
               </VStack>
