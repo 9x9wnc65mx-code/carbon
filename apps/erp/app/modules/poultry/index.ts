@@ -1,3 +1,5 @@
+export * from "./feed.models";
+export * from "./feed.service";
 export * from "./health.models";
 export * from "./health.service";
 export * from "./health.time";
