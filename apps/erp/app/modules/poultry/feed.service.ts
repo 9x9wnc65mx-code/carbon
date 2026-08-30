@@ -151,22 +151,45 @@ export function getFeedTrackedEntities(
   return query;
 }
 
-export function upsertFeedTrackedLotProfile(
+export async function saveFeedTrackedLotProfile(
   client: SupabaseClient<Database>,
   input: FeedTrackedLotProfileInput,
   context: { companyId: string; userId: string }
 ) {
-  return feedDb(client)
+  const db = feedDb(client);
+  const existing = await db
     .from("feedTrackedLotProfile")
-    .upsert(
+    .select("trackedEntityId")
+    .eq("companyId", context.companyId)
+    .eq("trackedEntityId", input.trackedEntityId)
+    .maybeSingle();
+
+  if (existing.error) return existing;
+
+  if (existing.data) {
+    return db
+      .from("feedTrackedLotProfile")
+      .update(
+        sanitize({
+          ...input,
+          updatedBy: context.userId,
+          updatedAt: updatedAt()
+        })
+      )
+      .eq("companyId", context.companyId)
+      .eq("trackedEntityId", input.trackedEntityId)
+      .select("*")
+      .single();
+  }
+
+  return db
+    .from("feedTrackedLotProfile")
+    .insert(
       sanitize({
         ...input,
         companyId: context.companyId,
-        createdBy: context.userId,
-        updatedBy: context.userId,
-        updatedAt: updatedAt()
-      }),
-      { onConflict: "trackedEntityId,companyId" }
+        createdBy: context.userId
+      })
     )
     .select("*")
     .single();
@@ -216,7 +239,7 @@ export async function getFeedTraceabilitySnapshot(
   flockId?: string
 ) {
   const profiles = await getFeedItemProfiles(client, companyId);
-  const itemIds = (profiles.data ?? []).map((profile: any) => profile.itemId);
+  const itemIds = (profiles.data ?? []).map((profile) => profile.itemId);
 
   const [items, lots, lotProfiles, specifications, exposures] = await Promise.all([
     getFeedCandidateItems(client, companyId),
