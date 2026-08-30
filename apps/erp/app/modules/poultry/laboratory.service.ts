@@ -222,7 +222,11 @@ export function addLabTestDiseaseTarget(
 export function getLabAccessions(
   client: SupabaseClient<Database>,
   companyId: string,
-  filters?: { laboratoryId?: string; flockId?: string }
+  filters?: {
+    laboratoryId?: string;
+    flockId?: string;
+    trackedEntityId?: string;
+  }
 ) {
   let query = labDb(client)
     .from("labAccession")
@@ -231,6 +235,7 @@ export function getLabAccessions(
     .order("collectedAt", { ascending: false });
   if (filters?.laboratoryId) query = query.eq("laboratoryId", filters.laboratoryId);
   if (filters?.flockId) query = query.eq("flockId", filters.flockId);
+  if (filters?.trackedEntityId) query = query.eq("trackedEntityId", filters.trackedEntityId);
   return query;
 }
 
@@ -403,7 +408,6 @@ export function getLabResults(
   } else if (testOrderIds) {
     query = query.eq("testOrderId", testOrderIds);
   }
-
   return query;
 }
 
@@ -485,7 +489,7 @@ export async function verifyLabResult(
   if (result.data.status !== "Entered") {
     return {
       data: null,
-      error: new Error("Only an entered laboratory result can be verified")
+      error: new Error("Only entered laboratory results can be verified")
     };
   }
 
