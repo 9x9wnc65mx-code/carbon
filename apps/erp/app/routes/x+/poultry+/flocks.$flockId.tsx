@@ -3,6 +3,7 @@ import { requirePermissions } from "@carbon/auth/auth.server";
 import { flash } from "@carbon/auth/session.server";
 import { validationError, validator } from "@carbon/form";
 import { Button, Card, CardContent, CardHeader, CardTitle, VStack } from "@carbon/react";
+import { now } from "@internationalized/date";
 import { Trans } from "@lingui/react/macro";
 import type { ReactNode } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
@@ -27,6 +28,8 @@ import {
   getFlockVaccinationAssignments,
   getFlockVaccinationEventDiseases,
   getFlockVaccinationEvents,
+  getLaboratories,
+  getLabAccessions,
   getPoultryHouse,
   getPoultryHouses,
   getVaccinationPrograms,
@@ -45,6 +48,7 @@ import {
   vaccinationEventSkipValidator
 } from "~/modules/poultry";
 import FlockHealthCard from "~/modules/poultry/ui/FlockHealthCard";
+import FlockLaboratoryCard from "~/modules/poultry/ui/FlockLaboratoryCard";
 import FlockVaccinationCard from "~/modules/poultry/ui/FlockVaccinationCard";
 import { FlockForm } from "~/modules/poultry/ui/PoultryRegistryForm";
 import TechnicalText from "~/modules/poultry/ui/TechnicalText";
@@ -82,7 +86,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     clinicalEvents,
     clinicalEventDiseases,
     treatmentCourses,
-    treatmentAdministrations
+    treatmentAdministrations,
+    laboratories,
+    labAccessions
   ] = await Promise.all([
     getPoultryHouse(client, companyId, flock.data.houseId),
     getFarms(client, companyId),
@@ -97,7 +103,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     getFlockClinicalEvents(client, companyId, flock.data.id),
     getFlockClinicalEventDiseases(client, companyId, flock.data.id),
     getFlockTreatmentCourses(client, companyId, flock.data.id),
-    getFlockTreatmentAdministrations(client, companyId, flock.data.id)
+    getFlockTreatmentAdministrations(client, companyId, flock.data.id),
+    getLaboratories(client, companyId),
+    getLabAccessions(client, companyId, { flockId: flock.data.id })
   ]);
   const farm = house.data
     ? await getFarm(client, companyId, house.data.farmId)
@@ -121,8 +129,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     clinicalEventDiseases: clinicalEventDiseases.data ?? [],
     treatmentCourses: treatmentCourses.data ?? [],
     treatmentAdministrations: treatmentAdministrations.data ?? [],
+    laboratories: laboratories.data ?? [],
+    labAccessions: labAccessions.data ?? [],
     timeZone,
-    defaultDateTime: utcDateTimeToFarmLocal(new Date().toISOString(), timeZone)
+    defaultDateTime: utcDateTimeToFarmLocal(
+      now("UTC").toAbsoluteString(),
+      timeZone
+    )
   };
 }
 
@@ -249,6 +262,8 @@ export default function FlockDigitalPassportRoute() {
     clinicalEventDiseases,
     treatmentCourses,
     treatmentAdministrations,
+    laboratories,
+    labAccessions,
     timeZone,
     defaultDateTime
   } = useLoaderData<typeof loader>();
@@ -297,6 +312,7 @@ export default function FlockDigitalPassportRoute() {
                 <PassportItem label={<Trans>Chick / hatchery origin</Trans>}><span className="text-muted-foreground"><Trans>Ready for origin lot linkage</Trans></span></PassportItem>
                 <PassportItem label={<Trans>Feed exposure</Trans>}><span className="text-muted-foreground"><Trans>Ready for feed lot genealogy</Trans></span></PassportItem>
                 <PassportItem label={<Trans>Health & vaccination</Trans>}><span className="text-emerald-600"><Trans>Clinical, treatment and vaccination workflows active</Trans></span></PassportItem>
+                <PassportItem label={<Trans>Laboratory</Trans>}><span className="text-emerald-600"><Trans>Sample accession and verified-result traceability active</Trans></span></PassportItem>
                 <PassportItem label={<Trans>Slaughter & quality</Trans>}><span className="text-muted-foreground"><Trans>Ready for downstream outcome linkage</Trans></span></PassportItem>
               </div>
               <p className="mt-3 text-xs text-muted-foreground"><Trans>The passport is a read model over the flock identity and linked domains; it does not duplicate genealogy data.</Trans></p>
@@ -306,6 +322,8 @@ export default function FlockDigitalPassportRoute() {
           <FlockVaccinationCard flockType={flock.flockType} programs={vaccinationPrograms} assignments={vaccinationAssignments} events={vaccinationEvents} eventDiseases={vaccinationEventDiseases} diseases={diseases} vaccines={vaccines} />
 
           <FlockHealthCard timeZone={timeZone} defaultDateTime={defaultDateTime} clinicalEvents={clinicalEvents} clinicalEventDiseases={clinicalEventDiseases} diseases={diseases} treatments={treatmentCourses} administrations={treatmentAdministrations} drugs={drugs} />
+
+          <FlockLaboratoryCard laboratories={laboratories} accessions={labAccessions} />
 
           <Card className="w-full">
             <CardHeader><CardTitle><Trans>Edit flock identity</Trans></CardTitle></CardHeader>
