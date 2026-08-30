@@ -10,7 +10,7 @@ import {
 } from "@carbon/react";
 import { msg } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { LuBird, LuHouse } from "react-icons/lu";
+import { LuBird, LuFlaskConical, LuHouse } from "react-icons/lu";
 import type { LoaderFunctionArgs } from "react-router";
 import { Link } from "react-router";
 import TechnicalText from "~/modules/poultry/ui/TechnicalText";
@@ -79,7 +79,7 @@ export default function PoultryOverview() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 w-full">
           <Card>
             <CardHeader>
               <CardTitle>
@@ -127,6 +127,32 @@ export default function PoultryOverview() {
                 <Button asChild variant="secondary">
                   <Link to="/x/poultry/flocks">
                     <Trans>Open Flocks</Trans>
+                  </Link>
+                </Button>
+              </VStack>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <HStack>
+                  <LuFlaskConical />
+                  <Trans>Laboratory</Trans>
+                </HStack>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <VStack spacing={3}>
+                <p className="text-sm text-muted-foreground text-pretty">
+                  <Trans>
+                    Configure test definitions and parameters, accession samples,
+                    enter analytical results and lock verified laboratory evidence.
+                  </Trans>
+                </p>
+                <Button asChild variant="secondary">
+                  <Link to="/x/poultry/laboratories">
+                    <Trans>Open Laboratory Center</Trans>
                   </Link>
                 </Button>
               </VStack>
