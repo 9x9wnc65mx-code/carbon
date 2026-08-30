@@ -139,7 +139,6 @@ export const feedTrackedLotProfileValidator = z.object({
 export const flockFeedExposureValidator = z
   .object({
     trackedEntityId: z.string().min(1, "Feed lot is required"),
-    itemId: z.string().min(1),
     exposureType: z.enum(feedExposureTypes),
     startedAtLocal: localDateTime,
     endedAtLocal: optionalLocalDateTime,
