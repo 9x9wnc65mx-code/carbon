@@ -32,6 +32,7 @@ export function FarmForm({
       <label className="grid gap-1 text-sm"><span><Trans>Status</Trans></span><select name="status" defaultValue={initial?.status ?? "Active"} className={inputClass}><option value="Active">Active</option><option value="Inactive">Inactive</option></select></label>
       <label className="grid gap-1 text-sm"><span><Trans>Region</Trans></span><input name="region" defaultValue={initial?.region ?? ""} className={inputClass} /></label>
       <label className="grid gap-1 text-sm"><span><Trans>Address</Trans></span><input name="address" defaultValue={initial?.address ?? ""} className={inputClass} /></label>
+      <label className="grid gap-1 text-sm md:col-span-2"><span><Trans>Farm timezone</Trans></span><input name="timezone" required dir="ltr" defaultValue={initial?.timezone ?? "UTC"} className={inputClass} placeholder="Asia/Amman" list="avios-timezones" /><datalist id="avios-timezones"><option value="Asia/Amman" /><option value="UTC" /><option value="Asia/Riyadh" /><option value="Asia/Dubai" /><option value="Europe/Istanbul" /></datalist><span className="text-xs text-muted-foreground"><Trans>Use an IANA timezone such as Asia/Amman.</Trans></span></label>
       <label className="grid gap-1 text-sm md:col-span-2"><span><Trans>Notes</Trans></span><textarea name="notes" defaultValue={initial?.notes ?? ""} className={textAreaClass} /></label>
       <div className="md:col-span-2 flex justify-end"><Button type="submit" name="_intent" value={intent}>{submitLabel}</Button></div>
     </ValidatedForm>

@@ -41,6 +41,7 @@ export const farmValidator = z.object({
   farmType: z.enum(farmTypes),
   region: optionalText,
   address: optionalText,
+  timezone: z.string().trim().min(1, "Timezone is required").max(100),
   status: z.enum(farmStatuses),
   notes: optionalText
 });

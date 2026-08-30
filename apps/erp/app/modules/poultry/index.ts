@@ -1,3 +1,6 @@
+export * from "./health.models";
+export * from "./health.service";
+export * from "./health.time";
 export * from "./poultry.models";
 export * from "./poultry.service";
 export * from "./vaccination.models";
