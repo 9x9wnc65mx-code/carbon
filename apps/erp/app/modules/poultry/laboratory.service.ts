@@ -387,14 +387,20 @@ export function updateLabTestOrderStatus(
 export function getLabResults(
   client: SupabaseClient<Database>,
   companyId: string,
-  testOrderId?: string
+  testOrderIds?: string | string[]
 ) {
   let query = labDb(client)
     .from("labResult")
     .select("*")
     .eq("companyId", companyId)
     .order("sequenceNo", { ascending: true });
-  if (testOrderId) query = query.eq("testOrderId", testOrderId);
+
+  if (Array.isArray(testOrderIds)) {
+    if (testOrderIds.length > 0) query = query.in("testOrderId", testOrderIds);
+  } else if (testOrderIds) {
+    query = query.eq("testOrderId", testOrderIds);
+  }
+
   return query;
 }
 
@@ -473,8 +479,11 @@ export async function verifyLabResult(
     .eq("id", resultId)
     .maybeSingle();
   if (result.error || !result.data) return result;
-  if (result.data.status === "Pending") {
-    return { data: null, error: new Error("Enter the laboratory result before verification") };
+  if (result.data.status !== "Entered") {
+    return {
+      data: null,
+      error: new Error("Only an entered laboratory result can be verified")
+    };
   }
 
   return db
