@@ -396,7 +396,10 @@ export function getLabResults(
     .order("sequenceNo", { ascending: true });
 
   if (Array.isArray(testOrderIds)) {
-    if (testOrderIds.length > 0) query = query.in("testOrderId", testOrderIds);
+    query = query.in(
+      "testOrderId",
+      testOrderIds.length > 0 ? testOrderIds : ["__avios_no_test_orders__"]
+    );
   } else if (testOrderIds) {
     query = query.eq("testOrderId", testOrderIds);
   }
